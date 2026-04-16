@@ -113,17 +113,17 @@ function buildHTML(f, { base, gstAmt, total }) {
   }
 
   .logo-cell {
-    width: 150px;
+    width: 130px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 14px 10px;
+    padding: 10px 8px;
     background: #fff;
   }
   .logo-cell img {
-    width: 130px;
-    height: 44px;
+    width: 114px;   /* 130 - 16px padding */
+    height: 142px;  /* maintaining 112x140 aspect ratio, slightly adjusted */
     object-fit: contain;
     display: block;
   }
@@ -136,7 +136,7 @@ function buildHTML(f, { base, gstAmt, total }) {
   }
   .co-name {
     background: #52ba4f;
-    padding: 11px 16px 10px;
+    padding: 24px 16px 23px;
     text-align: center;
     flex-shrink: 0;
   }
@@ -157,7 +157,7 @@ function buildHTML(f, { base, gstAmt, total }) {
     text-align: center;
     font-size: 9.5pt;
     line-height: 1.72;
-    padding: 8px 10px 7px;
+    padding: 18px 10px 17px;
     color: #111;
   }
 
@@ -269,7 +269,7 @@ function buildHTML(f, { base, gstAmt, total }) {
   <!-- LETTERHEAD -->
   <div class="lh">
     <div class="logo-cell">
-      <img src="/logo.png" alt="Unique Sorter &amp; Equipments Pvt. Ltd."/>
+      <img src="/image.png" alt="Unique Sorter &amp; Equipments Pvt. Ltd."/>
     </div>
     <div class="co-info">
       <div class="co-name">
@@ -432,10 +432,10 @@ function buildHTML(f, { base, gstAmt, total }) {
 
   <!-- STAMP -->
   <div class="stamp-row">
-    <img src="/stamp.png" alt="Company Stamp" style="display:block;width:47%;object-fit:contain;"/>
+    <img src="/stamp.png" alt="Company Stamp" style="width: 300px; height: auto; object-fit: contain;"/>
   </div>
 
-  <div style="height:0;border-top:1px solid #555;width:47%;margin:2px 0 8px;"></div>
+  <hr class="rule-half"/>
 
   <div class="for-row">
     <span>For, Unique Sorter &amp; Equipments Pvt. Ltd:</span>

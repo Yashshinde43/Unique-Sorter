@@ -35,19 +35,19 @@
     margin-bottom: 5px;
   }
 
-  /* Logo cell — 438:149 ratio, displayed at ~150px wide */
+  /* Logo cell — optimized for new image.png (112x140, portrait) */
   .logo-cell {
-    width: 150px;
+    width: 130px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 14px 10px;
+    padding: 10px 8px;
     background: #fff;
   }
   .logo-cell img {
-    width: 130px;   /* 150 - 20px padding */
-    height: 44px;   /* 130 / 2.94 ratio */
+    width: 114px;   /* 130 - 16px padding */
+    height: 142px;  /* maintaining 112x140 aspect ratio, slightly adjusted */
     object-fit: contain;
     display: block;
   }
@@ -61,7 +61,7 @@
   }
   .co-name {
     background: #52ba4f;
-    padding: 11px 16px 10px;
+    padding: 24px 16px 23px;
     text-align: center;
     flex-shrink: 0;
   }
@@ -82,7 +82,7 @@
     text-align: center;
     font-size: 9.5pt;
     line-height: 1.72;
-    padding: 8px 10px 7px;
+    padding: 18px 10px 17px;
     color: #111;
   }
 
@@ -212,7 +212,7 @@
 
     <!-- Logo -->
     <div class="logo-cell">
-      <img src="/logo.png" alt="Unique Sorter &amp; Equipments Pvt. Ltd."/>
+      <img src="/image.png" alt="Unique Sorter &amp; Equipments Pvt. Ltd."/>
     </div>
 
     <!-- Company info -->
@@ -387,34 +387,8 @@ Machine</span></td>
   <!-- ══ STAMP + SIGNATURE ══ -->
   <div class="stamp-row">
 
-    <!-- Green circular stamp -->
-    <svg width="105" height="105" viewBox="0 0 105 105">
-      <circle cx="52.5" cy="52.5" r="49"  fill="none" stroke="#2e7d32" stroke-width="2.5"/>
-      <circle cx="52.5" cy="52.5" r="42"  fill="none" stroke="#2e7d32" stroke-width="1"/>
-      <path id="arc-top" d="M 14,52.5 A 38.5,38.5 0 0,1 91,52.5" fill="none"/>
-      <text font-size="8" font-family="Arial" font-weight="700" fill="#2e7d32">
-        <textPath href="#arc-top" startOffset="5%">Sorter &amp; Equipments Pvt. Ltd.</textPath>
-      </text>
-      <path id="arc-bot" d="M 14,52.5 A 38.5,38.5 0 0,0 91,52.5" fill="none"/>
-      <text font-size="7.5" font-family="Arial" fill="#2e7d32">
-        <textPath href="#arc-bot" startOffset="6%">Sector-1, Devendra Nagar, Raipur</textPath>
-      </text>
-      <line x1="20" y1="52.5" x2="85" y2="52.5" stroke="#2e7d32" stroke-width=".7" opacity=".3"/>
-      <text x="52.5" y="44"  text-anchor="middle" font-size="10"  font-weight="700" fill="#2e7d32" font-family="Arial">Raipur</text>
-      <text x="52.5" y="56"  text-anchor="middle" font-size="9"   font-weight="600" fill="#2e7d32" font-family="Arial">Chhattisgarh</text>
-      <text x="52.5" y="67"  text-anchor="middle" font-size="9"   font-weight="600" fill="#2e7d32" font-family="Arial">492009</text>
-      <circle cx="52.5" cy="17" r="2.5" fill="#2e7d32" opacity=".5"/>
-      <circle cx="52.5" cy="88" r="2.5" fill="#2e7d32" opacity=".5"/>
-    </svg>
-
-    <!-- Signature squiggle -->
-    <svg width="180" height="80" viewBox="0 0 180 80" style="opacity:.62; margin-left:-8px">
-      <path d="M 10,52 C 22,26 34,62 52,40 C 64,22 70,56 88,36
-               C 102,18 108,54 128,38 C 144,24 150,52 175,44"
-        fill="none" stroke="#222" stroke-width="1.7"
-        stroke-linecap="round" stroke-linejoin="round"/>
-      <line x1="8" y1="63" x2="100" y2="63" stroke="#333" stroke-width=".7" opacity=".25"/>
-    </svg>
+    <!-- Company stamp -->
+    <img src="/stamp.png" alt="Company Stamp" style="width: 300px; height: auto; object-fit: contain;"/>
 
   </div>
 
