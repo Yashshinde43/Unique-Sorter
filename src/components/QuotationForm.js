@@ -510,6 +510,23 @@ const CSS = `
     box-shadow: 0 2px 10px rgba(26,55,170,.5); transition: all .15s;
   }
   .qf-bar-btn-primary:hover { background: #1e42cc; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(26,55,170,.55); }
+  .qf-bar-btn-save {
+    height: 30px; padding: 0 16px; border-radius: 6px;
+    border: none; background: #52ba4f; color: #fff;
+    font-size: 12px; font-family: 'DM Sans', sans-serif; font-weight: 600;
+    cursor: pointer; display: flex; align-items: center; gap: 6px;
+    box-shadow: 0 2px 10px rgba(82,186,79,.4); transition: all .15s;
+  }
+  .qf-bar-btn-save:hover { background: #47a844; transform: translateY(-1px); }
+  .qf-toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+    background: #1a2a1a; color: #7edd7b; border: 1px solid #3a6b38;
+    border-radius: 10px; padding: 10px 20px; font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; gap: 8px; z-index: 9999;
+    box-shadow: 0 8px 32px rgba(0,0,0,.35);
+    animation: qf-toast-in .2s ease both;
+  }
+  @keyframes qf-toast-in { from{opacity:0;transform:translate(-50%,12px)} to{opacity:1;transform:translate(-50%,0)} }
 
   /* ── Page content ── */
   .qf-content { max-width: 900px; margin: 0 auto; padding: 32px 20px 80px; }
@@ -730,8 +747,27 @@ function F({ label, full, required, children }) {
 export default function QuotationForm() {
   const [f, setF] = useState(INIT());
   const [showPreview, setShowPreview] = useState(false);
+  const [saved, setSaved]             = useState(false);
   const iframeRef = useRef(null);
   const set = (k, v) => setF(p => ({ ...p, [k]: v }));
+
+  const handleSave = () => {
+    const base    = parseFloat(f.basePrice) || 0;
+    const gstRate = parseFloat(f.gstRate)   || 0;
+    const gstAmt  = base * gstRate / 100;
+    const total   = base + gstAmt;
+    const record  = {
+      id: Date.now(),
+      savedAt: new Date().toISOString(),
+      ...f,
+      gstAmt,
+      total,
+    };
+    const existing = JSON.parse(localStorage.getItem('usepl_quotations') || '[]');
+    localStorage.setItem('usepl_quotations', JSON.stringify([record, ...existing]));
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2500);
+  };
 
   const handleModelSelect = e => {
     const label = e.target.value;
@@ -858,6 +894,14 @@ export default function QuotationForm() {
     <div className="qf-root">
       <style>{CSS}</style>
 
+      {/* ── SAVE TOAST ── */}
+      {saved && (
+        <div className="qf-toast">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Quotation saved successfully
+        </div>
+      )}
+
       {/* ── PREVIEW MODAL ── */}
       {showPreview && (
         <div className="qf-overlay">
@@ -902,6 +946,10 @@ export default function QuotationForm() {
         <button className="qf-bar-btn" onClick={openPreview}>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           Preview
+        </button>
+        <button className="qf-bar-btn-save" onClick={handleSave}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Save
         </button>
         <button className="qf-bar-btn-primary" onClick={openPreview}>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -1119,6 +1167,10 @@ export default function QuotationForm() {
               <button className="qf-footer-preview" onClick={openPreview}>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                 Preview
+              </button>
+              <button className="qf-footer-save" style={{background:'#52ba4f',boxShadow:'0 2px 12px rgba(82,186,79,.4)'}} onClick={handleSave}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                Save Quotation
               </button>
               <button className="qf-footer-save" onClick={openPreview}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
