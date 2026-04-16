@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Quotation - Unique Sorter & Equipments Pvt. Ltd.</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #a0a8b8;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 32px 16px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  /* ── A4 Paper ── */
+  .page {
+    width: 794px;
+    min-height: 1123px;
+    background: #fff;
+    padding: 24px 36px 36px;
+    box-shadow: 0 8px 48px rgba(0,0,0,.35);
+    font-size: 10.5pt;
+    color: #000;
+    line-height: 1.45;
+    position: relative;
+  }
+
+  /* ══ LETTERHEAD ══ */
+  .lh {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin-bottom: 5px;
+  }
+
+  .logo-cell {
+    width: 150px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 10px;
+    background: #fff;
+  }
+  .logo-cell img {
+    width: 130px;
+    height: 44px;
+    object-fit: contain;
+    display: block;
+  }
+
+  .co-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .co-name {
+    background: #52ba4f;
+    padding: 11px 16px 10px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .co-name span {
+    color: #fff;
+    font-weight: 900;
+    font-size: 15.5pt;
+    letter-spacing: .35px;
+    font-family: Arial, Helvetica, sans-serif;
+    white-space: nowrap;
+  }
+  .co-addr {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 9.5pt;
+    line-height: 1.72;
+    padding: 8px 10px 7px;
+    color: #111;
+  }
+
+  /* ══ SEPARATORS ══ */
+  .rule-thick { border: none; border-top: 2px solid #444; margin: 6px 0 0; }
+  .rule-thin  { border: none; border-top: 1px solid #444; margin: 0; }
+
+  /* ══ REF/DATE ══ */
+  .ref-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 2px 5px;
+    font-size: 10.5pt;
+  }
+
+  /* ══ ADDRESS BOX ══ */
+  .address-container {
+    border: 1px solid #444;
+    padding: 0;
+    margin: 15px 0;
+  }
+  .address-content {
+    display: flex;
+    align-items: stretch;
+  }
+  .address-section {
+    flex: 1;
+    padding: 15px;
+  }
+  .address-divider {
+    width: 1px;
+    background: #444;
+    margin: 0;
+    align-self: stretch;
+    min-height: 100%;
+  }
+
+  /* ══ PAGE NUMBER ══ */
+  .page-num {
+    text-align: right;
+    font-size: 9pt;
+    color: #666;
+    position: absolute;
+    bottom: 70px;
+    right: 36px;
+    margin: 0;
+  }
+
+  /* ══ LETTER CONTENT ══ */
+  .letter-content {
+    margin: 20px 0;
+    line-height: 1.7;
+  }
+  .letter-content p {
+    margin-bottom: 12px;
+    text-align: justify;
+  }
+  .letter-footer {
+    margin-top: 30px;
+  }
+  .letter-signature {
+    margin-top: 20px;
+  }
+
+  /* ══ HIGHLIGHTS ══ */
+  .yl { background: #FFFF00; padding: 0 1px; }
+  .gn { background: #92D050; padding: 0 1px; }
+
+  /* ══ TECHNICAL SPECIFICATIONS TABLE ══ */
+  .tech-specs-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    font-size: 10.5pt;
+  }
+  .tech-specs-table td {
+    padding: 8px 10px;
+    border: 1px solid #bbb;
+    vertical-align: top;
+  }
+  .tech-specs-table td:first-child {
+    width: 8%;
+    text-align: center;
+    font-weight: 700;
+  }
+  .tech-specs-table td:nth-child(2) {
+    width: 32%;
+    font-weight: 700;
+  }
+  .tech-specs-table td:nth-child(3) {
+    width: 60%;
+  }
+  .specs-title {
+    font-size: 13pt;
+    font-weight: 900;
+    margin: 20px 0 10px;
+    text-decoration: underline;
+  }
+
+  /* ══ COMMERCIAL OFFER TABLE ══ */
+  .qt {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10.5pt;
+    border: 1px solid #999;
+    margin-bottom: 4px;
+  }
+  .qt thead tr { border-top: 2px solid #222; border-bottom: 2px solid #222; }
+  .qt th {
+    padding: 7px 8px;
+    font-weight: 700;
+    font-size: 11pt;
+    background: #fff;
+  }
+  .qt td { padding: 7px 8px; vertical-align: top; }
+  .th-qty  { text-align: center; border-right: 1px solid #bbb; width: 10%; }
+  .th-desc { text-align: center; border-right: 1px solid #bbb; width: 66%; }
+  .th-price{ text-align: right; width: 24%; }
+  .td-qty  { text-align: center; border-right: 1px solid #ccc; width: 10%; padding-top: 9px; }
+  .td-model{ border-right: 1px solid #ccc; width: 13%; font-weight: 600; font-size: 10pt; padding-top: 9px; white-space: pre-line; }
+  .td-desc { border-right: 1px solid #ccc; width: 53%; }
+  .td-price{ text-align: right; width: 24%; font-weight: 600; font-size: 11pt; letter-spacing: .2px; }
+  .td-gst-lbl { text-align: right; padding: 5px 8px; border-right: 1px solid #ccc; }
+  .td-gst-val { text-align: right; padding: 5px 8px; }
+  .td-total {
+    text-align: right; padding: 5px 8px 8px;
+    font-weight: 900; font-size: 12.5pt;
+    border-top: 1.5px solid #000; letter-spacing: .2px;
+  }
+  .item-row td { border-bottom: 1px solid #e0e0e0; }
+
+  /* ══ AMOUNT IN WORDS ══ */
+  .amt-words {
+    font-style: italic; font-weight: 700; font-size: 10.5pt;
+    padding: 6px 0 8px; border-bottom: 1px solid #ccc;
+    margin-bottom: 9px;
+  }
+
+  /* ══ TERMS ══ */
+  .terms { font-size: 10.5pt; margin-bottom: 12px; }
+  .term {
+    display: flex; align-items: flex-start;
+    gap: 0; margin-bottom: 3px; line-height: 1.6;
+  }
+  .term-lbl { width: 148px; flex-shrink: 0; font-weight: 700; }
+  .term-val { flex: 1; }
+
+  /* ══ BANK DETAILS ══ */
+  .bank-details {
+    background: #f9f9f9;
+    padding: 12px;
+    margin: 15px 0 10px 30px;
+    border-left: 4px solid #52ba4f;
+  }
+
+  /* ══ EXCLUSIONS ══ */
+  .exclusions-list {
+    list-style: none;
+    margin: 10px 0 20px 30px;
+  }
+  .exclusions-list li {
+    margin-bottom: 6px;
+    line-height: 1.5;
+    position: relative;
+    padding-left: 20px;
+  }
+  .exclusions-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    font-weight: 700;
+  }
+
+  /* ══ STAMP + SIGNATURE ══ */
+  .stamp-row { 
+    display: flex; 
+    align-items: flex-end; 
+    gap: 0; 
+    margin: 30px 0 4px 0; 
+  }
+
+  /* ══ FOR / ACCEPTED ══ */
+  .for-row {
+    display: flex; justify-content: space-between;
+    font-size: 10.5pt; font-weight: 500; margin-bottom: 10px;
+  }
+
+  /* ══ SIGNATURE LINE ══ */
+  .rule-half { border: none; border-top: 1px solid #555; width: 47%; margin: 2px 0 8px; }
+
+  /* ══ FOOTER ══ */
+  .doc-footer {
+    text-align: center; font-size: 10.5pt; color: #555;
+    padding-top: 8px; border-top: 1px solid #ddd;
+  }
+
+  /* ── Print ── */
+  @media print {
+    body { background: white; padding: 0; }
+    .page { box-shadow: none; width: 100%; min-height: auto; page-break-after: always; }
+    .page:last-child { page-break-after: avoid; }
+    @page { size: A4; margin: 6mm 8mm; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ========== PAGE 1: COVER LETTER ========== -->
+<div class="page">
+  <!-- ══ LETTERHEAD ══ -->
+  <div class="lh">
+    <div class="logo-cell">
+      <img src="/logo.png" alt="Unique Sorter & Equipments Pvt. Ltd."/>
+    </div>
+    <div class="co-info">
+      <div class="co-name">
+        <span>UNIQUE SORTER & EQUIPMENTS PVT. LTD.</span>
+      </div>
+      <div class="co-addr">
+        <div>H. No.: C-77, Sector-1, Hemu Kalyani Ward-35, Devendra Nagar, Raipur (Chhattisgarh)</div>
+        <div>492009 Ph.: 0771 - 4001442, 3566497, CIN No.: U51909CT2021PTC011465,</div>
+        <div>GST No. 22AACCU8116G1ZL</div>
+        <div>Web: <span style="color:#1A37AA">www.uniquesorter.in</span> , Email: <span style="color:#1A37AA">raipur@uniquesorter.in</span></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule-thick"/>
+
+  <!-- ══ REF/DATE ══ -->
+  <div class="ref-row">
+    <div>Ref No. <strong>USEPL/Q-D/2026/005/R0</strong></div>
+    <div>Date: <strong>09/04/2026</strong></div>
+  </div>
+
+  <hr class="rule-thin"/>
+
+  <!-- ══ PAGE NUMBER ══ -->
+  <div class="page-num">Page 1 | 6</div>
+
+  <!-- ══ ADDRESS BOX ══ -->
+  <div class="address-container">
+    <div class="address-content">
+      <div class="address-section">
+        <strong>To,</strong><br/>
+        <strong><span class="yl">M/s. PASSL LOGISTICS & AGRO PVT LTD</span></strong><br/>
+        <span class="yl">CHHAGAON, GURUDIJHATIA CUTTACK – [ODISHA]</span><br/>
+        <span class="yl">GSTIN: 21AAICP5617PZ3</span>
+      </div>
+      <div class="address-divider"></div>
+      <div class="address-section">
+        <strong>Kind Attention:</strong><br/>
+        <span class="yl">Col. P. K Mohanty (Retd)</span><br/>
+        <span class="yl">Mobile: +91 9692160283</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ LETTER CONTENT ══ -->
+  <div class="letter-content">
+    <p><strong>Subject:</strong> Offer for supply & commissioning of advanced UNIQUE Color Sorter Machine.</p>
+
+    <p><strong>Dear Sir,</strong></p>
+
+    <p>At the outset we thank you for showing interest in <strong>UNIQUE HIGH END PINNACLE SERIES COLOUR SORTERS</strong> with features available only with us in the industry currently. As a pioneer in sorting technology UNIQUE is the most PREFERRED sorter of exporters and as well as domestic millers.</p>
+
+    <p>We wish to make a mention that though this is a multiproduct machine, it has been especially designed keeping rice as the prime commodity.</p>
+
+    <p>As explained the camera is the first of it's kind <strong>HOLOGRAPHIC CAMERA</strong> which makes a 360° view of the grain. HD image panoramic view 262 million pixel resolution, with 0.01sqmm defect detection capability, Imported from JAPAN.</p>
+
+    <p>Other important feature is that the machine has the ability to set the sensitivity automatically, unlike in any other machine where it totally depends on the operator skill to set the sensitivity.</p>
+
+    <p>The machine is equipped with multi-chromatic LED in the background. Here also we have used a <strong>LOW WATTAGE-HIGH LUMENS PATENTED TECHNOLOGY</strong> which consumes less power. We can create background of 16 million color shades depending on the product. This feature enhances the sorting efficiency and there by gives superior end results.</p>
+
+    <p>Reverse sort is available in all the chutes, unlike in the last chute of the competitor machines.</p>
+
+    <p>The ejectors are of metallic body having 12 billion cycles of life, block type, serviceable at a very low price, the air consumption per chute is the lowest in industry.</p>
+  </div>
+</div>
+
+<!-- ========== PAGE 2: LETTER CONTINUED ========== -->
+<div class="page">
+  <!-- ══ LETTERHEAD ══ -->
+  <div class="lh">
+    <div class="logo-cell">
+      <img src="/logo.png" alt="Unique Sorter & Equipments Pvt. Ltd."/>
+    </div>
+    <div class="co-info">
+      <div class="co-name">
+        <span>UNIQUE SORTER & EQUIPMENTS PVT. LTD.</span>
+      </div>
+      <div class="co-addr">
+        <div>H. No.: C-77, Sector-1, Hemu Kalyani Ward-35, Devendra Nagar, Raipur (Chhattisgarh)</div>
+        <div>492009 Ph.: 0771 - 4001442, 3566497, CIN No.: U51909CT2021PTC011465,</div>
+        <div>GST No. 22AACCU8116G1ZL</div>
+        <div>Web: <span style="color:#1A37AA">www.uniquesorter.in</span> , Email: <span style="color:#1A37AA">raipur@uniquesorter.in</span></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule-thick"/>
+
+  <!-- ══ REF/DATE ══ -->
+  <div class="ref-row">
+    <div>Ref No. <strong>USEPL/Q-D/2026/005/R0</strong></div>
+    <div>Date: <strong>09/04/2026</strong></div>
+  </div>
+
+  <hr class="rule-thin"/>
+
+  <!-- ══ PAGE NUMBER ══ -->
+  <div class="page-num">Page 2 | 6</div>
+
+  <!-- ══ LETTER CONTINUED ══ -->
+  <div class="letter-content">
+    <p>The machine is equipped with imported ejectors Other features are GUI (monitor) can be accessed on smart phone/ iPad within a specific distance via WiFi through a built-in modem.</p>
+
+    <p>Flow monitor, Shape sorting, Mapping Reverse Sort, Chalky removal feature with efficiency as high as 98%. Micro-discolor separation with efficiency up to 98%, Overall efficiency 99.999% in Single and Dual rejection is possible.</p>
+
+    <p>The machine incorporates new age wiping system improving total output capacity.</p>
+
+    <p>We ensure that we are committed to extend after sales service and spares with minimum downtime.</p>
+
+    <p>Having sold over <strong>1500+ machines</strong> across India covering 23 states with major top brands using our machine/(s) we confirm that you will have the same satisfactory experience in promoting your rice in domestic and worldwide market.</p>
+
+    <p>Please find the offer for color sorter suitable for your need as attached.</p>
+
+    <p>In case of queries please let us know. We will be happy to discuss.</p>
+
+    <div class="letter-footer">
+      <p>Thanking you,</p>
+      <div class="letter-signature">
+        <strong>Subhas Siware</strong><br/>
+        Admin Manager
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PAGE 3: TECHNICAL SPECIFICATIONS ========== -->
+<div class="page">
+  <!-- ══ LETTERHEAD ══ -->
+  <div class="lh">
+    <div class="logo-cell">
+      <img src="/logo.png" alt="Unique Sorter & Equipments Pvt. Ltd."/>
+    </div>
+    <div class="co-info">
+      <div class="co-name">
+        <span>UNIQUE SORTER & EQUIPMENTS PVT. LTD.</span>
+      </div>
+      <div class="co-addr">
+        <div>H. No.: C-77, Sector-1, Hemu Kalyani Ward-35, Devendra Nagar, Raipur (Chhattisgarh)</div>
+        <div>492009 Ph.: 0771 - 4001442, 3566497, CIN No.: U51909CT2021PTC011465,</div>
+        <div>GST No. 22AACCU8116G1ZL</div>
+        <div>Web: <span style="color:#1A37AA">www.uniquesorter.in</span> , Email: <span style="color:#1A37AA">raipur@uniquesorter.in</span></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule-thick"/>
+
+  <!-- ══ REF/DATE ══ -->
+  <div class="ref-row">
+    <div>Ref No. <strong>USEPL/Q-D/2026/005/R0</strong></div>
+    <div>Date: <strong>09/04/2026</strong></div>
+  </div>
+
+  <hr class="rule-thin"/>
+
+  <!-- ══ PAGE NUMBER ══ -->
+  <div class="page-num">Page 3 | 6</div>
+
+  <!-- ══ TECHNICAL SPECIFICATIONS ══ -->
+  <h2 class="specs-title">TECHNICAL SPECIFICATIONS:</h2>
+
+  <table class="tech-specs-table">
+    <tr>
+      <td><strong>01</strong></td>
+      <td><strong>Sorter Model</strong></td>
+      <td>PINNACLE 8 (USEPL 8V)</td>
+    </tr>
+    <tr>
+      <td><strong>02</strong></td>
+      <td><strong>Number of Modules/channels</strong></td>
+      <td>8 Modules/504 channels</td>
+    </tr>
+    <tr>
+      <td><strong>03</strong></td>
+      <td><strong>Sorting modes</strong></td>
+      <td>Regular & reverse sorting available</td>
+    </tr>
+    <tr>
+      <td><strong>04</strong></td>
+      <td><strong>Total Cameras</strong></td>
+      <td>16 Nos HOLOGRAPHIC TRICHROMATIC FLASH cameras</td>
+    </tr>
+    <tr>
+      <td><strong>05</strong></td>
+      <td><strong>Lighting system</strong></td>
+      <td>Hi Lux LOW WATTAGE LED multi strips</td>
+    </tr>
+    <tr>
+      <td><strong>06</strong></td>
+      <td><strong>Air Filter System</strong></td>
+      <td>Set of micro filters</td>
+    </tr>
+    <tr>
+      <td><strong>07</strong></td>
+      <td><strong>Compressed Air Required</strong></td>
+      <td>>120CFM Water & Oil Free air @ 4.2 Kg/Cm²</td>
+    </tr>
+    <tr>
+      <td><strong>08</strong></td>
+      <td><strong>GUI Configuration</strong></td>
+      <td>USEPL, INDIA</td>
+    </tr>
+    <tr>
+      <td><strong>09</strong></td>
+      <td><strong>Sorting algorithm</strong></td>
+      <td>USEPL, INDIA</td>
+    </tr>
+    <tr>
+      <td><strong>10</strong></td>
+      <td><strong>Product sprouting</strong></td>
+      <td>Provided, MOC: Stainless Steel</td>
+    </tr>
+    <tr>
+      <td><strong>11</strong></td>
+      <td><strong>Aspiration system</strong></td>
+      <td>Multipoint with sprouts. PVC connecting pipes are provided.</td>
+    </tr>
+    <tr>
+      <td><strong>12</strong></td>
+      <td><strong>Power Required</strong></td>
+      <td>1-Phase 230V AC. Only UPS Supply.</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ========== PAGE 4: COMMERCIAL OFFER & TERMS ========== -->
+<div class="page">
+  <!-- ══ LETTERHEAD ══ -->
+  <div class="lh">
+    <div class="logo-cell">
+      <img src="/logo.png" alt="Unique Sorter & Equipments Pvt. Ltd."/>
+    </div>
+    <div class="co-info">
+      <div class="co-name">
+        <span>UNIQUE SORTER & EQUIPMENTS PVT. LTD.</span>
+      </div>
+      <div class="co-addr">
+        <div>H. No.: C-77, Sector-1, Hemu Kalyani Ward-35, Devendra Nagar, Raipur (Chhattisgarh)</div>
+        <div>492009 Ph.: 0771 - 4001442, 3566497, CIN No.: U51909CT2021PTC011465,</div>
+        <div>GST No. 22AACCU8116G1ZL</div>
+        <div>Web: <span style="color:#1A37AA">www.uniquesorter.in</span> , Email: <span style="color:#1A37AA">raipur@uniquesorter.in</span></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule-thick"/>
+
+  <!-- ══ REF/DATE ══ -->
+  <div class="ref-row">
+    <div>Ref No. <strong>USEPL/Q-D/2026/005/R0</strong></div>
+    <div>Date: <strong>09/04/2026</strong></div>
+  </div>
+
+  <hr class="rule-thin"/>
+
+  <!-- ══ PAGE NUMBER ══ -->
+  <div class="page-num">Page 4 | 6</div>
+
+  <!-- ══ COMMERCIAL OFFER ══ -->
+  <h2 class="specs-title">COMMERCIAL OFFER:</h2>
+
+  <table class="qt">
+    <colgroup>
+      <col style="width:8%"/>
+      <col style="width:20%"/>
+      <col style="width:42%"/>
+      <col style="width:10%"/>
+      <col style="width:20%"/>
+      <col style="width:20%"/>
+    </colgroup>
+    <thead>
+      <tr>
+        <th class="th-qty">Sl. No.</th>
+        <th class="th-desc" colspan="2">MODEL</th>
+        <th class="th-qty">QTY</th>
+        <th class="th-price">UNIT PRICE</th>
+        <th class="th-price">TOTAL AMOUNT</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="item-row">
+        <td class="td-qty">1.</td>
+        <td class="td-model"><strong>PINNACLE 8<br/>(USEPL 8V)</strong></td>
+        <td class="td-desc">
+          <div><strong>UNIQUE Color Sorter</strong></div>
+          <div>With Intelligent sorting technology</div>
+        </td>
+        <td class="td-qty">1 Nos</td>
+        <td class="td-price"><strong>₹ 32,20,339.00</strong></td>
+        <td class="td-price"><strong>₹ 32,20,339.00</strong></td>
+      </tr>
+      <tr>
+        <td style="border-right:1px solid #ccc; padding:5px 8px"></td>
+        <td style="border-right:1px solid #ccc; padding:5px 8px"></td>
+        <td class="td-gst-lbl"><strong>Add GST 18%</strong></td>
+        <td style="border-right:1px solid #ccc; padding:5px 8px"></td>
+        <td style="border-right:1px solid #ccc; padding:5px 8px"></td>
+        <td class="td-gst-val"><strong>₹ 5,79,661.00</strong></td>
+      </tr>
+      <tr style="border-top:2px solid #000;">
+        <td style="border-right:1px solid #ccc; padding:2px 8px"></td>
+        <td style="border-right:1px solid #ccc; padding:2px 8px"></td>
+        <td style="border-right:1px solid #ccc; padding:2px 8px"></td>
+        <td style="border-right:1px solid #ccc; padding:2px 8px"></td>
+        <td style="border-right:1px solid #ccc; padding:2px 8px; text-align:right; font-weight:900;"><strong>TOTAL</strong></td>
+        <td class="td-total"><strong>₹38,00,000.00</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="amt-words">
+    Amount In words: <span class="yl">Thirty eight lakhs only.</span>
+  </div>
+
+  <!-- ══ TERMS & CONDITIONS ══ -->
+  <h3 class="specs-title">TERMS & CONDITIONS:</h3>
+
+  <div class="terms">
+    <div class="term">
+      <span class="term-lbl">1. Taxes & levies:</span>
+      <span class="term-val">GST 18% added in above price. Any other taxes and levies applicable during the invoice will be extra.</span>
+    </div>
+    <div class="term">
+      <span class="term-lbl">2. Freight & transit insurance:</span>
+      <span class="term-val">In your scope.</span>
+    </div>
+    <div class="term">
+      <span class="term-lbl">3. Payment terms:</span>
+      <span class="term-val">50% as advance along with order. Balance payment before dispatch.</span>
+    </div>
+    <div class="term">
+      <span class="term-lbl">4. Delivery:</span>
+      <span class="term-val">7 To 8 working weeks from Receipt of confirmed purchase order with advance.</span>
+    </div>
+    <div class="term">
+      <span class="term-lbl">5. Commodity:</span>
+      <span class="term-val">Rice, must be free from Stone & other impurities.</span>
+    </div>
+    <div class="term">
+      <span class="term-lbl">6. Warranty:</span>
+      <span class="term-val">12 months from the date of commissioning or 14 months from date of invoicing whichever is earlier. Warranty doesn't cover glass, wiper brush & wiper rubber. Warranty doesn't cover defects or performance issues of parts occurred by (1) water/moisture damage of compressed air, (2) by not changing the air filters in time (3) by poor earthing (4) by faults due to failure of CVCF.</span>
+    </div>
+    <div class="term">
+      <span class="term-lbl">7. Commissioning:</span>
+      <span class="term-val">In our scope. Arrangement needs to be done by you for commutation of engineer from lodging place to mill.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ========== PAGE 5: TERMS CONTINUED, BANK, EXCLUSIONS ========== -->
+<div class="page">
+  <!-- ══ LETTERHEAD ══ -->
+  <div class="lh">
+    <div class="logo-cell">
+      <img src="/logo.png" alt="Unique Sorter & Equipments Pvt. Ltd."/>
+    </div>
+    <div class="co-info">
+      <div class="co-name">
+        <span>UNIQUE SORTER & EQUIPMENTS PVT. LTD.</span>
+      </div>
+      <div class="co-addr">
+        <div>H. No.: C-77, Sector-1, Hemu Kalyani Ward-35, Devendra Nagar, Raipur (Chhattisgarh)</div>
+        <div>492009 Ph.: 0771 - 4001442, 3566497, CIN No.: U51909CT2021PTC011465,</div>
+        <div>GST No. 22AACCU8116G1ZL</div>
+        <div>Web: <span style="color:#1A37AA">www.uniquesorter.in</span> , Email: <span style="color:#1A37AA">raipur@uniquesorter.in</span></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule-thick"/>
+
+  <!-- ══ REF/DATE ══ -->
+  <div class="ref-row">
+    <div>Ref No. <strong>USEPL/Q-D/2026/005/R0</strong></div>
+    <div>Date: <strong>09/04/2026</strong></div>
+  </div>
+
+  <hr class="rule-thin"/>
+
+  <!-- ══ PAGE NUMBER ══ -->
+  <div class="page-num">Page 5 | 6</div>
+
+  <!-- ══ TERMS CONTINUED ══ -->
+  <div class="terms">
+    <div class="term">
+      <span class="term-lbl">8. Quotation Validity:</span>
+      <span class="term-val">30 days only.</span>
+    </div>
+    <div class="term">
+      <span class="term-lbl">9. Our Bank Details:</span>
+      <span class="term-val"></span>
+    </div>
+  </div>
+
+  <!-- ══ BANK DETAILS BOX ══ -->
+  <div class="bank-details">
+    <p><strong>A/c Name:</strong> UNIQUE SORTER & EQUIPMENTS (P) LTD.</p>
+    <p><strong>A/c No.:</strong> 0047 846 0000 1921</p>
+    <p><strong>Bank:</strong> YES BANK</p>
+    <p><strong>Branch:</strong> CIVIL LINE, RAIPUR</p>
+    <p><strong>IFSC Code:</strong> YESB0 00 00 47</p>
+  </div>
+
+  <!-- ══ EXCLUSIONS ══ -->
+  <h3 class="specs-title">EXCLUSIONS:</h3>
+  <ul class="exclusions-list">
+    <li>Air Compressor, Air Dryer, Air Receiver Tank, Air Filters Etc. It can be sourced from any of the manufacturers having good service with an assurance of oil & water free air.</li>
+    <li>CVCF (Constant Voltage Constant Frequency) 220V, Single phase, 7.5-KVA</li>
+    <li>Elevators of suitable capacity with provision of aspiration points.</li>
+    <li>Fabrications of structure, erection of machines and any other thing which is not mentioned above are not included in the supply.</li>
+    <li>Sorter Cabin, AC, Exhaust Fan to be arranged & commissioned before commissioning of sorter machine.</li>
+    <li>Dust aspiration fan and related piping connection to be done before commissioning.</li>
+    <li>Earthing: 0 V megger value is required. This is compulsory need to dedicated Earth pit for Sorter machine only. No other device to be used.</li>
+  </ul>
+</div>
+
+<!-- ========== PAGE 6: FORCE MAJEURE & SIGNATURE ========== -->
+<div class="page">
+  <!-- ══ LETTERHEAD ══ -->
+  <div class="lh">
+    <div class="logo-cell">
+      <img src="/logo.png" alt="Unique Sorter & Equipments Pvt. Ltd."/>
+    </div>
+    <div class="co-info">
+      <div class="co-name">
+        <span>UNIQUE SORTER & EQUIPMENTS PVT. LTD.</span>
+      </div>
+      <div class="co-addr">
+        <div>H. No.: C-77, Sector-1, Hemu Kalyani Ward-35, Devendra Nagar, Raipur (Chhattisgarh)</div>
+        <div>492009 Ph.: 0771 - 4001442, 3566497, CIN No.: U51909CT2021PTC011465,</div>
+        <div>GST No. 22AACCU8116G1ZL</div>
+        <div>Web: <span style="color:#1A37AA">www.uniquesorter.in</span> , Email: <span style="color:#1A37AA">raipur@uniquesorter.in</span></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule-thick"/>
+
+  <!-- ══ REF/DATE ══ -->
+  <div class="ref-row">
+    <div>Ref No. <strong>USEPL/Q-D/2026/005/R0</strong></div>
+    <div>Date: <strong>09/04/2026</strong></div>
+  </div>
+
+  <hr class="rule-thin"/>
+
+  <!-- ══ PAGE NUMBER ══ -->
+  <div class="page-num">Page 6 | 6</div>
+
+  <!-- ══ FORCE MAJEURE ══ -->
+  <h3 class="specs-title">Force Majeure:</h3>
+  <p style="line-height:1.6; margin-bottom:15px;">Neither party shall be held liable for any failure or delay in fulfilling their obligations under this quotation (excluding outstanding payment obligations) if such failure or delay is caused by events beyond their reasonable control.</p>
+
+  <p style="line-height:1.6; margin-bottom:20px;">Such events include, but are not limited to: acts of God, natural disasters, war, armed conflict, trade embargoes, international sanctions, strikes or labor disputes, government interventions, severe supply chain or raw material shortages, and sudden operational disruptions at the Port of Shanghai (including port closures, strikes, or extreme congestion).</p>
+
+  <!-- ══ SIGNATURE BLOCK ══ -->
+  <div class="stamp-row">
+    <!-- Green circular stamp -->
+    <svg width="105" height="105" viewBox="0 0 105 105">
+      <circle cx="52.5" cy="52.5" r="49" fill="none" stroke="#2e7d32" stroke-width="2.5"/>
+      <circle cx="52.5" cy="52.5" r="42" fill="none" stroke="#2e7d32" stroke-width="1"/>
+      <path id="arc-top" d="M 14,52.5 A 38.5,38.5 0 0,1 91,52.5" fill="none"/>
+      <text font-size="8" font-family="Arial" font-weight="700" fill="#2e7d32">
+        <textPath href="#arc-top" startOffset="5%">Sorter & Equipments Pvt. Ltd.</textPath>
+      </text>
+      <path id="arc-bot" d="M 14,52.5 A 38.5,38.5 0 0,0 91,52.5" fill="none"/>
+      <text font-size="7.5" font-family="Arial" fill="#2e7d32">
+        <textPath href="#arc-bot" startOffset="6%">Sector-1, Devendra Nagar, Raipur</textPath>
+      </text>
+      <line x1="20" y1="52.5" x2="85" y2="52.5" stroke="#2e7d32" stroke-width=".7" opacity=".3"/>
+      <text x="52.5" y="44" text-anchor="middle" font-size="10" font-weight="700" fill="#2e7d32" font-family="Arial">Raipur</text>
+      <text x="52.5" y="56" text-anchor="middle" font-size="9" font-weight="600" fill="#2e7d32" font-family="Arial">Chhattisgarh</text>
+      <text x="52.5" y="67" text-anchor="middle" font-size="9" font-weight="600" fill="#2e7d32" font-family="Arial">492009</text>
+      <circle cx="52.5" cy="17" r="2.5" fill="#2e7d32" opacity=".5"/>
+      <circle cx="52.5" cy="88" r="2.5" fill="#2e7d32" opacity=".5"/>
+    </svg>
+
+    <!-- Signature squiggle -->
+    <svg width="180" height="80" viewBox="0 0 180 80" style="opacity:.62; margin-left: -8px;">
+      <path d="M 10,52 C 22,26 34,62 52,40 C 64,22 70,56 88,36
+               C 102,18 108,54 128,38 C 144,24 150,52 175,44"
+        fill="none" stroke="#222" stroke-width="1.7"
+        stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="8" y1="63" x2="100" y2="63" stroke="#333" stroke-width=".7" opacity=".25"/>
+    </svg>
+  </div>
+
+  <hr class="rule-half"/>
+
+  <!-- ══ FOR / ACCEPTED BY ══ -->
+  <div class="for-row">
+    <span>For, Unique Sorter & Equipments Pvt. Ltd:</span>
+    <span>Accepted by Customer:</span>
+  </div>
+
+  <!-- ══ SIGNATURE TEXT ══ -->
+  <div style="text-align:right; margin-top: 20px;">
+    <strong>Subhas Siware</strong><br/>
+    Admin Manager
+  </div>
+
+  <!-- ══ FOOTER ══ -->
+  <div class="doc-footer">This is Computer Generated Quotation</div>
+</div>
+
+</body>
+</html>
