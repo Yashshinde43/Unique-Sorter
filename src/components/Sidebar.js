@@ -23,7 +23,7 @@ const NAV = [
     ],
   },
   {
-    label: 'SALES',
+    label: 'QUOTATIONS',
     items: [
        {
         href: '/dashboard/quotations',
@@ -37,7 +37,6 @@ const NAV = [
             <polyline points="10 9 9 9 8 9" />
           </svg>
         ),
-        badge: '12',
       },
       {
         href: '/dashboard/quotations/quotations-2',
@@ -49,29 +48,6 @@ const NAV = [
             <line x1="16" y1="13" x2="8" y2="13" />
             <line x1="16" y1="17" x2="8" y2="17" />
             <polyline points="10 9 9 9 8 9" />
-          </svg>
-        ),
-      },
-      {
-        href: '/dashboard/leads',
-        label: 'Leads',
-        icon: (
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-            <circle cx="9" cy="7" r="4" />
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-          </svg>
-        ),
-      },
-      {
-        href: '/dashboard/orders',
-        label: 'Orders',
-        icon: (
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <path d="M16 10a4 4 0 0 1-8 0" />
           </svg>
         ),
       },
@@ -194,9 +170,11 @@ export default function Sidebar() {
               <span className="sidebar-group-label">{group.label}</span>
             )}
             {group.items.map((item) => {
+              const allHrefs = NAV.flatMap(g => g.items.map(i => i.href));
               const isActive = item.href === '/dashboard'
                 ? pathname === '/dashboard'
-                : pathname.startsWith(item.href);
+                : (pathname === item.href || pathname.startsWith(item.href + '/')) &&
+                  !allHrefs.some(h => h !== item.href && h.startsWith(item.href) && (pathname === h || pathname.startsWith(h + '/')));
               return (
                 <Link
                   key={item.href}
