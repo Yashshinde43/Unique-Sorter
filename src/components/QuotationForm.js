@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Link from 'next/link';
 
-/* ─── Number helpers ──────────────────────────────────────────── */
+/* ─── Number / date helpers ───────────────────────────────────── */
 const fmtINR = n => new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(+n || 0);
 const ONES = ['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
 const TENS = ['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
@@ -18,19 +18,441 @@ function toWords(a) {
   return 'Rs. '+p.join(' ')+' Only.';
 }
 const todayISO = () => new Date().toISOString().split('T')[0];
+const fmtDate = iso => {
+  if (!iso) return '';
+  const [y, m, d] = iso.split('-');
+  return `${d}/${m}/${y}`;
+};
+const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+/* ─── Product catalogue ───────────────────────────────────────── */
+const MODELS = [
+  {
+    label: 'USEPL-4V PINNACLE',
+    shortName: 'Sorter\nMachine',
+    descLine1: 'Color sorting Machine (USEPL-4V) PINNACLE',
+    descLine2: 'With AI (Advance intelligent Algorithm)',
+    hsn: '84371000',
+    price: '',
+  },
+  {
+    label: 'USEPL-6V PINNACLE',
+    shortName: 'Sorter\nMachine',
+    descLine1: 'Color sorting Machine (USEPL-6V) PINNACLE',
+    descLine2: 'With AI (Advance intelligent Algorithm)',
+    hsn: '84371000',
+    price: '',
+  },
+  {
+    label: 'USEPL-8V PINNACLE',
+    shortName: 'Sorter\nMachine',
+    descLine1: 'Color sorting Machine (USEPL-8V) PINNACLE',
+    descLine2: 'With AI (Advance intelligent Algorithm)',
+    hsn: '84371000',
+    price: '3135593',
+  },
+];
 
 const INIT = () => ({
-  refNo:'', refDate:todayISO(), quotNo:'', quotDate:todayISO(),
+  refNo:'USEPL/Q-D/2026/005/R0', refDate:todayISO(), quotNo:'', quotDate:todayISO(),
   salutation:'Mr.', contact:'', company:'', addr1:'', addr2:'',
   city:'', state:'', mobile:'', email:'',
-  qty:'01 Set.', shortName:'', descLine1:'', descLine2:'', hsn:'',
+  model:'', qty:'', shortName:'', descLine1:'', descLine2:'', hsn:'',
   basePrice:'', gstRate:'18',
   note:'',
-  payTerms:'50% as advance & balance 12 EMI against PDCs (to be submitted during order booking) starting from the next month of billing.',
-  delivery:'', leadDays:'', commodity:'', electricity:'', validity:'90',
+  payTerms:'',
+  delivery:'', leadDays:'', commodity:'', electricity:'', validity:'',
   freight:'', warranty:'One year.',
   cancellation:'Order once confirmed & processed cannot be cancelled.',
 });
+
+/* ─── Build the quotation HTML from form state ────────────────── */
+function buildHTML(f, { base, gstAmt, total }) {
+  const addrParts = [f.addr1, f.addr2].filter(Boolean);
+  const cityState = [f.city, f.state ? `[${f.state}]` : ''].filter(Boolean).join(', ');
+  const leadText = f.leadDays
+    ? `<span class="gn">${esc(f.leadDays)}</span> Days from receipt of confirmed purchase order with 50% advance.`
+    : 'As per mutual agreement.';
+  const elec = f.electricity || '220 V Frequency- 50Hz.';
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Quotation — Unique Sorter &amp; Equipments Pvt. Ltd.</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #a0a8b8;
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 32px 16px 60px;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* ── A4 Paper ── */
+  .page {
+    width: 794px;
+    min-height: 1123px;
+    background: #fff;
+    padding: 24px 36px 36px;
+    box-shadow: 0 8px 48px rgba(0,0,0,.35);
+    font-size: 10.5pt;
+    color: #000;
+    line-height: 1.45;
+  }
+
+  /* ══ LETTERHEAD ══ */
+  .lh {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    margin-bottom: 5px;
+  }
+
+  .logo-cell {
+    width: 150px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 10px;
+    background: #fff;
+  }
+  .logo-cell img {
+    width: 130px;
+    height: 44px;
+    object-fit: contain;
+    display: block;
+  }
+
+  .co-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .co-name {
+    background: #52ba4f;
+    padding: 11px 16px 10px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .co-name span {
+    color: #fff;
+    font-weight: 900;
+    font-size: 15.5pt;
+    letter-spacing: .35px;
+    font-family: Arial, Helvetica, sans-serif;
+    white-space: nowrap;
+  }
+  .co-addr {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 9.5pt;
+    line-height: 1.72;
+    padding: 8px 10px 7px;
+    color: #111;
+  }
+
+
+  .ref-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 2px 5px;
+    font-size: 10.5pt;
+    margin-bottom: 10px;
+  }
+  .quot-title {
+    font-size: 18pt;
+    font-weight: 900;
+    text-decoration: underline;
+    letter-spacing: 3px;
+    text-align: center;
+  }
+
+  .two-col {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 10px;
+    padding-top: 2px;
+  }
+  .client-blk { flex: 1; line-height: 1.7; }
+  .client-blk .attn { font-weight: 700; margin-bottom: 4px; font-size: 10.5pt; }
+  .client-blk .company { font-weight: 700; text-decoration: underline; font-size: 10.5pt; }
+  .quot-meta { text-align: left; line-height: 2; font-size: 10.5pt; flex-shrink: 0; }
+
+  .yl { background: #FFFF00; padding: 0 1px; }
+  .gn { background: #92D050; padding: 0 1px; }
+
+  .qt {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10.5pt;
+    border: 1px solid #999;
+    margin-bottom: 4px;
+  }
+  .qt thead tr { border-top: 2px solid #222; border-bottom: 2px solid #222; }
+  .qt th {
+    padding: 7px 8px;
+    font-weight: 700;
+    font-size: 11pt;
+    background: #fff;
+  }
+  .qt td { padding: 7px 8px; vertical-align: top; }
+  .th-qty  { text-align: center; border-right: 1px solid #bbb; width: 10%; }
+  .th-desc { text-align: center; border-right: 1px solid #bbb; width: 66%; }
+  .th-price{ text-align: right;  width: 24%; }
+  .td-qty  { text-align: center; border-right: 1px solid #ccc; width: 10%; padding-top: 9px; }
+  .td-model{ border-right: 1px solid #ccc; width: 13%; font-weight: 600; font-size: 10pt; padding-top: 9px; white-space: pre-line; }
+  .td-desc { border-right: 1px solid #ccc; width: 53%; }
+  .td-price{ text-align: right; width: 24%; font-weight: 600; font-size: 11pt; letter-spacing: .2px; }
+  .td-gst-lbl { text-align: right; padding: 5px 8px; border-right: 1px solid #ccc; }
+  .td-gst-val { text-align: right; padding: 5px 8px; }
+  .td-total {
+    text-align: right; padding: 5px 8px 8px;
+    font-weight: 900; font-size: 12.5pt;
+    border-top: 1.5px solid #000; letter-spacing: .2px;
+  }
+  .item-row td { border-bottom: 1px solid #e0e0e0; }
+
+  .amt-words {
+    font-style: italic; font-weight: 700; font-size: 10.5pt;
+    padding: 6px 0 8px; border-bottom: 1px solid #ccc;
+    margin-bottom: 9px;
+  }
+
+  .doc-note { font-size: 10.5pt; margin-bottom: 10px; line-height: 1.6; }
+
+  .terms { font-size: 10.5pt; margin-bottom: 12px; }
+  .term {
+    display: flex; align-items: flex-start;
+    gap: 0; margin-bottom: 3px; line-height: 1.6;
+  }
+  .term-lbl { width: 148px; flex-shrink: 0; }
+  .term-val  { flex: 1; }
+
+  .stamp-row { margin-bottom: 4px; }
+
+
+  .for-row {
+    display: flex; justify-content: space-between;
+    font-size: 10.5pt; font-weight: 500; margin-bottom: 10px;
+  }
+
+  .usd-note { font-size: 10pt; margin-bottom: 10px; line-height: 1.6; }
+
+  .doc-footer {
+    text-align: center; font-size: 10.5pt; color: #555;
+    padding-top: 8px; border-top: 1px solid #ddd;
+  }
+
+  @media print {
+    body { background: white; padding: 0; }
+    .page { box-shadow: none; width: 100%; min-height: auto; }
+    @page { size: A4; margin: 6mm 8mm; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- LETTERHEAD -->
+  <div class="lh">
+    <div class="logo-cell">
+      <img src="/logo.png" alt="Unique Sorter &amp; Equipments Pvt. Ltd."/>
+    </div>
+    <div class="co-info">
+      <div class="co-name">
+        <span>UNIQUE SORTER &amp; EQUIPMENTS PVT. LTD.</span>
+      </div>
+      <div class="co-addr">
+        <div>H. No.: C-77, Sector-1, Hemu Kalyani Ward-35, Devendra Nagar, Raipur (Chhattisgarh) 492009</div>
+        <div>Ph.: 0771 - 4001442, 3566497</div>
+        <div>CIN No.: U51909CT2021PTC011465 &nbsp;|&nbsp; GST No. 22AACCU8116G1ZL</div>
+        <div>Web: <a href="https://www.uniquesorter.in" target="_blank" style="color:#1A37AA;text-decoration:none;">www.uniquesorter.in</a> &nbsp;|&nbsp; Email: <a href="mailto:raipur@uniquesorter.in" style="color:#1A37AA;text-decoration:none;">raipur@uniquesorter.in</a></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:0;border-top:2px solid #444;margin:6px 0 0;"></div>
+
+  <!-- REF / QUOTATION / DATE -->
+  <div class="ref-row">
+    <div>Ref No. <strong>${esc(f.refNo) || '—'}</strong></div>
+    <div class="quot-title">QUOTATION</div>
+    <div>Date: <strong>${fmtDate(f.refDate) || '—'}</strong></div>
+  </div>
+
+  <!-- CLIENT + QUOT META -->
+  <div class="two-col">
+
+    <div class="client-blk">
+      <div class="attn">Kind Attention: ${esc(f.salutation)} <span class="yl">${esc(f.contact) || '—'}</span></div>
+      <div class="company"><span class="yl">M/s ${esc(f.company) || '—'}</span></div>
+      ${addrParts.map(a => `<div><span class="yl">${esc(a)}</span></div>`).join('')}
+      ${cityState ? `<div><span class="yl">${esc(cityState)}</span></div>` : ''}
+      ${f.mobile ? `<div><span class="yl">MOB: ${esc(f.mobile)}</span></div>` : ''}
+      <div>E-mail: <span class="yl">${f.email ? esc(f.email) : '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'}</span></div>
+    </div>
+
+    <div class="quot-meta">
+      <div>QUOTATION# <strong>${esc(f.quotNo) || '—'}</strong></div>
+      <div>DATE- <strong>${fmtDate(f.quotDate) || '—'}</strong></div>
+    </div>
+
+  </div>
+
+  <!-- ITEMS TABLE -->
+  <table class="qt">
+    <colgroup>
+      <col style="width:10%"/>
+      <col style="width:13%"/>
+      <col style="width:53%"/>
+      <col style="width:24%"/>
+    </colgroup>
+    <thead>
+      <tr>
+        <th class="th-qty">Qty</th>
+        <th class="th-desc" colspan="2">Model Description</th>
+        <th class="th-price">Unit Price INR</th>
+      </tr>
+    </thead>
+    <tbody>
+
+      <tr class="item-row">
+        <td class="td-qty"><span class="yl">${esc(f.qty) || '—'}</span></td>
+        <td class="td-model"><span class="gn">${esc(f.shortName) || '—'}</span></td>
+        <td class="td-desc">
+          ${f.descLine1 ? `<div><span class="gn">${esc(f.descLine1)}</span></div>` : ''}
+          ${f.descLine2 ? `<div><span class="gn">${esc(f.descLine2)}</span></div>` : ''}
+          ${f.hsn ? `<div style="margin-top:3px">[HSN CODE-<span class="gn">${esc(f.hsn)}</span>]</div>` : ''}
+        </td>
+        <td class="td-price"><span class="gn">${base ? fmtINR(base) : '—'}</span></td>
+      </tr>
+
+      <tr>
+        <td style="border-right:1px solid #ccc; padding:5px 8px"></td>
+        <td style="border-right:1px solid #ccc; padding:5px 8px"></td>
+        <td class="td-gst-lbl">GST @ ${esc(f.gstRate)}%</td>
+        <td class="td-gst-val">${base ? fmtINR(gstAmt) : '—'}</td>
+      </tr>
+
+      <tr>
+        <td style="border-right:1px solid #ccc; padding:2px 8px"></td>
+        <td style="border-right:1px solid #ccc; padding:2px 8px"></td>
+        <td style="border-right:1px solid #ccc; padding:2px 8px"></td>
+        <td class="td-total">${base ? fmtINR(total) : '—'}</td>
+      </tr>
+
+    </tbody>
+  </table>
+
+  <!-- AMOUNT IN WORDS -->
+  <div class="amt-words">
+    [Amount in words- <span class="yl">${base ? toWords(total) : '—'}</span>]
+  </div>
+
+  <!-- NOTE -->
+  ${f.note ? `<div class="doc-note"><strong>Note –</strong> ${esc(f.note)}</div>` : ''}
+
+  <!-- TERMS -->
+  <div class="terms">
+
+    <div class="term">
+      <span class="term-lbl">Payment terms:</span>
+      <span class="term-val"><span class="yl">${esc(f.payTerms)}</span></span>
+    </div>
+
+    <div class="term">
+      <span class="term-lbl">Point of delivery:</span>
+      <span class="term-val"><span class="yl">${esc(f.delivery) || '—'}</span></span>
+    </div>
+
+    <div class="term">
+      <span class="term-lbl">Date of dispatch:</span>
+      <span class="term-val">${leadText}</span>
+    </div>
+
+    <div class="term">
+      <span class="term-lbl">Commodity:</span>
+      <span class="term-val"><span class="yl">${esc(f.commodity) || '—'}</span></span>
+    </div>
+
+    <div class="term">
+      <span class="term-lbl">Electricity Supply:</span>
+      <span class="term-val">${esc(elec)}</span>
+    </div>
+
+    <div class="term">
+      <span class="term-lbl">Validity:</span>
+      <span class="term-val"><span class="yl">${esc(f.validity)}</span> Days.</span>
+    </div>
+
+    <div class="term">
+      <span class="term-lbl">Taxes &amp; Duties:</span>
+      <span class="term-val">GST@ ${esc(f.gstRate)}% as mentioned above</span>
+    </div>
+
+    <div class="term">
+      <span class="term-lbl">Freight:</span>
+      <span class="term-val"><span class="gn">${esc(f.freight) || '—'}</span></span>
+    </div>
+
+    <div class="term">
+      <span class="term-lbl">Warranty:</span>
+      <span class="term-val">${esc(f.warranty)}</span>
+    </div>
+
+    <div class="term">
+      <span class="term-lbl">Cancellation:</span>
+      <span class="term-val">${esc(f.cancellation)}</span>
+    </div>
+
+    <div class="term">
+      <span class="term-lbl">Payment in favor of:</span>
+      <span class="term-val">UNIQUE SORTER &amp; EQUIPMENTS PVT LTD</span>
+    </div>
+
+    <div class="term">
+      <span class="term-lbl">Bank Details:</span>
+      <span class="term-val">A/c No- 004784600001921, IFSC Code-YESB0000047 Bank-YES BANK, Branch-CIVIL LINES, RAIPUR [C.G.]</span>
+    </div>
+
+  </div>
+
+  <!-- STAMP -->
+  <div class="stamp-row">
+    <img src="/stamp.png" alt="Company Stamp" style="display:block;width:47%;object-fit:contain;"/>
+  </div>
+
+  <div style="height:0;border-top:1px solid #555;width:47%;margin:2px 0 8px;"></div>
+
+  <div class="for-row">
+    <span>For, Unique Sorter &amp; Equipments Pvt. Ltd:</span>
+    <span>Accepted by Customer:</span>
+  </div>
+
+  <div class="usd-note">
+    &nbsp;NOTE :-Variation in USD rate will be considered from the date of Quotation to order finalization.
+  </div>
+
+  <div class="doc-footer">This is Computer Generated Quotation</div>
+
+</div>
+
+</body>
+</html>`;
+}
 
 /* ─── Styles ──────────────────────────────────────────────────── */
 const CSS = `
@@ -116,7 +538,6 @@ const CSS = `
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* Card top accent bar */
   .qf-card-accent {
     height: 4px;
     background: linear-gradient(90deg, #1A37AA 0%, #4169e1 50%, #52ba4f 100%);
@@ -124,7 +545,6 @@ const CSS = `
 
   .qf-card-body { padding: 32px 36px 36px; }
 
-  /* ── Section divider (inline, not a separate card) ── */
   .qf-divider {
     display: flex; align-items: center; gap: 12px;
     margin: 28px 0 20px;
@@ -136,14 +556,12 @@ const CSS = `
   }
   .qf-divider-line { flex: 1; height: 1px; background: #e8ecf5; }
 
-  /* ── Grid layouts ── */
   .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
   .g4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
   .full { grid-column: 1 / -1; }
   .mt { margin-top: 16px; }
 
-  /* ── Field ── */
   .qf-f { display: flex; flex-direction: column; gap: 6px; }
   .qf-lbl {
     font-size: 10px; font-weight: 700; color: #9aa5b8;
@@ -152,7 +570,6 @@ const CSS = `
   }
   .req { color: #e05555; }
 
-  /* ── Inputs ── */
   .qf-in, .qf-sel, .qf-ta {
     width: 100%; border: 1.5px solid #e8ecf5; border-radius: 9px;
     padding: 10px 13px; font-size: 13px; font-family: 'DM Sans', sans-serif;
@@ -181,12 +598,10 @@ const CSS = `
     border-color: #edf0f7; box-shadow: none; background: #f7f9fc;
   }
 
-  /* salutation + name combo */
   .qf-combo { display: flex; gap: 8px; }
   .qf-combo .qf-sel { width: 78px; flex-shrink: 0; }
   .qf-combo .qf-in  { flex: 1; }
 
-  /* ── Pricing panel ── */
   .qf-pricing-panel {
     background: #0d1828;
     border-radius: 12px;
@@ -214,7 +629,6 @@ const CSS = `
   .qf-total-amount { font-family: 'Barlow Condensed', sans-serif; font-size: 34px; font-weight: 800; color: #fff; letter-spacing: .5px; line-height: 1; }
   .qf-total-words { font-size: 11px; color: rgba(255,255,255,.35); font-style: italic; margin-top: 7px; line-height: 1.5; }
 
-  /* ── Footer actions ── */
   .qf-footer { margin-top: 32px; display: flex; justify-content: flex-end; gap: 10px; align-items: center; }
   .qf-footer-reset {
     height: 42px; padding: 0 20px; border-radius: 9px;
@@ -223,6 +637,13 @@ const CSS = `
     font-weight: 500; cursor: pointer; transition: all .15s;
   }
   .qf-footer-reset:hover { border-color: #c5cfe0; color: #0d1828; }
+  .qf-footer-preview {
+    height: 42px; padding: 0 22px; border-radius: 9px;
+    border: 1.5px solid #1A37AA; background: transparent;
+    color: #1A37AA; font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 600;
+    cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all .18s;
+  }
+  .qf-footer-preview:hover { background: rgba(26,55,170,.06); }
   .qf-footer-save {
     height: 42px; padding: 0 28px; border-radius: 9px;
     border: none; background: #1A37AA; color: #fff;
@@ -232,6 +653,59 @@ const CSS = `
     letter-spacing: .1px;
   }
   .qf-footer-save:hover { background: #1e42cc; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,55,170,.5); }
+
+  /* ── Preview modal ── */
+  .qf-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(10,16,32,.72);
+    backdrop-filter: blur(4px);
+    display: flex; flex-direction: column;
+    animation: qf-fade-in .18s ease both;
+  }
+  @keyframes qf-fade-in {
+    from { opacity: 0; } to { opacity: 1; }
+  }
+  .qf-modal-bar {
+    flex-shrink: 0;
+    height: 54px;
+    background: #0d1828;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    display: flex; align-items: center; gap: 12px; padding: 0 20px;
+  }
+  .qf-modal-title {
+    font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+    color: #fff; letter-spacing: .2px; flex: 1;
+  }
+  .qf-modal-close {
+    height: 30px; padding: 0 14px; border-radius: 6px;
+    border: 1px solid rgba(255,255,255,.12); background: transparent;
+    color: rgba(255,255,255,.5); font-size: 12px; font-family: 'DM Sans', sans-serif;
+    font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px;
+    transition: all .15s;
+  }
+  .qf-modal-close:hover { border-color: rgba(255,255,255,.3); color: #fff; }
+  .qf-modal-download {
+    height: 30px; padding: 0 16px; border-radius: 6px;
+    border: none; background: #52ba4f; color: #fff;
+    font-size: 12px; font-family: 'DM Sans', sans-serif; font-weight: 600;
+    cursor: pointer; display: flex; align-items: center; gap: 6px;
+    box-shadow: 0 2px 10px rgba(82,186,79,.4); transition: all .15s;
+  }
+  .qf-modal-download:hover { background: #47a844; transform: translateY(-1px); }
+  .qf-modal-iframe-wrap {
+    flex: 1; overflow: auto;
+    background: #a0a8b8;
+    display: flex; justify-content: center;
+    padding: 24px 16px 40px;
+  }
+  .qf-modal-iframe-wrap iframe {
+    border: none;
+    width: 860px;
+    height: 1200px;
+    flex-shrink: 0;
+    background: #fff;
+    box-shadow: 0 8px 48px rgba(0,0,0,.35);
+  }
 `;
 
 /* ─── Tiny helpers ────────────────────────────────────────────── */
@@ -255,16 +729,161 @@ function F({ label, full, required, children }) {
 /* ════════════════════════════════════════════════════════════════ */
 export default function QuotationForm() {
   const [f, setF] = useState(INIT());
+  const [showPreview, setShowPreview] = useState(false);
+  const iframeRef = useRef(null);
   const set = (k, v) => setF(p => ({ ...p, [k]: v }));
+
+  const handleModelSelect = e => {
+    const label = e.target.value;
+    const m = MODELS.find(x => x.label === label);
+    if (m) {
+      setF(p => ({ ...p, model: label, shortName: m.shortName, descLine1: m.descLine1, descLine2: m.descLine2, hsn: m.hsn, basePrice: m.price }));
+    } else {
+      setF(p => ({ ...p, model: '', shortName: '', descLine1: '', descLine2: '', hsn: '', basePrice: '' }));
+    }
+  };
 
   const base    = parseFloat(f.basePrice) || 0;
   const gstRate = parseFloat(f.gstRate) || 0;
   const gstAmt  = base * gstRate / 100;
   const total   = base + gstAmt;
 
+  const calc = { base, gstAmt, total };
+
+  const openPreview = () => setShowPreview(true);
+
+  const handleDownload = async () => {
+    const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
+      import('html2canvas'),
+      import('jspdf'),
+    ]);
+
+    // Parse the full quotation HTML
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(buildHTML(f, calc), 'text/html');
+
+    // Extract CSS, drop body/html rules that would break the main page layout
+    const rawStyle = doc.querySelector('style')?.textContent || '';
+    const cleanStyle = rawStyle
+      .replace(/\bbody\s*\{[^}]*\}/gs, '')
+      .replace(/\bhtml\s*\{[^}]*\}/gs, '');
+
+    const page = doc.querySelector('.page');
+    if (!page) return;
+
+    // Convert stamp.png to base64 so html2canvas can render it off-screen
+    const stampB64 = await fetch('/stamp.png')
+      .then(r => r.blob())
+      .then(blob => new Promise(res => {
+        const reader = new FileReader();
+        reader.onload = () => res(reader.result);
+        reader.readAsDataURL(blob);
+      }));
+    const stampImg = page.querySelector('img[alt="Company Stamp"]');
+    if (stampImg) stampImg.src = stampB64;
+
+    // Inject CSS into main document so html2canvas sees computed styles
+    const styleEl = document.createElement('style');
+    styleEl.textContent = cleanStyle;
+    document.head.appendChild(styleEl);
+
+    // Place .page off-screen in the main document (not inside an iframe)
+    const shell = document.createElement('div');
+    shell.style.cssText = 'position:fixed;top:0;left:-9999px;width:794px;overflow:visible;z-index:-1;';
+    shell.appendChild(page);
+    document.body.appendChild(shell);
+
+    // Wait for fonts, images & a paint cycle
+    await document.fonts.ready;
+    await Promise.all(
+      Array.from(shell.querySelectorAll('img')).map(img =>
+        img.complete ? Promise.resolve() : new Promise(res => { img.onload = res; img.onerror = res; })
+      )
+    );
+    await new Promise(r => setTimeout(r, 200));
+
+    // Collect link positions relative to .page before canvas capture
+    const pageRect = page.getBoundingClientRect();
+    const linkData = Array.from(page.querySelectorAll('a[href]')).map(a => {
+      const r = a.getBoundingClientRect();
+      return {
+        x: r.left - pageRect.left,
+        y: r.top  - pageRect.top,
+        w: r.width,
+        h: r.height,
+        url: a.href,
+      };
+    });
+
+    const filename = `Quotation${f.quotNo ? `_${f.quotNo.replace(/\//g, '-')}` : ''}.pdf`;
+
+    try {
+      // Capture the entire .page as one canvas — no page splitting
+      const canvas = await html2canvas(page, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+        width: 794,
+        windowWidth: 794,
+        scrollX: 0,
+        scrollY: 0,
+      });
+
+      const imgData = canvas.toDataURL('image/jpeg', 0.98);
+
+      // A4: 210mm × 297mm — .page is already exactly this ratio (794:1123 ≈ 1:√2)
+      const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+      const pdfW = pdf.internal.pageSize.getWidth();   // 210
+      const pdfH = pdf.internal.pageSize.getHeight();  // 297
+
+      // Fit the captured image to full A4, proportionally
+      const imgH = pdfW * (canvas.height / canvas.width);
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfW, Math.min(imgH, pdfH));
+
+      // Stamp invisible clickable link annotations at exact scaled coordinates
+      const scaleX = pdfW / page.offsetWidth;
+      const scaleY = Math.min(imgH, pdfH) / page.offsetHeight;
+      linkData.forEach(({ x, y, w, h, url }) => {
+        pdf.link(x * scaleX, y * scaleY, w * scaleX, h * scaleY, { url });
+      });
+
+      pdf.save(filename);
+    } finally {
+      document.body.removeChild(shell);
+      document.head.removeChild(styleEl);
+    }
+  };
+
   return (
     <div className="qf-root">
       <style>{CSS}</style>
+
+      {/* ── PREVIEW MODAL ── */}
+      {showPreview && (
+        <div className="qf-overlay">
+          <div className="qf-modal-bar">
+            <span className="qf-modal-title">
+              Quotation Preview
+              {f.quotNo && ` — ${f.quotNo}`}
+            </span>
+            <button className="qf-modal-download" onClick={handleDownload}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download PDF
+            </button>
+            <button className="qf-modal-close" onClick={() => setShowPreview(false)}>
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              Close
+            </button>
+          </div>
+          <div className="qf-modal-iframe-wrap">
+            <iframe
+              ref={iframeRef}
+              srcDoc={buildHTML(f, calc)}
+              title="Quotation Preview"
+            />
+          </div>
+        </div>
+      )}
 
       {/* TOP BAR */}
       <div className="qf-bar">
@@ -280,13 +899,13 @@ export default function QuotationForm() {
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
           Reset
         </button>
-        <button className="qf-bar-btn">
+        <button className="qf-bar-btn" onClick={openPreview}>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           Preview
         </button>
-        <button className="qf-bar-btn-primary">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          Save Quotation
+        <button className="qf-bar-btn-primary" onClick={openPreview}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
         </button>
       </div>
 
@@ -362,10 +981,32 @@ export default function QuotationForm() {
 
             {/* ── PRODUCT DETAILS ── */}
             <Div label="Product Details"/>
-            <div className="g4">
+
+            {/* Model selector */}
+            <div className="g2">
+              <F label="Select Model" required>
+                <select className="qf-sel" value={f.model} onChange={handleModelSelect}>
+                  <option value="">— Choose a model —</option>
+                  {MODELS.map(m => (
+                    <option key={m.label} value={m.label}>{m.label}</option>
+                  ))}
+                </select>
+              </F>
               <F label="Quantity" required>
                 <input className="qf-in" value={f.qty} onChange={e => set('qty', e.target.value)} placeholder="01 Set."/>
               </F>
+            </div>
+
+            {/* Auto-filled product fields — editable for overrides */}
+            <div className="g2 mt">
+              <F label="Description Line 1" required>
+                <input className="qf-in" value={f.descLine1} onChange={e => set('descLine1', e.target.value)} placeholder="Color sorting Machine (USEPL-8V) PINNACLE"/>
+              </F>
+              <F label="Description Line 2">
+                <input className="qf-in" value={f.descLine2} onChange={e => set('descLine2', e.target.value)} placeholder="With AI (Advance intelligent Algorithm)"/>
+              </F>
+            </div>
+            <div className="g3 mt">
               <F label="Model Short Name" required>
                 <input className="qf-in" value={f.shortName} onChange={e => set('shortName', e.target.value)} placeholder="Sorter Machine"/>
               </F>
@@ -374,14 +1015,6 @@ export default function QuotationForm() {
               </F>
               <F label="Base Price (₹)" required>
                 <input className="qf-in" type="number" value={f.basePrice} onChange={e => set('basePrice', e.target.value)} placeholder="3135593"/>
-              </F>
-            </div>
-            <div className="g2 mt">
-              <F label="Description Line 1" required>
-                <input className="qf-in" value={f.descLine1} onChange={e => set('descLine1', e.target.value)} placeholder="Color sorting Machine (USEPL-8V) PINNACLE"/>
-              </F>
-              <F label="Description Line 2">
-                <input className="qf-in" value={f.descLine2} onChange={e => set('descLine2', e.target.value)} placeholder="With AI (Advance intelligent Algorithm)"/>
               </F>
             </div>
             <div className="mt">
@@ -483,9 +1116,13 @@ export default function QuotationForm() {
             {/* ── FOOTER ACTIONS ── */}
             <div className="qf-footer">
               <button className="qf-footer-reset" onClick={() => setF(INIT())}>Reset Form</button>
-              <button className="qf-footer-save">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-                Save Quotation
+              <button className="qf-footer-preview" onClick={openPreview}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                Preview
+              </button>
+              <button className="qf-footer-save" onClick={openPreview}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download PDF
               </button>
             </div>
 
