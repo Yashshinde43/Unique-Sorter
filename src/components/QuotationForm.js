@@ -54,7 +54,7 @@ const MODELS = [
 ];
 
 const INIT = () => ({
-  refNo:'USEPL/Q-D/2026/005/R0', refDate:todayISO(), quotNo:'', quotDate:todayISO(),
+  refNo:'USEPL/Q-D/2026/005/R0', refDate:todayISO(), quotNo:'USE/DNR- 15112501/R0', quotDate:todayISO(),
   salutation:'Mr.', contact:'', company:'', addr1:'', addr2:'',
   city:'', state:'', mobile:'', email:'',
   model:'', qty:'', shortName:'', descLine1:'', descLine2:'', hsn:'',
@@ -190,8 +190,8 @@ function buildHTML(f, { base, gstAmt, total }) {
   .client-blk .company { font-weight: 700; text-decoration: underline; font-size: 10.5pt; }
   .quot-meta { text-align: left; line-height: 2; font-size: 10.5pt; flex-shrink: 0; }
 
-  .yl { background: #FFFF00; padding: 0 1px; }
-  .gn { background: #92D050; padding: 0 1px; }
+  .yl { padding: 0 1px; }
+  .gn { padding: 0 1px; }
 
   .qt {
     width: 100%;
