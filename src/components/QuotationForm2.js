@@ -86,16 +86,59 @@ function toWords(a) {
   return "Rs. " + p.join(" ") + " Only.";
 }
 
+/* ─── Product catalogue (green-highlighted fields) ───────────── */
+const PRODUCTS = [
+  {
+    id: "pinnacle6v",
+    label: "PINNACLE 6 (USEPL 6V) — 6 Chute",
+    model: "PINNACLE 6 (USEPL 6V)",
+    modules: "6 Modules/378 channels",
+    cameras: "12 Nos HOLOGRAPHIC TRICHROMATIC FLASH cameras",
+    airReq: ">90CFM Water & Oil Free air @ 4.2 Kg/Cm²",
+    basePrice: "2415254",
+  },
+  {
+    id: "pinnacle8v",
+    label: "PINNACLE 8 (USEPL 8V) — 8 Chute",
+    model: "PINNACLE 8 (USEPL 8V)",
+    modules: "8 Modules/504 channels",
+    cameras: "16 Nos HOLOGRAPHIC TRICHROMATIC FLASH cameras",
+    airReq: ">120CFM Water & Oil Free air @ 4.2 Kg/Cm²",
+    basePrice: "3220339",
+  },
+  {
+    id: "pinnacle10v",
+    label: "PINNACLE 10 (USEPL 10V) — 10 Chute",
+    model: "PINNACLE 10 (USEPL 10V)",
+    modules: "10 Modules/630 channels",
+    cameras: "20 Nos HOLOGRAPHIC TRICHROMATIC FLASH cameras",
+    airReq: ">150CFM Water & Oil Free air @ 4.2 Kg/Cm²",
+    basePrice: "4025424",
+  },
+];
+
 /* ─── Initial state ───────────────────────────────────────────── */
 const INIT = () => ({
   refNo: "USEPL/Q-D/2026/005/R0",
   refDate: todayISO(),
+  companyPrefix: "",
   company: "",
   address: "",
   gstin: "",
   contact: "",
   mobile: "",
+  productId: "",
+  model: "",
+  modules: "",
+  cameras: "",
+  airReq: "",
   basePrice: "",
+  freight: "In your scope.",
+  paymentTerms: "50% as advance along with order.\nBalance payment before dispatch.",
+  deliveryFrom: "7",
+  deliveryTo: "8",
+  commodity: "Rice",
+  quotationValidity: "30",
 });
 
 /* ─── Shared letterhead (injected on every page) ──────────────── */
@@ -154,7 +197,7 @@ function buildHTML(f) {
   .letter-content p { margin-bottom:12px; text-align:justify; }
   .letter-footer { margin-top:30px; }
   .letter-signature { margin-top:20px; }
-  .yl { background:#FFFF00; padding:0 1px; }
+  .yl { padding:0 1px; }
   .specs-title { font-size:13pt; font-weight:900; margin:20px 0 10px; text-decoration:underline; }
   .tech-specs-table { width:100%; border-collapse:collapse; margin:15px 0; font-size:10.5pt; }
   .tech-specs-table td { padding:8px 10px; border:1px solid #bbb; vertical-align:top; }
@@ -207,7 +250,7 @@ function buildHTML(f) {
     <div class="address-content">
       <div class="address-section">
         <strong>To,</strong><br/>
-        <strong><span class="yl">${f.company ? "M/s. " + esc(f.company) : "M/s. —"}</span></strong><br/>
+        <strong><span class="yl">${f.company ? (f.companyPrefix ? esc(f.companyPrefix) + " " : "") + esc(f.company) : "—"}</span></strong><br/>
         <span class="yl">${esc(f.address) || "—"}</span><br/>
         <span class="yl">GSTIN: ${esc(f.gstin) || "—"}</span>
       </div>
@@ -263,13 +306,13 @@ function buildHTML(f) {
 
   <h2 class="specs-title">TECHNICAL SPECIFICATIONS:</h2>
   <table class="tech-specs-table">
-    <tr><td><strong>01</strong></td><td><strong>Sorter Model</strong></td><td>PINNACLE 8 (USEPL 8V)</td></tr>
-    <tr><td><strong>02</strong></td><td><strong>Number of Modules/channels</strong></td><td>8 Modules/504 channels</td></tr>
+    <tr><td><strong>01</strong></td><td><strong>Sorter Model</strong></td><td>${esc(f.model)}</td></tr>
+    <tr><td><strong>02</strong></td><td><strong>Number of Modules/channels</strong></td><td>${esc(f.modules)}</td></tr>
     <tr><td><strong>03</strong></td><td><strong>Sorting modes</strong></td><td>Regular &amp; reverse sorting available</td></tr>
-    <tr><td><strong>04</strong></td><td><strong>Total Cameras</strong></td><td>16 Nos HOLOGRAPHIC TRICHROMATIC FLASH cameras</td></tr>
+    <tr><td><strong>04</strong></td><td><strong>Total Cameras</strong></td><td>${esc(f.cameras)}</td></tr>
     <tr><td><strong>05</strong></td><td><strong>Lighting system</strong></td><td>Hi Lux LOW WATTAGE LED multi strips</td></tr>
     <tr><td><strong>06</strong></td><td><strong>Air Filter System</strong></td><td>Set of micro filters</td></tr>
-    <tr><td><strong>07</strong></td><td><strong>Compressed Air Required</strong></td><td>&gt;120CFM Water &amp; Oil Free air @ 4.2 Kg/Cm²</td></tr>
+    <tr><td><strong>07</strong></td><td><strong>Compressed Air Required</strong></td><td>${esc(f.airReq)}</td></tr>
     <tr><td><strong>08</strong></td><td><strong>GUI Configuration</strong></td><td>USEPL, INDIA</td></tr>
     <tr><td><strong>09</strong></td><td><strong>Sorting algorithm</strong></td><td>USEPL, INDIA</td></tr>
     <tr><td><strong>10</strong></td><td><strong>Product sprouting</strong></td><td>Provided, MOC: Stainless Steel</td></tr>
@@ -301,7 +344,7 @@ function buildHTML(f) {
     <tbody>
       <tr class="item-row">
         <td class="td-qty">1.</td>
-        <td class="td-model"><strong>PINNACLE 8<br/>(USEPL 8V)</strong></td>
+        <td class="td-model"><strong>${esc(f.model).replace(" (", "<br/>(")}</strong></td>
         <td class="td-desc">
           <div><strong>UNIQUE Color Sorter</strong></div>
           <div>With Intelligent sorting technology</div>
@@ -336,10 +379,10 @@ function buildHTML(f) {
   <h3 class="specs-title">TERMS &amp; CONDITIONS:</h3>
   <div class="terms">
     <div class="term"><span class="term-lbl">1. Taxes &amp; levies:</span><span class="term-val">GST 18% added in above price. Any other taxes and levies applicable during the invoice will be extra.</span></div>
-    <div class="term"><span class="term-lbl">2. Freight &amp; transit insurance:</span><span class="term-val">In your scope.</span></div>
-    <div class="term"><span class="term-lbl">3. Payment terms:</span><span class="term-val">50% as advance along with order. Balance payment before dispatch.</span></div>
-    <div class="term"><span class="term-lbl">4. Delivery:</span><span class="term-val">7 To 8 working weeks from Receipt of confirmed purchase order with advance.</span></div>
-    <div class="term"><span class="term-lbl">5. Commodity:</span><span class="term-val">Rice, must be free from Stone &amp; other impurities.</span></div>
+    <div class="term"><span class="term-lbl">2. Freight &amp; transit insurance:</span><span class="term-val"><span class="yl">${esc(f.freight) || "—"}</span></span></div>
+    <div class="term"><span class="term-lbl">3. Payment terms:</span><span class="term-val"><span class="yl">${esc(f.paymentTerms).replace(/\n/g, "<br/>") || "—"}</span></span></div>
+    <div class="term"><span class="term-lbl">4. Delivery:</span><span class="term-val"><span class="yl">${esc(f.deliveryFrom) || "—"} To ${esc(f.deliveryTo) || "—"}</span> working weeks from Receipt of confirmed purchase order with advance.</span></div>
+    <div class="term"><span class="term-lbl">5. Commodity:</span><span class="term-val"><span class="yl">${esc(f.commodity) || "—"}</span>, must be free from Stone &amp; other impurities.</span></div>
     <div class="term"><span class="term-lbl">6. Warranty:</span><span class="term-val">12 months from the date of commissioning or 14 months from date of invoicing whichever is earlier. Warranty doesn't cover glass, wiper brush &amp; wiper rubber. Warranty doesn't cover defects or performance issues of parts occurred by (1) water/moisture damage of compressed air, (2) by not changing the air filters in time (3) by poor earthing (4) by faults due to failure of CVCF.</span></div>
     <div class="term"><span class="term-lbl">7. Commissioning:</span><span class="term-val">In our scope. Arrangement needs to be done by you for commutation of engineer from lodging place to mill.</span></div>
   </div>
@@ -351,7 +394,7 @@ function buildHTML(f) {
   ${refRow(5)}
 
   <div class="terms">
-    <div class="term"><span class="term-lbl">8. Quotation Validity:</span><span class="term-val">30 days only.</span></div>
+    <div class="term"><span class="term-lbl">8. Quotation Validity:</span><span class="term-val"><span class="yl">${esc(f.quotationValidity) || "—"}</span> days only.</span></div>
     <div class="term"><span class="term-lbl">9. Our Bank Details:</span><span class="term-val"></span></div>
   </div>
 
@@ -509,6 +552,19 @@ export default function QuotationForm2() {
   const [saved, setSaved] = useState(false);
   const iframeRef = useRef(null);
   const set = (k, v) => setF((p) => ({ ...p, [k]: v }));
+  const selectProduct = (id) => {
+    const p = PRODUCTS.find((x) => x.id === id);
+    if (!p) return;
+    setF((prev) => ({
+      ...prev,
+      productId: id,
+      model: p.model,
+      modules: p.modules,
+      cameras: p.cameras,
+      airReq: p.airReq,
+      basePrice: p.basePrice,
+    }));
+  };
 
   const handleSave = () => {
     const base = parseFloat(f.basePrice) || 0;
@@ -520,6 +576,7 @@ export default function QuotationForm2() {
       ...f,
       gst18,
       total,
+      gstRate: 18,
     };
     const existing = JSON.parse(
       localStorage.getItem("usepl_quotations2") || "[]",
@@ -539,6 +596,9 @@ export default function QuotationForm2() {
   /* ── Download: capture each .page div as one PDF page ── */
   const handleDownload = async () => {
     setDownloading(true);
+    /* Clean up any leaked elements from a previous failed download */
+    document.querySelectorAll("style[data-qf2]").forEach((s) => s.remove());
+    document.querySelectorAll("[data-qf2-shell]").forEach((s) => s.remove());
     try {
       const [{ default: html2canvas }, { jsPDF }] = await Promise.all([
         import("html2canvas"),
@@ -570,11 +630,13 @@ export default function QuotationForm2() {
 
       /* Inject CSS into main document */
       const styleEl = document.createElement("style");
+      styleEl.setAttribute("data-qf2", "1");
       styleEl.textContent = cleanStyle;
       document.head.appendChild(styleEl);
 
       /* Place all .page elements off-screen */
       const shell = document.createElement("div");
+      shell.setAttribute("data-qf2-shell", "1");
       shell.style.cssText =
         "position:fixed;top:0;left:-9999px;width:794px;overflow:visible;z-index:-1;display:flex;flex-direction:column;gap:20px;";
       doc.querySelectorAll(".page").forEach((p) => shell.appendChild(p));
@@ -869,13 +931,30 @@ export default function QuotationForm2() {
             {/* ── CLIENT DETAILS ── */}
             <Div label="Client Details" n={2} />
             <div className="g2">
-              <F label="Company Name (M/s.)" required>
-                <input
-                  className="qf-in"
-                  value={f.company}
-                  onChange={(e) => set("company", e.target.value)}
-                  placeholder="PASSL LOGISTICS &amp; AGRO PVT LTD"
-                />
+              <F label="Company Name" required>
+                <div style={{ display: "flex", gap: 8 }}>
+                  <select
+                    className="qf-sel"
+                    value={f.companyPrefix}
+                    onChange={(e) => set("companyPrefix", e.target.value)}
+                    style={{ width: 90, flexShrink: 0 }}
+                  >
+                    <option value="">— Prefix</option>
+                    <option>M/s.</option>
+                    <option>Mr.</option>
+                    <option>Mrs.</option>
+                    <option>Ms.</option>
+                    <option>Dr.</option>
+                    <option>Er.</option>
+                  </select>
+                  <input
+                    className="qf-in"
+                    value={f.company}
+                    onChange={(e) => set("company", e.target.value)}
+                    placeholder="Company / Person name"
+                    style={{ flex: 1 }}
+                  />
+                </div>
               </F>
               <F label="GSTIN">
                 <input
@@ -917,14 +996,72 @@ export default function QuotationForm2() {
 
             {/* ── COMMERCIAL OFFER ── */}
             <Div label="Commercial Offer" n={3} />
-            <div className="g2">
+            <F label="Select Product Model" required>
+              <select
+                className="qf-sel"
+                value={f.productId}
+                onChange={(e) => selectProduct(e.target.value)}
+                style={!f.productId ? { color: "#b0bbc9" } : {}}
+              >
+                <option value="" disabled>— Choose PINNACLE model (6V / 8V / 10V) —</option>
+                {PRODUCTS.map((p) => (
+                  <option key={p.id} value={p.id}>{p.label}</option>
+                ))}
+              </select>
+            </F>
+            {!f.productId && (
+              <div style={{ marginTop: 8, padding: "10px 14px", background: "#fffbe6", border: "1px solid #ffe58f", borderRadius: 8, fontSize: 12, color: "#8a6d00" }}>
+                Select a product above to auto-fill model specs and price.
+              </div>
+            )}
+            <div className="g2 mt">
+              <F label="Model Name">
+                <input
+                  className={`qf-in${!f.productId ? "" : " readonly"}`}
+                  readOnly={!!f.productId}
+                  value={f.model}
+                  onChange={(e) => set("model", e.target.value)}
+                  placeholder="Auto-filled from product selection"
+                />
+              </F>
+              <F label="Modules / Channels">
+                <input
+                  className={`qf-in${!f.productId ? "" : " readonly"}`}
+                  readOnly={!!f.productId}
+                  value={f.modules}
+                  onChange={(e) => set("modules", e.target.value)}
+                  placeholder="Auto-filled from product selection"
+                />
+              </F>
+            </div>
+            <div className="g2 mt">
+              <F label="Total Cameras">
+                <input
+                  className={`qf-in${!f.productId ? "" : " readonly"}`}
+                  readOnly={!!f.productId}
+                  value={f.cameras}
+                  onChange={(e) => set("cameras", e.target.value)}
+                  placeholder="Auto-filled from product selection"
+                />
+              </F>
+              <F label="Compressed Air Required">
+                <input
+                  className={`qf-in${!f.productId ? "" : " readonly"}`}
+                  readOnly={!!f.productId}
+                  value={f.airReq}
+                  onChange={(e) => set("airReq", e.target.value)}
+                  placeholder="Auto-filled from product selection"
+                />
+              </F>
+            </div>
+            <div className="g2 mt">
               <F label="Base Price (₹)" required>
                 <input
                   className="qf-in"
                   type="number"
                   value={f.basePrice}
                   onChange={(e) => set("basePrice", e.target.value)}
-                  placeholder="3220339"
+                  placeholder="Select product or enter manually"
                 />
               </F>
               <F label="GST Amount (₹) — 18%">
@@ -969,6 +1106,73 @@ export default function QuotationForm2() {
                 </div>
               </div>
             )}
+
+            {/* ── TERMS & CONDITIONS ── */}
+            <Div label="Terms & Conditions" n={4} />
+            <div className="g2">
+              <F label="Freight & Transit Insurance">
+                <input
+                  className="qf-in"
+                  value={f.freight}
+                  onChange={(e) => set("freight", e.target.value)}
+                  placeholder="In your scope."
+                />
+              </F>
+              <F label="Commodity">
+                <input
+                  className="qf-in"
+                  value={f.commodity}
+                  onChange={(e) => set("commodity", e.target.value)}
+                  placeholder="Rice"
+                />
+              </F>
+            </div>
+            <div className="mt">
+              <F label="Payment Terms">
+                <textarea
+                  className="qf-ta"
+                  rows={3}
+                  value={f.paymentTerms}
+                  onChange={(e) => set("paymentTerms", e.target.value)}
+                  placeholder="50% as advance along with order.&#10;Balance payment before dispatch."
+                />
+              </F>
+            </div>
+            <div className="g3 mt">
+              <F label="Delivery — From (weeks)">
+                <input
+                  className="qf-in"
+                  type="number"
+                  min="1"
+                  value={f.deliveryFrom}
+                  onChange={(e) => set("deliveryFrom", e.target.value)}
+                  placeholder="7"
+                />
+              </F>
+              <F label="Delivery — To (weeks)">
+                <input
+                  className="qf-in"
+                  type="number"
+                  min="1"
+                  value={f.deliveryTo}
+                  onChange={(e) => set("deliveryTo", e.target.value)}
+                  placeholder="8"
+                />
+              </F>
+              <F label="Quotation Validity (days)">
+                <input
+                  className="qf-in"
+                  type="number"
+                  min="1"
+                  value={f.quotationValidity}
+                  onChange={(e) => set("quotationValidity", e.target.value)}
+                  placeholder="30"
+                />
+              </F>
+            </div>
+            <div style={{ marginTop: 10, padding: "10px 14px", background: "#f6f8fc", border: "1px solid #e0e5ed", borderRadius: 8, fontSize: 12, color: "#6b7a90", lineHeight: 1.6 }}>
+              <strong style={{ color: "#4a5568" }}>Static fields (pre-filled in PDF):</strong> Taxes &amp; levies · Warranty · Commissioning
+            </div>
 
             {/* ── ACTIONS ── */}
             <div className="qf-footer">
