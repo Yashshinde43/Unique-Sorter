@@ -487,6 +487,9 @@ const CSS = `
   .qf-in:hover, .qf-sel:hover { border-color:#b0bbc9; }
   .qf-in:focus, .qf-sel:focus, .qf-ta:focus { border-color:#1A37AA; box-shadow:0 0 0 3px rgba(26,55,170,.09); outline:none; background:#fafbff; }
   .qf-sel { cursor:pointer; appearance:none; padding-right:34px; background-image:url("data:image/svg+xml,%3Csvg width='11' height='7' viewBox='0 0 11 7' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5.5 5.5L10 1' stroke='%236b7a90' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; }
+  .qf-sel-highlight { background-color:#f5f8ff; border-color:#1A37AA; border-width:2px; font-size:14px; padding:12px 38px 12px 16px; background-image:url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%231A37AA' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E"); }
+  .qf-sel-highlight:hover { background-color:#eef2ff; border-color:#152e8f; }
+  .qf-sel-highlight:focus { background-color:#fff; border-color:#1A37AA; box-shadow:0 0 0 4px rgba(26,55,170,.15); }
   .qf-in.readonly { background:#f2f4f8; color:#7a8899; cursor:default; border-color:#e0e5ed; border-style:dashed; }
   .qf-pricing-panel { background:#0d1828; border-radius:12px; padding:22px 28px; margin-top:16px; display:grid; grid-template-columns:1fr 1fr; gap:0; position:relative; overflow:hidden; }
   .qf-pricing-panel::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 60% 80% at 100% 50%,rgba(26,55,170,.25) 0%,transparent 70%); pointer-events:none; }
@@ -998,10 +1001,10 @@ export default function QuotationForm2() {
             <Div label="Commercial Offer" n={3} />
             <F label="Select Product Model" required>
               <select
-                className="qf-sel"
+                className="qf-sel qf-sel-highlight"
                 value={f.productId}
                 onChange={(e) => selectProduct(e.target.value)}
-                style={!f.productId ? { color: "#b0bbc9" } : {}}
+                style={!f.productId ? { color: "#5a6a80", fontWeight: 500 } : { fontWeight: 500 }}
               >
                 <option value="" disabled>— Choose PINNACLE model (6V / 8V / 10V) —</option>
                 {PRODUCTS.map((p) => (
