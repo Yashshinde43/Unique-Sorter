@@ -766,9 +766,9 @@ export default function QuotationForm() {
   const set = (k, v) => setF(p => ({ ...p, [k]: v }));
 
   const handleSave = () => {
-    const base    = parseFloat(f.basePrice) || 0;
+    const base    = Math.round(parseFloat(f.basePrice) || 0);
     const gstRate = parseFloat(f.gstRate)   || 0;
-    const gstAmt  = base * gstRate / 100;
+    const gstAmt  = Math.round(base * gstRate / 100);
     const total   = base + gstAmt;
     const record  = {
       id: Date.now(),
@@ -793,9 +793,9 @@ export default function QuotationForm() {
     }
   };
 
-  const base    = parseFloat(f.basePrice) || 0;
+  const base    = Math.round(parseFloat(f.basePrice) || 0);
   const gstRate = parseFloat(f.gstRate) || 0;
-  const gstAmt  = base * gstRate / 100;
+  const gstAmt  = Math.round(base * gstRate / 100);
   const total   = base + gstAmt;
 
   const calc = { base, gstAmt, total };
