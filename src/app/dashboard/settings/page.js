@@ -1,16 +1,5 @@
-import TopBar from '@/components/TopBar';
+import WorkInProgress from '@/components/WorkInProgress';
 
-export default function Page() {
-  return (
-    <div className="page-wrapper">
-      <TopBar title="Settings" subtitle="Coming soon" />
-      <div className="page-content">
-        <div className="card coming-soon-card">
-          <div className="coming-soon-icon">🚧</div>
-          <h2 className="coming-soon-title">settings page</h2>
-          <p className="coming-soon-text">This section is under construction. Check back soon.</p>
-        </div>
-      </div>
-    </div>
-  );
+export default function SettingsPage() {
+  return <WorkInProgress />;
 }

@@ -1,5 +1,5 @@
 import WorkInProgress from '@/components/WorkInProgress';
 
-export default function QuotationsPage() {
+export default function EnquiryPage() {
   return <WorkInProgress />;
 }

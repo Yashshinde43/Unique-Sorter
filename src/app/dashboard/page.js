@@ -1,5 +1,3 @@
-import TopBar from '@/components/TopBar';
-
 const STATS = [
   {
     label: 'Total Quotations',
@@ -55,8 +53,6 @@ const STATS = [
 export default function DashboardPage() {
   return (
     <div className="page-wrapper">
-      <TopBar title="Dashboard" subtitle="Welcome back, Admin" />
-
       <div className="page-content">
         {/* Stats Grid */}
         <div className="stats-grid">
@@ -127,7 +123,7 @@ export default function DashboardPage() {
           <div className="quick-actions-grid">
             {[
               { label: 'New Quotation', href: '/dashboard/quotations/new', icon: '📄', desc: 'Create a new client quotation' },
-              { label: 'Add Lead', href: '/dashboard/leads', icon: '👤', desc: 'Register a new sales lead' },
+              { label: 'Add Enquiry', href: '/dashboard/enquiry', icon: '👤', desc: 'Register a new sales lead' },
               { label: 'Add Product', href: '/dashboard/products', icon: '📦', desc: 'Add product to catalogue' },
               { label: 'View Reports', href: '/dashboard/reports', icon: '📊', desc: 'Analyse sales performance' },
             ].map((action) => (
