@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/lib/firebase';
-import { collection, query, where, getDocs, doc, getDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
+import db from '@/lib/db';
+import { isFirebaseConfigured, checkFirestoreAccess } from '@/lib/firebase';
 
 // Simple JWT token generation
 const generateToken = (user) => {
@@ -25,33 +25,25 @@ export async function POST(request) {
       );
     }
 
-    // Step 1: Get OTP from Firebase
-    const otpRef = doc(db, 'otps', phone);
-    const otpDoc = await getDoc(otpRef);
-
-    if (!otpDoc.exists()) {
+    // Step 1: Check OTP in Backend FIRST
+    const otpData = db.getOtp(phone);
+    if (!otpData) {
       return NextResponse.json(
         { message: 'OTP expired or not found' },
         { status: 400 }
       );
     }
 
-    const otpData = otpDoc.data();
-
-    // Step 2: Check if OTP expired (5 minutes)
-    const createdAt = otpData.createdAt?.toMillis() || Date.now();
-    const now = Date.now();
-    const fiveMinutes = 5 * 60 * 1000;
-
-    if (now - createdAt > fiveMinutes) {
-      await deleteDoc(otpRef); // Clean up expired OTP
+    // Step 2: Check if OTP expired in Backend
+    if (Date.now() > otpData.expiresAt) {
+      db.deleteOtp(phone);
       return NextResponse.json(
         { message: 'OTP expired. Please request a new one.' },
         { status: 400 }
       );
     }
 
-    // Step 3: Verify OTP
+    // Step 3: Verify OTP in Backend
     if (otpData.otp !== otp) {
       return NextResponse.json(
         { message: 'Invalid OTP' },
@@ -59,37 +51,48 @@ export async function POST(request) {
       );
     }
 
-    // Step 4: Get user data from Firebase
-    const usersRef = collection(db, 'users');
-    const q = query(usersRef, where('phone', '==', phone));
-    const querySnapshot = await getDocs(q);
-
-    if (querySnapshot.empty) {
+    // Step 4: Get user from Backend
+    const user = db.findUserByPhone(phone);
+    if (!user) {
       return NextResponse.json(
         { message: 'User not found' },
         { status: 404 }
       );
     }
 
-    const userDoc = querySnapshot.docs[0];
-    const userData = userDoc.data();
+    // Step 5: Delete used OTP from Backend
+    db.deleteOtp(phone);
 
-    // Step 5: Delete used OTP
-    await deleteDoc(otpRef);
+    // Step 6: Sync to Firebase (delete used OTP) - ONLY if configured AND accessible
+    if (isFirebaseConfigured) {
+      try {
+        const { db: firebaseDb } = await import('@/lib/firebase');
+        
+        // Check if Firestore is actually accessible before trying to delete
+        const isAccessible = await checkFirestoreAccess();
+        
+        if (firebaseDb && isAccessible) {
+          const { doc, deleteDoc } = await import('firebase/firestore');
+          await deleteDoc(doc(firebaseDb, 'otps', phone));
+          console.log('OTP deleted from Firebase:', phone);
+        }
+      } catch (firebaseError) {
+        console.error('Firebase delete error (non-critical):', firebaseError.message);
+      }
+    }
 
-    // Step 6: Generate token
-    const token = generateToken({ id: userDoc.id, ...userData });
+    // Step 7: Generate token
+    const token = generateToken(user);
 
     return NextResponse.json({
       success: true,
       message: 'Login successful',
       token,
       user: {
-        id: userDoc.id,
-        name: userData.name,
-        phone: userData.phone,
-        email: userData.email,
-        role: userData.role || 'user',
+        id: user.id,
+        name: user.name,
+        phone: user.phone,
+        role: user.role || 'user',
       },
     });
 

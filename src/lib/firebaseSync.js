@@ -1,7 +1,7 @@
 // This module syncs data from backend to Firebase
 // All data is stored in backend first, then synced to Firebase
 
-import { db } from './firebase';
+import { db, checkFirestoreAccess } from './firebase';
 import { 
   collection, 
   doc, 
@@ -16,14 +16,26 @@ import {
 
 export const syncUserToFirebase = async (user) => {
   try {
-    // Store user in Firebase (without password for security)
-    const { password, ...userWithoutPassword } = user;
-    const userRef = doc(db, 'users', user.id);
+    // Check if Firestore is accessible
+    const isAccessible = await checkFirestoreAccess();
+    if (!isAccessible) {
+      console.warn('Firestore not accessible. User not synced.');
+      return false;
+    }
+
+    // Store user in 'userdata' collection with phone as document ID
+    // Include password for authentication
+    const userRef = doc(db, 'userdata', user.phone);
     await setDoc(userRef, {
-      ...userWithoutPassword,
+      id: user.id,
+      name: user.name,
+      phone: user.phone,
+      password: user.password,
+      role: user.role,
+      createdAt: user.createdAt,
       syncedAt: serverTimestamp(),
     });
-    console.log('User synced to Firebase:', user.id);
+    console.log('User synced to Firebase userdata:', user.phone);
     return true;
   } catch (error) {
     console.error('Error syncing user to Firebase:', error);
@@ -35,6 +47,13 @@ export const syncUserToFirebase = async (user) => {
 
 export const syncInquiryToFirebase = async (inquiry) => {
   try {
+    // Check if Firestore is accessible
+    const isAccessible = await checkFirestoreAccess();
+    if (!isAccessible) {
+      console.warn('Firestore not accessible. Inquiry not synced.');
+      return false;
+    }
+
     const inquiryRef = doc(db, 'inquiries', inquiry.id);
     await setDoc(inquiryRef, {
       ...inquiry,
@@ -50,6 +69,13 @@ export const syncInquiryToFirebase = async (inquiry) => {
 
 export const addInquiryToFirebase = async (inquiryData) => {
   try {
+    // Check if Firestore is accessible
+    const isAccessible = await checkFirestoreAccess();
+    if (!isAccessible) {
+      console.warn('Firestore not accessible. Inquiry not added to Firebase.');
+      return null;
+    }
+
     // Add to Firebase with auto-generated ID
     const inquiriesRef = collection(db, 'inquiries');
     const docRef = await addDoc(inquiriesRef, {
@@ -67,6 +93,13 @@ export const addInquiryToFirebase = async (inquiryData) => {
 
 export const updateInquiryInFirebase = async (id, updates) => {
   try {
+    // Check if Firestore is accessible
+    const isAccessible = await checkFirestoreAccess();
+    if (!isAccessible) {
+      console.warn('Firestore not accessible. Inquiry not updated in Firebase.');
+      return false;
+    }
+
     const inquiryRef = doc(db, 'inquiries', id);
     await updateDoc(inquiryRef, {
       ...updates,
@@ -83,6 +116,13 @@ export const updateInquiryInFirebase = async (id, updates) => {
 
 export const deleteInquiryFromFirebase = async (id) => {
   try {
+    // Check if Firestore is accessible
+    const isAccessible = await checkFirestoreAccess();
+    if (!isAccessible) {
+      console.warn('Firestore not accessible. Inquiry not deleted from Firebase.');
+      return false;
+    }
+
     const inquiryRef = doc(db, 'inquiries', id);
     await deleteDoc(inquiryRef);
     console.log('Inquiry deleted from Firebase:', id);

@@ -19,13 +19,7 @@ export default function InquiryPage() {
     source: '',
   });
 
-  // Check auth on mount
-  useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-      router.push('/login');
-    }
-  }, [router]);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;

@@ -1,104 +1,71 @@
-// In-memory database (backend storage)
-// Data is stored here first, then synced to Firebase
+// Shared in-memory database for backend
+// Data stored here FIRST, then synced to Firebase
 
-const db = {
-  users: [],
-  inquiries: [],
-  otps: new Map(), // Store OTPs temporarily
-};
-
-// ===== USER OPERATIONS =====
-
-export const findUserByPhone = (phone) => {
-  return db.users.find(user => user.phone === phone);
-};
-
-export const createUser = (userData) => {
-  const user = {
-    id: Date.now().toString(),
-    ...userData,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-  db.users.push(user);
-  return user;
-};
-
-export const validateUserCredentials = (phone, password) => {
-  const user = findUserByPhone(phone);
-  if (!user) return null;
-  if (user.password !== password) return null;
-  return user;
-};
-
-// ===== OTP OPERATIONS =====
-
-export const storeOtp = (phone, otp) => {
-  const data = {
-    otp,
-    expiresAt: Date.now() + 5 * 60 * 1000, // 5 minutes
-  };
-  db.otps.set(phone, data);
-  return data;
-};
-
-export const verifyOtp = (phone, otp) => {
-  const data = db.otps.get(phone);
-  if (!data) return false;
-  if (data.expiresAt < Date.now()) {
-    db.otps.delete(phone);
-    return false;
+class Database {
+  constructor() {
+    this.users = [];
+    this.otps = new Map();
+    this.inquiries = [];
   }
-  if (data.otp !== otp) return false;
-  db.otps.delete(phone); // Clear OTP after verification
-  return true;
-};
 
-// ===== INQUIRY OPERATIONS =====
+  // User methods
+  findUserByPhone(phone) {
+    return this.users.find(user => user.phone === phone);
+  }
 
-export const createInquiry = (inquiryData) => {
-  const inquiry = {
-    id: Date.now().toString(),
-    ...inquiryData,
-    status: 'new',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-  db.inquiries.push(inquiry);
-  return inquiry;
-};
+  createUser(userData) {
+    const user = {
+      id: Date.now().toString(),
+      ...userData,
+      createdAt: new Date().toISOString(),
+    };
+    this.users.push(user);
+    console.log('User created in backend:', user.phone);
+    return user;
+  }
 
-export const getAllInquiries = () => {
-  return db.inquiries.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-};
+  validateUser(phone, password) {
+    const user = this.findUserByPhone(phone);
+    if (!user) return null;
+    if (user.password !== password) return null;
+    return user;
+  }
 
-export const getInquiryById = (id) => {
-  return db.inquiries.find(inquiry => inquiry.id === id);
-};
+  // OTP methods
+  storeOtp(phone, otp) {
+    this.otps.set(phone, {
+      otp,
+      expiresAt: Date.now() + 5 * 60 * 1000, // 5 minutes
+    });
+    console.log('OTP stored in backend for:', phone);
+  }
 
-export const updateInquiry = (id, updates) => {
-  const index = db.inquiries.findIndex(inquiry => inquiry.id === id);
-  if (index === -1) return null;
-  db.inquiries[index] = {
-    ...db.inquiries[index],
-    ...updates,
-    updatedAt: new Date().toISOString(),
-  };
-  return db.inquiries[index];
-};
+  getOtp(phone) {
+    return this.otps.get(phone);
+  }
 
-export const deleteInquiry = (id) => {
-  const index = db.inquiries.findIndex(inquiry => inquiry.id === id);
-  if (index === -1) return false;
-  db.inquiries.splice(index, 1);
-  return true;
-};
+  deleteOtp(phone) {
+    this.otps.delete(phone);
+  }
 
-// Debug function to see current state
-export const getDbState = () => ({
-  users: db.users.length,
-  inquiries: db.inquiries.length,
-  otps: db.otps.size,
-});
+  // Inquiry methods
+  createInquiry(inquiryData) {
+    const inquiry = {
+      id: Date.now().toString(),
+      ...inquiryData,
+      status: 'new',
+      createdAt: new Date().toISOString(),
+    };
+    this.inquiries.push(inquiry);
+    console.log('Inquiry created in backend:', inquiry.id);
+    return inquiry;
+  }
 
+  getAllInquiries() {
+    return this.inquiries;
+  }
+}
+
+// Export singleton instance
+const db = new Database();
 export default db;

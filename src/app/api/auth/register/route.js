@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { createUser, findUserByPhone } from '@/lib/db';
-import { syncUserToFirebase } from '@/lib/firebaseSync';
+import db from '@/lib/db';
+import { isFirebaseConfigured, checkFirestoreAccess } from '@/lib/firebase';
 
 export async function POST(request) {
   try {
-    const { name, phone, email, password, role = 'user' } = await request.json();
+    const { name, phone, password, role = 'user' } = await request.json();
 
     // Validate input
     if (!name || !phone || !password) {
@@ -23,8 +23,8 @@ export async function POST(request) {
       );
     }
 
-    // Check if user already exists
-    const existingUser = findUserByPhone(phone);
+    // Step 1: Check Backend FIRST
+    const existingUser = db.findUserByPhone(phone);
     if (existingUser) {
       return NextResponse.json(
         { message: 'User with this phone number already exists' },
@@ -32,17 +32,48 @@ export async function POST(request) {
       );
     }
 
-    // Step 1: Create user in backend first
-    const user = createUser({
+    // Step 2: Create user in Backend FIRST
+    const user = db.createUser({
       name,
       phone,
-      email,
-      password, // In production, hash this password!
+      password,
       role,
     });
 
-    // Step 2: Sync to Firebase (background process)
-    syncUserToFirebase(user).catch(console.error);
+    // Step 3: Sync to Firebase (background) - ONLY if configured AND accessible
+    if (isFirebaseConfigured) {
+      try {
+        const { db: firebaseDb } = await import('@/lib/firebase');
+        
+        // Check if Firestore is actually accessible before trying to write
+        const isAccessible = await checkFirestoreAccess();
+        
+        if (firebaseDb && isAccessible) {
+          const { doc, setDoc, serverTimestamp } = await import('firebase/firestore');
+          // Store user data in 'userdata' collection with phone as document ID
+          // Include password for authentication
+          await setDoc(doc(firebaseDb, 'userdata', user.phone), {
+            id: user.id,
+            name: user.name,
+            phone: user.phone,
+            password: user.password,
+            role: user.role,
+            createdAt: user.createdAt,
+            syncedAt: serverTimestamp(),
+          });
+          console.log('User synced to Firebase userdata:', user.phone);
+        } else if (!isAccessible) {
+          console.log('Firestore database not accessible. User stored in backend only.');
+          console.log('To enable Firebase sync, create the Firestore database in Firebase Console:');
+          console.log('https://console.firebase.google.com/ -> Firestore Database -> Create database');
+        }
+      } catch (firebaseError) {
+        console.error('Firebase sync error (non-critical):', firebaseError.message);
+        // Continue - user is already stored in backend
+      }
+    } else {
+      console.log('Firebase not configured. User stored in backend only.');
+    }
 
     return NextResponse.json({
       success: true,
@@ -51,7 +82,6 @@ export async function POST(request) {
         id: user.id,
         name: user.name,
         phone: user.phone,
-        email: user.email,
         role: user.role,
       },
     });
@@ -63,4 +93,11 @@ export async function POST(request) {
       { status: 500 }
     );
   }
+}
+
+// GET all users (for debugging)
+export async function GET() {
+  return NextResponse.json({
+    users: db.users.map(u => ({ id: u.id, name: u.name, phone: u.phone, role: u.role })),
+  });
 }
