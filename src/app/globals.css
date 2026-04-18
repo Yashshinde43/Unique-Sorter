@@ -2197,3 +2197,8 @@ select { font-family: inherit; }
     margin: 0;
   }
 }
+
+/* Spinner animation for login */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
