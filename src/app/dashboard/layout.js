@@ -1,4 +1,5 @@
 import Sidebar from '@/components/Sidebar';
+import TopBar from '@/components/TopBar';
 
 export const metadata = {
   title: 'CRM — Unique Sorter',
@@ -9,9 +10,12 @@ export default function DashboardLayout({ children }) {
   return (
     <div className="dashboard-shell">
       <Sidebar />
-      <main className="dashboard-main">
-        {children}
-      </main>
+      <div className="dashboard-body">
+        <TopBar />
+        <main className="dashboard-main">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }
