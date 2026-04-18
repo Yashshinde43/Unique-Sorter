@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 
 const PAGE_META = {
   '/dashboard':             { title: 'Dashboard',   subtitle: 'Welcome back, Admin' },
-  '/dashboard/enquiry':     { title: 'Enquiry',     subtitle: 'Manage your leads & enquiries' },
+  '/enquiry':               { title: 'Enquiry',     subtitle: 'Manage your leads & enquiries' },
   '/dashboard/quotations':  { title: 'Quotations',  subtitle: 'Create and track quotations' },
   '/dashboard/settings':    { title: 'Settings',    subtitle: 'Manage your preferences' },
 };

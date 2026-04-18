@@ -123,7 +123,7 @@ export default function DashboardPage() {
           <div className="quick-actions-grid">
             {[
               { label: 'New Quotation', href: '/dashboard/quotations/new', icon: '📄', desc: 'Create a new client quotation' },
-              { label: 'Add Enquiry', href: '/dashboard/enquiry', icon: '👤', desc: 'Register a new sales lead' },
+              { label: 'Add Enquiry', href: '/enquiry', icon: '👤', desc: 'Register a new sales lead' },
               { label: 'Add Product', href: '/dashboard/products', icon: '📦', desc: 'Add product to catalogue' },
               { label: 'View Reports', href: '/dashboard/reports', icon: '📊', desc: 'Analyse sales performance' },
             ].map((action) => (

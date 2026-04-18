@@ -1,0 +1,612 @@
+'use client';
+
+import { useState } from 'react';
+
+/* ─── Constants ───────────────────────────────────────────────── */
+const REGIONS = [
+  'North India', 'South India', 'East India',
+  'West India', 'Central India', 'Export / International',
+];
+const SIZES = ['Small', 'Medium', 'Large', 'Custom'];
+const SOURCES = ['Cold Call', 'Reference', 'Exhibition', 'Online / Website', 'Social Media', 'Other'];
+
+let _id = 2;
+
+const INIT = () => ({
+  customerName: '',
+  millName: '',
+  mobile: '',
+  email: '',
+  gst: '',
+  location: '',
+  state: '',
+  address: '',
+  source: '',
+
+  hasRequirement: null,
+  futureNote: '',
+  followUpDate: '',
+  probableMonth: '',
+  orderChances: '',
+  items: [{ id: 1, modelNo: '', size: '', qty: '', priceRegion: '' }],
+});
+
+/* ─── CSS ─────────────────────────────────────────────────────── */
+const CSS = `
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Barlow+Condensed:wght@400;500;600;700;800&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .enqf-root {
+    min-height: 100vh;
+    background: #eef0f5;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* ── Simple brand navbar ── */
+  .enqf-navbar {
+    height: 56px;
+    background: #111c2d;
+    display: flex; align-items: center;
+    padding: 0 32px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .enqf-brand {
+    font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
+    color: #fff; letter-spacing: -0.2px;
+  }
+  .enqf-brand span { color: #4e7cff; }
+
+  /* ── Page content ── */
+  .enqf-content { max-width: 860px; margin: 0 auto; padding: 36px 32px 80px; }
+
+  .enqf-page-head {
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid rgba(13,24,40,.08);
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .enqf-page-head h1 {
+    font-family: 'Inter', sans-serif; font-size: 22px; font-weight: 700;
+    color: #0d1828; letter-spacing: -.3px; line-height: 1.25;
+  }
+  .enqf-page-head p { font-family: 'Inter', sans-serif; font-size: 13px; color: #6b7a90; margin-top: 4px; }
+  .enqf-page-head-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .enqf-btn-reset {
+    height: 36px; padding: 0 16px; border-radius: 8px;
+    border: 1px solid #d8dfe8; background: #fff;
+    color: #4a5568; font-size: 13px; font-family: 'DM Sans', sans-serif;
+    font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px;
+    transition: all .15s;
+  }
+  .enqf-btn-reset:hover { border-color: #b0bbc9; color: #0d1828; }
+  .enqf-btn-save {
+    height: 36px; padding: 0 18px; border-radius: 8px;
+    border: none; background: #1A37AA; color: #fff;
+    font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 600;
+    cursor: pointer; display: flex; align-items: center; gap: 6px;
+    box-shadow: 0 2px 10px rgba(26,55,170,.35); transition: all .15s;
+  }
+  .enqf-btn-save:hover { background: #1e42cc; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(26,55,170,.45); }
+
+  /* ── Section dividers ── */
+  .enqf-divider {
+    display: flex; align-items: center; gap: 14px;
+    margin: 36px 0 20px;
+  }
+  .enqf-divider:first-child { margin-top: 0; }
+  .enqf-divider-num {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: #1A37AA; color: #fff;
+    font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .enqf-divider-label {
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700;
+    color: #0d1828; letter-spacing: .1px; white-space: nowrap;
+  }
+  .enqf-divider-line { flex: 1; height: 1px; background: rgba(13,24,40,.1); }
+
+  /* ── Grid helpers ── */
+  .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .full { grid-column: 1 / -1; }
+  .mt { margin-top: 16px; }
+
+  /* ── Field ── */
+  .enqf-f { display: flex; flex-direction: column; gap: 5px; }
+  .enqf-lbl {
+    font-size: 11px; font-weight: 600; color: #4a5568;
+    letter-spacing: .3px; display: flex; align-items: center; gap: 4px;
+  }
+  .req { color: #e05555; }
+
+  .enqf-in, .enqf-sel, .enqf-ta {
+    width: 100%; border: 1.5px solid #d8dfe8; border-radius: 8px;
+    padding: 10px 13px; font-size: 13.5px; font-family: 'DM Sans', sans-serif;
+    color: #0d1828; background: #fff; line-height: 1.5;
+    transition: border-color .18s, box-shadow .18s;
+    outline: none;
+  }
+  .enqf-in::placeholder, .enqf-ta::placeholder { color: #b0bbc9; }
+  .enqf-in:hover, .enqf-sel:hover, .enqf-ta:hover { border-color: #b0bbc9; }
+  .enqf-in:focus, .enqf-sel:focus, .enqf-ta:focus {
+    border-color: #1A37AA; box-shadow: 0 0 0 3px rgba(26,55,170,.1);
+  }
+  .enqf-in--err, .enqf-sel--err, .enqf-ta--err {
+    border-color: #e05555 !important;
+    box-shadow: 0 0 0 3px rgba(224,85,85,.1) !important;
+  }
+  .enqf-sel {
+    appearance: none; cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%238898aa' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center;
+    padding-right: 32px;
+  }
+  .enqf-ta { resize: vertical; min-height: 80px; }
+  .enqf-err { font-size: 11px; color: #c0392b; font-weight: 500; margin-top: 1px; }
+
+  /* ── Requirement toggle ── */
+  .enqf-toggle { display: flex; gap: 10px; margin-top: 4px; }
+  .enqf-toggle-btn {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 24px; border-radius: 10px; font-size: 13.5px; font-weight: 600;
+    font-family: 'DM Sans', sans-serif; cursor: pointer;
+    border: 1.5px solid #d8dfe8; background: #fff; color: #4a5568;
+    transition: all .18s;
+  }
+  .enqf-toggle-btn:hover { border-color: #b0bbc9; color: #0d1828; background: #f8f9fc; }
+  .enqf-toggle-btn--yes {
+    background: rgba(82,186,79,.08); border-color: rgba(82,186,79,.5);
+    color: #2e8c2b; box-shadow: 0 2px 10px rgba(82,186,79,.12);
+  }
+  .enqf-toggle-btn--no {
+    background: rgba(224,85,85,.07); border-color: rgba(224,85,85,.4);
+    color: #c0392b; box-shadow: 0 2px 10px rgba(224,85,85,.1);
+  }
+
+  /* ── Item cards ── */
+  .enqf-items { display: flex; flex-direction: column; gap: 14px; margin-top: 16px; }
+
+  .enqf-item {
+    border: 1.5px solid #e0e8f0; border-radius: 12px;
+    overflow: hidden; background: #fff;
+    box-shadow: 0 2px 8px rgba(13,24,40,.04);
+  }
+  .enqf-item-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 16px;
+    background: #0d1828; border-bottom: 1px solid rgba(255,255,255,.07);
+  }
+  .enqf-item-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11.5px; font-weight: 700; color: rgba(255,255,255,.7);
+    text-transform: uppercase; letter-spacing: .8px;
+  }
+  .enqf-item-remove {
+    width: 24px; height: 24px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    color: #e05555; background: rgba(224,85,85,.15);
+    border: none; cursor: pointer; transition: background .15s;
+  }
+  .enqf-item-remove:hover { background: rgba(224,85,85,.28); }
+  .enqf-item-body { padding: 16px; }
+
+  .enqf-add-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 16px; font-size: 12.5px; font-weight: 600;
+    color: #1A37AA; background: rgba(26,55,170,.07);
+    border: 1.5px dashed rgba(26,55,170,.3);
+    border-radius: 9px; cursor: pointer; transition: background .15s;
+    font-family: 'DM Sans', sans-serif; margin-top: 4px;
+  }
+  .enqf-add-btn:hover { background: rgba(26,55,170,.13); }
+
+  /* ── Future badge ── */
+  .enqf-future-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 12px; background: rgba(232,160,32,.1);
+    border: 1px solid rgba(232,160,32,.35); border-radius: 8px;
+    font-size: 12px; font-weight: 600; color: #b07d10; margin-bottom: 14px;
+  }
+
+  /* ── Success screen ── */
+  .enqf-success {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    background: #eef0f5; padding: 40px 20px;
+  }
+  .enqf-success-card {
+    background: #fff; border: 1px solid #e0e8f0; border-radius: 20px;
+    padding: 48px 40px 40px; max-width: 420px; width: 100%;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    box-shadow: 0 12px 40px rgba(13,24,40,.1);
+    animation: enqf-rise .35s ease both;
+  }
+  .enqf-success-icon {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: linear-gradient(135deg, #52ba4f, #3a9e37);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px; box-shadow: 0 8px 24px rgba(82,186,79,.3);
+  }
+  .enqf-success-title {
+    font-family: 'Inter', sans-serif; font-size: 22px; font-weight: 700;
+    color: #0d1828; letter-spacing: -.3px; margin-bottom: 10px;
+  }
+  .enqf-success-desc { font-size: 14px; color: #6b7a90; line-height: 1.65; margin-bottom: 28px; }
+  .enqf-success-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .enqf-success-btn {
+    padding: 10px 20px; border-radius: 9px; font-size: 13px; font-weight: 600;
+    cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all .15s;
+    display: inline-flex; align-items: center; gap: 7px;
+  }
+  .enqf-success-btn--primary {
+    background: #1A37AA; color: #fff; border: none;
+    box-shadow: 0 2px 8px rgba(26,55,170,.3);
+  }
+  .enqf-success-btn--primary:hover { background: #1e42cc; }
+  .enqf-success-btn--sec {
+    background: #fff; color: #4a5568;
+    border: 1.5px solid #d8dfe8; text-decoration: none;
+  }
+  .enqf-success-btn--sec:hover { border-color: #1A37AA; color: #1A37AA; }
+
+  @keyframes enqf-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
+  @keyframes enqf-rise {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 640px) {
+    .enqf-content { padding: 20px 16px 60px; }
+    .g2, .g3 { grid-template-columns: 1fr; }
+    .enqf-page-head { flex-direction: column; align-items: flex-start; gap: 6px; }
+  }
+`;
+
+/* ─── Component ──────────────────────────────────────────────── */
+export default function EnquiryPage() {
+  const [form, setForm] = useState(INIT());
+  const [errors, setErrors] = useState({});
+  const [status, setStatus] = useState('idle'); // idle | loading | success | error
+  const [errorMsg, setErrorMsg] = useState('');
+  const [savedName, setSavedName] = useState('');
+
+  const set = (k, v) => {
+    setForm(f => ({ ...f, [k]: v }));
+    setErrors(e => ({ ...e, [k]: undefined }));
+  };
+
+  const setItem = (id, k, v) =>
+    setForm(f => ({ ...f, items: f.items.map(it => it.id === id ? { ...it, [k]: v } : it) }));
+
+  const addItem = () =>
+    setForm(f => ({ ...f, items: [...f.items, { id: _id++, modelNo: '', size: '', qty: '', priceRegion: '' }] }));
+
+  const removeItem = (id) =>
+    setForm(f => ({ ...f, items: f.items.filter(it => it.id !== id) }));
+
+  const validate = () => {
+    const e = {};
+    if (!form.customerName.trim()) e.customerName = 'Required';
+    if (!form.millName.trim()) e.millName = 'Required';
+    if (!form.mobile.trim()) e.mobile = 'Required';
+    else if (!/^[6-9]\d{9}$/.test(form.mobile.trim())) e.mobile = 'Enter valid 10-digit mobile';
+    if (!form.location.trim()) e.location = 'Required';
+    if (!form.address.trim()) e.address = 'Required';
+    if (form.hasRequirement === null) e.hasRequirement = 'Please select an option';
+    if (form.hasRequirement === true) {
+      form.items.forEach((it, i) => {
+        if (!it.modelNo.trim()) e[`item_${i}_modelNo`] = 'Required';
+        if (!it.qty || +it.qty < 1) e[`item_${i}_qty`] = 'Required';
+        if (!it.priceRegion) e[`item_${i}_priceRegion`] = 'Required';
+      });
+    }
+    if (form.hasRequirement === false && !form.futureNote.trim())
+      e.futureNote = 'Please describe the future requirement';
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validate()) return;
+
+    setStatus('loading');
+    setErrorMsg('');
+
+    try {
+      const res = await fetch('/api/enquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'Something went wrong');
+      setSavedName(form.customerName);
+      setStatus('success');
+    } catch (err) {
+      setErrorMsg(err.message);
+      setStatus('error');
+    }
+  };
+
+  const handleReset = () => { setForm(INIT()); setErrors({}); setStatus('idle'); setErrorMsg(''); };
+
+  return (
+    <>
+      <style>{CSS}</style>
+      <div className="enqf-root">
+
+        {/* ── Navbar (same as dashboard) ── */}
+        <nav className="enqf-navbar">
+          <span className="enqf-brand">Unique<span>Sorter</span></span>
+        </nav>
+
+        {/* ── Content ── */}
+        <div className="enqf-content">
+
+          {/* Page heading */}
+          <div className="enqf-page-head">
+            <div>
+              <h1>New Customer Enquiry</h1>
+              <p>Fill in the customer details, location and requirement information below.</p>
+            </div>
+            <div className="enqf-page-head-actions">
+              <button type="button" className="enqf-btn-reset" onClick={handleReset}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/>
+                </svg>
+                Reset
+              </button>
+            </div>
+          </div>
+
+          <form id="enq-form" onSubmit={handleSubmit} noValidate>
+
+            {/* ── Section 1 : Customer ── */}
+            <Divider num="1" label="Customer Information" />
+            <div className="g2">
+              <F label="Customer Name" req err={errors.customerName}>
+                <input className={`enqf-in${errors.customerName ? ' enqf-in--err' : ''}`}
+                  placeholder="e.g. Rajesh Kumar"
+                  value={form.customerName} onChange={e => set('customerName', e.target.value)} />
+              </F>
+              <F label="Mill / Company Name" req err={errors.millName}>
+                <input className={`enqf-in${errors.millName ? ' enqf-in--err' : ''}`}
+                  placeholder="e.g. Sri Balaji Rice Mill"
+                  value={form.millName} onChange={e => set('millName', e.target.value)} />
+              </F>
+              <F label="Mobile No." req err={errors.mobile}>
+                <input className={`enqf-in${errors.mobile ? ' enqf-in--err' : ''}`}
+                  placeholder="10-digit mobile number"
+                  inputMode="numeric" value={form.mobile}
+                  onChange={e => set('mobile', e.target.value.replace(/\D/g, '').slice(0, 10))} />
+              </F>
+              <F label="Email Address">
+                <input className="enqf-in" type="email" placeholder="e.g. rajesh@example.com"
+                  value={form.email} onChange={e => set('email', e.target.value)} />
+              </F>
+              <F label="GST No.">
+                <input className="enqf-in" placeholder="e.g. 29ABCDE1234F1Z5"
+                  value={form.gst} onChange={e => set('gst', e.target.value.toUpperCase())} maxLength={15} />
+              </F>
+              <F label="Lead Source">
+                <select className="enqf-sel" value={form.source} onChange={e => set('source', e.target.value)}>
+                  <option value="">Select source</option>
+                  {SOURCES.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </F>
+            </div>
+
+            {/* ── Section 2 : Location ── */}
+            <Divider num="2" label="Location Details" />
+            <div className="g2">
+              <F label="City / Location" req err={errors.location}>
+                <input className={`enqf-in${errors.location ? ' enqf-in--err' : ''}`}
+                  placeholder="e.g. Nagpur"
+                  value={form.location} onChange={e => set('location', e.target.value)} />
+              </F>
+              <F label="State">
+                <input className="enqf-in" placeholder="e.g. Maharashtra"
+                  value={form.state} onChange={e => set('state', e.target.value)} />
+              </F>
+              <F label="Full Address" req err={errors.address} cls="full">
+                <textarea className={`enqf-ta${errors.address ? ' enqf-ta--err' : ''}`}
+                  placeholder="Street, area, city, state, PIN..."
+                  rows={3} value={form.address} onChange={e => set('address', e.target.value)} />
+              </F>
+            </div>
+
+            {/* ── Section 3 : Requirement ── */}
+            <Divider num="3" label="Requirement" />
+
+            <F label="Does the customer have an immediate requirement?" req err={errors.hasRequirement}>
+              <div className="enqf-toggle">
+                <button type="button"
+                  className={`enqf-toggle-btn${form.hasRequirement === true ? ' enqf-toggle-btn--yes' : ''}`}
+                  onClick={() => set('hasRequirement', true)}>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  Yes — Immediate
+                </button>
+                <button type="button"
+                  className={`enqf-toggle-btn${form.hasRequirement === false ? ' enqf-toggle-btn--no' : ''}`}
+                  onClick={() => set('hasRequirement', false)}>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                  No — Future
+                </button>
+              </div>
+            </F>
+
+            {/* YES → items */}
+            {form.hasRequirement === true && (
+              <div className="enqf-items">
+                {form.items.map((item, idx) => (
+                  <div key={item.id} className="enqf-item">
+                    <div className="enqf-item-head">
+                      <span className="enqf-item-label">Item {idx + 1}</span>
+                      {form.items.length > 1 && (
+                        <button type="button" className="enqf-item-remove" onClick={() => removeItem(item.id)}>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                    <div className="enqf-item-body">
+                      <div className="g2">
+                        <F label="Model No." req err={errors[`item_${idx}_modelNo`]}>
+                          <input className={`enqf-in${errors[`item_${idx}_modelNo`] ? ' enqf-in--err' : ''}`}
+                            placeholder="e.g. USEPL-6V"
+                            value={item.modelNo} onChange={e => setItem(item.id, 'modelNo', e.target.value)} />
+                        </F>
+                        <F label="Size">
+                          <select className="enqf-sel" value={item.size}
+                            onChange={e => setItem(item.id, 'size', e.target.value)}>
+                            <option value="">Select size</option>
+                            {SIZES.map(s => <option key={s} value={s}>{s}</option>)}
+                          </select>
+                        </F>
+                        <F label="Quantity" req err={errors[`item_${idx}_qty`]}>
+                          <input className={`enqf-in${errors[`item_${idx}_qty`] ? ' enqf-in--err' : ''}`}
+                            placeholder="e.g. 2" inputMode="numeric"
+                            value={item.qty} onChange={e => setItem(item.id, 'qty', e.target.value.replace(/\D/g, ''))} />
+                        </F>
+                        <F label="Price Region" req err={errors[`item_${idx}_priceRegion`]}>
+                          <select className={`enqf-sel${errors[`item_${idx}_priceRegion`] ? ' enqf-sel--err' : ''}`}
+                            value={item.priceRegion} onChange={e => setItem(item.id, 'priceRegion', e.target.value)}>
+                            <option value="">Select region</option>
+                            {REGIONS.map(r => <option key={r} value={r}>{r}</option>)}
+                          </select>
+                        </F>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <button type="button" className="enqf-add-btn" onClick={addItem}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
+                  Add Another Item
+                </button>
+              </div>
+            )}
+
+            {/* NO → future notes + follow-up date */}
+            {form.hasRequirement === false && (
+              <div style={{ marginTop: 16 }}>
+                <div className="enqf-future-badge">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                  </svg>
+                  Future Requirement
+                </div>
+                <div className="g2">
+                  <F label="Requirement Update / Notes" req err={errors.futureNote} cls="full">
+                    <textarea className={`enqf-ta${errors.futureNote ? ' enqf-ta--err' : ''}`}
+                      placeholder="Describe what the customer might need in the future, expected timeline, or follow-up notes..."
+                      rows={4} value={form.futureNote} onChange={e => set('futureNote', e.target.value)} />
+                  </F>
+                  <F label="Next Follow-up Date">
+                    <input className="enqf-in" type="date"
+                      value={form.followUpDate} onChange={e => set('followUpDate', e.target.value)} />
+                  </F>
+                  <F label="Probable Month of Order">
+                    <input className="enqf-in" placeholder="e.g. June 2025"
+                      value={form.probableMonth} onChange={e => set('probableMonth', e.target.value)} />
+                  </F>
+                  <F label="% Chances of Order">
+                    <input className="enqf-in" placeholder="e.g. 70%" inputMode="numeric"
+                      value={form.orderChances} onChange={e => set('orderChances', e.target.value)} />
+                  </F>
+                </div>
+              </div>
+            )}
+
+            {/* ── Bottom save ── */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 16, marginTop: 36, paddingTop: 24, borderTop: '2px solid rgba(13,24,40,.08)' }}>
+
+              {/* Error message */}
+              {status === 'error' && (
+                <span style={{ fontSize: 13, color: '#c0392b', fontWeight: 500 }}>
+                  ⚠ {errorMsg}
+                </span>
+              )}
+
+              {/* Success message */}
+              {status === 'success' && (
+                <span style={{ fontSize: 13, color: '#2e8c2b', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                  Enquiry for <strong style={{ marginLeft: 4 }}>{savedName}</strong>&nbsp;saved successfully!
+                </span>
+              )}
+
+              {status === 'success' ? (
+                <button type="button" className="enqf-btn-save" onClick={handleReset}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
+                  New Enquiry
+                </button>
+              ) : (
+                <button type="submit" className="enqf-btn-save" disabled={status === 'loading'}
+                  style={{ opacity: status === 'loading' ? 0.8 : 1, cursor: status === 'loading' ? 'not-allowed' : 'pointer' }}>
+                  {status === 'loading' ? (
+                    <>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
+                        style={{ animation: 'enqf-spin 0.8s linear infinite' }}>
+                        <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                      </svg>
+                      Saving…
+                    </>
+                  ) : (
+                    <>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                      Save Enquiry
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </>
+  );
+}
+
+/* ─── Sub-components ──────────────────────────────────────────── */
+function Divider({ num, label }) {
+  return (
+    <div className="enqf-divider">
+      <span className="enqf-divider-num">{num}</span>
+      <span className="enqf-divider-label">{label}</span>
+      <span className="enqf-divider-line" />
+    </div>
+  );
+}
+
+function F({ label, req, err, cls, children }) {
+  return (
+    <div className={`enqf-f${cls ? ` ${cls}` : ''}`}>
+      <label className="enqf-lbl">
+        {label}{req && <span className="req">*</span>}
+      </label>
+      {children}
+      {err && <span className="enqf-err">{err}</span>}
+    </div>
+  );
+}
