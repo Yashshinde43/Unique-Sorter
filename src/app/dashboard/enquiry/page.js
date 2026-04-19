@@ -544,11 +544,11 @@ function EnquiryDrawer({ row, onClose, onUpdated, onDeleted }) {
                   <div key={idx} className="eq-item">
                     <div className="eq-item-head">
                       <span className="eq-item-num">Item {idx + 1}</span>
-                      {item.priceRegion && <span className="eq-item-badge">{item.priceRegion}</span>}
+                      {item.price && <span className="eq-item-badge">{item.price}</span>}
                     </div>
                     <div className="eq-item-body">
                       <div className="eq-item-cell">
-                        <span className="eq-item-cell-lbl">Model No.</span>
+                        <span className="eq-item-cell-lbl">Model</span>
                         {editing ? <input className="eq-input" value={item.modelNo || ''} onChange={e => setItem(idx, 'modelNo', e.target.value)} /> : <span className="eq-item-cell-val">{item.modelNo || '—'}</span>}
                       </div>
                       <div className="eq-item-cell">
@@ -560,8 +560,8 @@ function EnquiryDrawer({ row, onClose, onUpdated, onDeleted }) {
                         {editing ? <input className="eq-input" value={item.qty || ''} onChange={e => setItem(idx, 'qty', e.target.value)} /> : <span className="eq-item-cell-val accent">{item.qty || '—'}</span>}
                       </div>
                       <div className="eq-item-cell">
-                        <span className="eq-item-cell-lbl">Price Region</span>
-                        {editing ? <input className="eq-input" value={item.priceRegion || ''} onChange={e => setItem(idx, 'priceRegion', e.target.value)} /> : <span className="eq-item-cell-val sub">{item.priceRegion || '—'}</span>}
+                        <span className="eq-item-cell-lbl">Price</span>
+                        <span className="eq-item-cell-val sub">{item.price || '—'}</span>
                       </div>
                     </div>
                   </div>

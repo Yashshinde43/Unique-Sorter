@@ -98,8 +98,7 @@ export default function LoginPage() {
           localStorage.setItem('authToken', data.token);
           localStorage.setItem('user', JSON.stringify(data.user));
         }
-        // Redirect to inquiry form
-        router.push('/inquiry');
+        router.push('/enquiry');
       } else {
         setError(data.message || 'Invalid OTP. Please try again.');
       }

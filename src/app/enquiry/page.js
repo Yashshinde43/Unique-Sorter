@@ -3,12 +3,24 @@
 import { useState } from 'react';
 
 /* ─── Constants ───────────────────────────────────────────────── */
-const REGIONS = [
-  'North India', 'South India', 'East India',
-  'West India', 'Central India', 'Export / International',
-];
-const SIZES = ['Small', 'Medium', 'Large', 'Custom'];
+const MODELS  = ['Pinnacle', 'Nandak'];
+const SIZES   = ['5', '6', '7', '8', '10'];
+const STATES  = ['Telangana', 'Karnataka'];
 const SOURCES = ['Cold Call', 'Reference', 'Exhibition', 'Online / Website', 'Social Media', 'Other'];
+
+const PRICE_TABLE = {
+  Telangana: { Pinnacle: { '5': '₹ 30 L', '6': '₹ 33 L', '7': '₹ 36 L', '8': '₹ 40 L', '10': '₹ 47 L' } },
+  Karnataka: { Pinnacle: { '5': '₹ 30 L', '6': '₹ 33 L', '7': '₹ 36 L', '8': '₹ 40 L', '10': '₹ 47 L' } },
+};
+
+const getBasePrice = (state, model, size) => PRICE_TABLE[state]?.[model]?.[size] || '';
+const getPrice = (state, model, size, qty) => {
+  const base = PRICE_TABLE[state]?.[model]?.[size];
+  if (!base) return '';
+  const num = parseFloat(base.replace(/[^\d.]/g, ''));
+  const q = parseInt(qty) || 1;
+  return `₹ ${(num * q).toFixed(num * q % 1 === 0 ? 0 : 1)} L`;
+};
 
 let _id = 2;
 
@@ -28,7 +40,7 @@ const INIT = () => ({
   followUpDate: '',
   probableMonth: '',
   orderChances: '',
-  items: [{ id: 1, modelNo: '', size: '', qty: '', priceRegion: '' }],
+  items: [{ id: 1, modelNo: '', size: '', qty: '', price: '' }],
 });
 
 /* ─── CSS ─────────────────────────────────────────────────────── */
@@ -277,15 +289,29 @@ export default function EnquiryPage() {
   const [savedName, setSavedName] = useState('');
 
   const set = (k, v) => {
-    setForm(f => ({ ...f, [k]: v }));
+    setForm(f => {
+      const updated = { ...f, [k]: v };
+      if (k === 'state') {
+        updated.items = f.items.map(it => ({ ...it, price: getPrice(v, it.modelNo, it.size, it.qty) }));
+      }
+      return updated;
+    });
     setErrors(e => ({ ...e, [k]: undefined }));
   };
 
   const setItem = (id, k, v) =>
-    setForm(f => ({ ...f, items: f.items.map(it => it.id === id ? { ...it, [k]: v } : it) }));
+    setForm(f => ({
+      ...f,
+      items: f.items.map(it => {
+        if (it.id !== id) return it;
+        const updated = { ...it, [k]: v };
+        updated.price = getPrice(f.state, updated.modelNo, updated.size, updated.qty);
+        return updated;
+      }),
+    }));
 
   const addItem = () =>
-    setForm(f => ({ ...f, items: [...f.items, { id: _id++, modelNo: '', size: '', qty: '', priceRegion: '' }] }));
+    setForm(f => ({ ...f, items: [...f.items, { id: _id++, modelNo: '', size: '', qty: '', price: '' }] }));
 
   const removeItem = (id) =>
     setForm(f => ({ ...f, items: f.items.filter(it => it.id !== id) }));
@@ -303,7 +329,6 @@ export default function EnquiryPage() {
       form.items.forEach((it, i) => {
         if (!it.modelNo.trim()) e[`item_${i}_modelNo`] = 'Required';
         if (!it.qty || +it.qty < 1) e[`item_${i}_qty`] = 'Required';
-        if (!it.priceRegion) e[`item_${i}_priceRegion`] = 'Required';
       });
     }
     if (form.hasRequirement === false && !form.futureNote.trim())
@@ -412,8 +437,10 @@ export default function EnquiryPage() {
                   value={form.location} onChange={e => set('location', e.target.value)} />
               </F>
               <F label="State">
-                <input className="enqf-in" placeholder="e.g. Maharashtra"
-                  value={form.state} onChange={e => set('state', e.target.value)} />
+                <select className="enqf-sel" value={form.state} onChange={e => set('state', e.target.value)}>
+                  <option value="">Select state</option>
+                  {STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
               </F>
               <F label="Full Address" req err={errors.address} cls="full">
                 <textarea className={`enqf-ta${errors.address ? ' enqf-ta--err' : ''}`}
@@ -463,10 +490,12 @@ export default function EnquiryPage() {
                     </div>
                     <div className="enqf-item-body">
                       <div className="g2">
-                        <F label="Model No." req err={errors[`item_${idx}_modelNo`]}>
-                          <input className={`enqf-in${errors[`item_${idx}_modelNo`] ? ' enqf-in--err' : ''}`}
-                            placeholder="e.g. USEPL-6V"
-                            value={item.modelNo} onChange={e => setItem(item.id, 'modelNo', e.target.value)} />
+                        <F label="Model" req err={errors[`item_${idx}_modelNo`]}>
+                          <select className={`enqf-sel${errors[`item_${idx}_modelNo`] ? ' enqf-sel--err' : ''}`}
+                            value={item.modelNo} onChange={e => setItem(item.id, 'modelNo', e.target.value)}>
+                            <option value="">Select model</option>
+                            {MODELS.map(m => <option key={m} value={m}>{m}</option>)}
+                          </select>
                         </F>
                         <F label="Size">
                           <select className="enqf-sel" value={item.size}
@@ -480,12 +509,15 @@ export default function EnquiryPage() {
                             placeholder="e.g. 2" inputMode="numeric"
                             value={item.qty} onChange={e => setItem(item.id, 'qty', e.target.value.replace(/\D/g, ''))} />
                         </F>
-                        <F label="Price Region" req err={errors[`item_${idx}_priceRegion`]}>
-                          <select className={`enqf-sel${errors[`item_${idx}_priceRegion`] ? ' enqf-sel--err' : ''}`}
-                            value={item.priceRegion} onChange={e => setItem(item.id, 'priceRegion', e.target.value)}>
-                            <option value="">Select region</option>
-                            {REGIONS.map(r => <option key={r} value={r}>{r}</option>)}
-                          </select>
+                        <F label="Price">
+                          <div className={`enqf-in`} style={{
+                            background: item.price ? 'rgba(26,55,170,0.05)' : '#f8f9fc',
+                            color: item.price ? '#1A37AA' : '#b0bbc9',
+                            fontWeight: item.price ? 700 : 400,
+                            cursor: 'default',
+                          }}>
+                            {item.price || 'Auto-filled based on state & size'}
+                          </div>
                         </F>
                       </div>
                     </div>

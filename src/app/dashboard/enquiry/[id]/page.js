@@ -4,9 +4,22 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-const REGIONS = ['North India','South India','East India','West India','Central India','Export / International'];
-const SIZES   = ['Small','Medium','Large','Custom'];
+const MODELS  = ['Pinnacle','Nandak'];
+const SIZES   = ['5','6','7','8','10'];
+const STATES  = ['Telangana','Karnataka'];
 const SOURCES = ['Cold Call','Reference','Exhibition','Online / Website','Social Media','Other'];
+
+const PRICE_TABLE = {
+  Telangana: { Pinnacle: { '5':'₹ 30 L','6':'₹ 33 L','7':'₹ 36 L','8':'₹ 40 L','10':'₹ 47 L' } },
+  Karnataka: { Pinnacle: { '5':'₹ 30 L','6':'₹ 33 L','7':'₹ 36 L','8':'₹ 40 L','10':'₹ 47 L' } },
+};
+const getPrice = (state, model, size, qty) => {
+  const base = PRICE_TABLE[state]?.[model]?.[size];
+  if (!base) return '';
+  const num = parseFloat(base.replace(/[^\d.]/g, ''));
+  const q = parseInt(qty) || 1;
+  return `₹ ${(num * q).toFixed(num * q % 1 === 0 ? 0 : 1)} L`;
+};
 
 const fmtDate = iso => {
   if (!iso) return '—';
@@ -299,10 +312,18 @@ export default function EnquiryDetailPage() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  const set = (k, v) => setDraft(d => ({ ...d, [k]: v }));
+  const set = (k, v) => setDraft(d => {
+    const updated = { ...d, [k]: v };
+    if (k === 'state') {
+      updated.items = (d.items || []).map(it => ({ ...it, price: getPrice(v, it.modelNo, it.size, it.qty) }));
+    }
+    return updated;
+  });
   const setItem = (idx, k, v) => setDraft(d => {
     const items = [...(d.items || [])];
-    items[idx] = { ...items[idx], [k]: v };
+    const updated = { ...items[idx], [k]: v };
+    updated.price = getPrice(d.state, updated.modelNo, updated.size, updated.qty);
+    items[idx] = updated;
     return { ...d, items };
   });
 
@@ -442,7 +463,12 @@ export default function EnquiryDetailPage() {
               {editing ? <input className="eqd-in" value={draft.location || ''} onChange={e => set('location', e.target.value)} /> : <Val v={draft.location} />}
             </Field>
             <Field label="State">
-              {editing ? <input className="eqd-in" value={draft.state || ''} onChange={e => set('state', e.target.value)} /> : <Val v={draft.state} muted />}
+              {editing ? (
+                <select className="eqd-sel" value={draft.state || ''} onChange={e => set('state', e.target.value)}>
+                  <option value="">Select state</option>
+                  {STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+              ) : <Val v={draft.state} muted />}
             </Field>
             <Field label="Full Address" cls="full">
               {editing ? <textarea className="eqd-ta" rows={3} value={draft.address || ''} onChange={e => set('address', e.target.value)} /> : <Val v={draft.address} muted />}
@@ -487,8 +513,13 @@ export default function EnquiryDetailPage() {
                   </div>
                   <div className="eqd-item-body">
                     <div className="g2">
-                      <Field label="Model No.">
-                        {editing ? <input className="eqd-in" value={item.modelNo || ''} onChange={e => setItem(idx, 'modelNo', e.target.value)} /> : <Val v={item.modelNo} />}
+                      <Field label="Model">
+                        {editing ? (
+                          <select className="eqd-sel" value={item.modelNo || ''} onChange={e => setItem(idx, 'modelNo', e.target.value)}>
+                            <option value="">Select model</option>
+                            {MODELS.map(m => <option key={m} value={m}>{m}</option>)}
+                          </select>
+                        ) : <Val v={item.modelNo} />}
                       </Field>
                       <Field label="Size">
                         {editing ? (
@@ -501,13 +532,16 @@ export default function EnquiryDetailPage() {
                       <Field label="Quantity">
                         {editing ? <input className="eqd-in" value={item.qty || ''} onChange={e => setItem(idx, 'qty', e.target.value)} /> : <Val v={item.qty} />}
                       </Field>
-                      <Field label="Price Region">
+                      <Field label="Price">
                         {editing ? (
-                          <select className="eqd-sel" value={item.priceRegion || ''} onChange={e => setItem(idx, 'priceRegion', e.target.value)}>
-                            <option value="">Select region</option>
-                            {REGIONS.map(r => <option key={r} value={r}>{r}</option>)}
-                          </select>
-                        ) : <Val v={item.priceRegion} muted />}
+                          <div className="eqd-val" style={{
+                            background: item.price ? 'rgba(26,55,170,0.05)' : undefined,
+                            color: item.price ? '#1A37AA' : undefined,
+                            fontWeight: item.price ? 700 : 400,
+                          }}>
+                            {item.price || 'Auto-filled based on state & size'}
+                          </div>
+                        ) : <Val v={item.price} />}
                       </Field>
                     </div>
                   </div>
