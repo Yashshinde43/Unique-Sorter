@@ -491,7 +491,9 @@ export default function EnquiryDetailPage() {
     );
     const found = types.find((t, i) => results[i].success && results[i].data) || null;
     setExistingQuotType(found);
-    setQuotationType('1page');
+    // If a quotation exists, default to that type so user sees what they have
+    // User must explicitly switch to the other type (which will trigger the warning)
+    setQuotationType(found || '1page');
     setShowGenConfirm(true);
   };
 
@@ -811,9 +813,24 @@ export default function EnquiryDetailPage() {
                     </svg>
                   </div>
                   <div>
-                    <div className="eqd-overwrite-warn-title">Previous quotation will be replaced</div>
+                    <div className="eqd-overwrite-warn-title">
+                      {quotationType === existingQuotType 
+                        ? 'Regenerate existing quotation'
+                        : 'Switch quotation type'}
+                    </div>
                     <div className="eqd-overwrite-warn-body">
-                      A <strong>{existingQuotType === '1page' ? '1-Page' : 'Detailed'} Quotation</strong> already exists for this enquiry. Generating a new one will permanently replace it.
+                      {quotationType === existingQuotType ? (
+                        <>
+                          A <strong>{existingQuotType === '1page' ? '1-Page' : 'Detailed'} Quotation</strong> already exists. 
+                          Generating will replace it with a new one.
+                        </>
+                      ) : (
+                        <>
+                          You currently have a <strong>{existingQuotType === '1page' ? '1-Page' : 'Detailed'} Quotation</strong>. 
+                          Only one quotation type is allowed per enquiry. 
+                          Switching to <strong>{quotationType === '1page' ? '1-Page' : 'Detailed'}</strong> will delete the existing one permanently.
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -835,7 +852,13 @@ export default function EnquiryDetailPage() {
                       <polyline points="20 6 9 17 4 12"/>
                     </svg>
                   )}
-                  {overwriting ? 'Replacing…' : existingQuotType ? 'Replace & Generate' : 'Generate Now'}
+                  {overwriting 
+                    ? 'Replacing…' 
+                    : existingQuotType 
+                      ? quotationType === existingQuotType 
+                        ? 'Regenerate' 
+                        : 'Switch & Generate' 
+                      : 'Generate Now'}
                 </button>
               </div>
 
