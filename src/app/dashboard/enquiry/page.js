@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -526,6 +526,56 @@ function EnquiryDrawer({ row, onClose, onUpdated, onDeleted }) {
             </div>
           </div>
 
+          {/* Commodity & Remarks */}
+          {(row.commodity || row.remarks || editing) && (
+            <div className="eq-section">
+              <div className="eq-section-head">
+                <div className="eq-section-icon">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
+                  </svg>
+                </div>
+                <span className="eq-section-title">Commodity & Remarks</span>
+                <div className="eq-section-line" />
+              </div>
+              <div className="eq-fields">
+                <div className="eq-fields-row single">
+                  <div className="eq-field">
+                    <span className="eq-field-label">
+                      <svg className="eq-field-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
+                      </svg>
+                      Commodity
+                    </span>
+                    {editing ? (
+                      <select className="eq-input" value={draft.commodity || ''} onChange={e => set('commodity', e.target.value)}>
+                        <option value="">Select commodity</option>
+                        {['Rice', 'Pulses', 'Multiproduct', 'Tuvar Dal', 'Moong Dal'].map(c => <option key={c} value={c}>{c}</option>)}
+                      </select>
+                    ) : (
+                      <span className="eq-field-value">{draft.commodity || '—'}</span>
+                    )}
+                  </div>
+                </div>
+                <div className="eq-fields-row single">
+                  <div className="eq-field">
+                    <span className="eq-field-label">
+                      <svg className="eq-field-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                      </svg>
+                      Remarks
+                    </span>
+                    {editing ? (
+                      <textarea className="eq-input" rows={3} value={draft.remarks || ''} onChange={e => set('remarks', e.target.value)} style={{ resize: 'vertical', height: 'auto', minHeight: 72 }} />
+                    ) : (
+                      <span className="eq-field-value muted">{draft.remarks || '—'}</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Requirement */}
           <div className="eq-section">
             <div className="eq-section-head">
@@ -644,6 +694,55 @@ export default function EnquiryPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState('');
 
+  /* filter state */
+  const [fName,   setFName]   = useState('');
+  const [fMobile, setFMobile] = useState('');
+  const [fSource, setFSource] = useState('');
+  const [fDate,   setFDate]   = useState('');
+  const [open,    setOpen]    = useState(false);
+
+  const filtered = useMemo(() => {
+    return rows.filter(r => {
+      const name   = `${r.customerName || ''} ${r.millName || ''}`.toLowerCase();
+      const mobile = (r.mobile || '').toLowerCase();
+      const source = (r.source || '').toLowerCase();
+      const date   = (r.createdAt || '').slice(0, 10);
+      return (
+        (!fName   || name.includes(fName.toLowerCase())) &&
+        (!fMobile || mobile.includes(fMobile.toLowerCase())) &&
+        (!fSource || source.includes(fSource.toLowerCase())) &&
+        (!fDate   || date === fDate)
+      );
+    });
+  }, [rows, fName, fMobile, fSource, fDate]);
+
+  const chips = [
+    fName   && { key: 'name',   label: fName,   clear: () => setFName('') },
+    fMobile && { key: 'mobile', label: fMobile, clear: () => setFMobile('') },
+    fSource && { key: 'source', label: fSource, clear: () => setFSource('') },
+    fDate   && { key: 'date',   label: fDate,   clear: () => setFDate('') },
+  ].filter(Boolean);
+
+  const hasAny = chips.length > 0;
+
+  const closePanel = useCallback(() => setOpen(false), []);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e) => {
+      if (!e.target.closest('.eq-filter-wrap')) closePanel();
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open, closePanel]);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e) => { if (e.key === 'Escape') closePanel(); };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [open, closePanel]);
+
   useEffect(() => {
     fetch('/api/enquiry')
       .then(r => r.json())
@@ -657,16 +756,118 @@ export default function EnquiryPage() {
 
   return (
     <div className="page-wrapper">
+      <style>{`
+        .eq-filter-wrap { position: relative; display: inline-flex; align-items: center; gap: 8px; }
+        .qf-btn {
+          display: inline-flex; align-items: center; gap: 7px;
+          padding: 0 14px; height: 36px; border-radius: 9px;
+          font-size: 13px; font-weight: 600; font-family: var(--font-body);
+          cursor: pointer; transition: all 0.15s;
+          border: 1.5px solid var(--border);
+          background: var(--surface); color: var(--text-secondary);
+          white-space: nowrap;
+        }
+        .qf-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-dim); }
+        .qf-btn.qf-open { border-color: var(--blue); color: var(--blue); background: var(--blue-dim); }
+        .qf-count {
+          display: inline-flex; align-items: center; justify-content: center;
+          min-width: 18px; height: 18px; border-radius: 99px;
+          background: var(--blue); color: #fff; font-size: 10px; font-weight: 700;
+          padding: 0 5px;
+        }
+        .qf-chips { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .qf-chip {
+          display: inline-flex; align-items: center; gap: 5px;
+          padding: 3px 10px 3px 10px; border-radius: 99px;
+          background: var(--blue-dim); border: 1px solid rgba(26,55,170,0.25);
+          color: var(--blue); font-size: 11.5px; font-weight: 600; font-family: var(--font-body);
+          animation: qf-chip-in 0.18s ease;
+        }
+        .qf-chip button {
+          display: inline-flex; align-items: center; justify-content: center;
+          width: 14px; height: 14px; border-radius: 50%;
+          border: none; background: transparent; color: inherit;
+          cursor: pointer; padding: 0; opacity: 0.7; transition: opacity 0.12s;
+        }
+        .qf-chip button:hover { opacity: 1; }
+        @keyframes qf-chip-in { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
+
+        .qf-panel {
+          background: var(--surface); border: 1.5px solid var(--border);
+          border-top: none; padding: 20px 20px 16px;
+          animation: qf-slide-down 0.18s ease;
+        }
+        @keyframes qf-slide-down { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+        .qf-grid {
+          display: grid; grid-template-columns: repeat(4, 1fr);
+          gap: 14px; align-items: flex-start;
+        }
+        .qf-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 0; }
+        .qf-label { font-size: 11px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: #1e293b; }
+        .qf-input-wrap { position: relative; }
+        .qf-input {
+          width: 100%; height: 36px; padding: 0 10px 0 32px;
+          border: 1.5px solid var(--border); border-radius: 8px;
+          font-size: 13px; font-family: var(--font-body); color: var(--text-primary);
+          background: var(--bg); outline: none;
+          transition: border-color 0.15s, box-shadow 0.15s; box-sizing: border-box;
+        }
+        .qf-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,55,170,0.1); }
+        .qf-input-icon {
+          position: absolute; left: 9px; top: 50%; transform: translateY(-50%);
+          color: var(--text-muted); pointer-events: none;
+        }
+        .qf-panel-reset {
+          display: inline-flex; align-items: center; gap: 5px;
+          margin-top: 12px; font-size: 12px; font-weight: 600;
+          color: var(--text-muted); background: none; border: none; cursor: pointer;
+          padding: 0; font-family: var(--font-body); transition: color 0.13s;
+        }
+        .qf-panel-reset:hover { color: #c0392b; }
+        .qf-result-bar {
+          font-size: 12px; color: var(--text-muted); padding: 8px 20px 0;
+          font-family: var(--font-body);
+        }
+      `}</style>
       <div className="page-content">
         <div className="card">
           <div className="card-header">
             <div>
               <h2 className="card-title">All Enquiries</h2>
               <p className="card-subtitle">
-                {loading ? 'Loading…' : `${rows.length} record${rows.length !== 1 ? 's' : ''} found`}
+                {loading ? 'Loading…' : `${filtered.length} record${filtered.length !== 1 ? 's' : ''} found`}
               </p>
             </div>
-            <div className="card-actions">
+            <div className="card-actions" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              {hasAny && (
+                <div className="qf-chips">
+                  {chips.map(c => (
+                    <span key={c.key} className="qf-chip">
+                      {c.label}
+                      <button onClick={c.clear} aria-label="Remove filter">
+                        <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+                          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+              <div className="eq-filter-wrap">
+                <button className={`qf-btn${open ? ' qf-open' : ''}`} onClick={() => setOpen(v => !v)}>
+                  {open ? (
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round">
+                      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                  ) : (
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round">
+                      <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="12" y1="18" x2="12" y2="18"/>
+                    </svg>
+                  )}
+                  {open ? 'Close' : 'Filter'}
+                  {!open && hasAny && <span className="qf-count">{chips.length}</span>}
+                </button>
+              </div>
               <Link href="/enquiry" className="btn-primary">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                   <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -675,6 +876,63 @@ export default function EnquiryPage() {
               </Link>
             </div>
           </div>
+
+          {open && (
+            <div className="qf-panel eq-filter-wrap" style={{ width: '100%', boxSizing: 'border-box' }}>
+              <div className="qf-grid">
+                <div className="qf-field">
+                  <label className="qf-label">Name / Company</label>
+                  <div className="qf-input-wrap">
+                    <svg className="qf-input-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    <input className="qf-input" placeholder="Search name…" value={fName} onChange={e => setFName(e.target.value)} autoFocus />
+                  </div>
+                </div>
+                <div className="qf-field">
+                  <label className="qf-label">Mobile</label>
+                  <div className="qf-input-wrap">
+                    <svg className="qf-input-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                      <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
+                    </svg>
+                    <input className="qf-input" placeholder="Search mobile…" value={fMobile} onChange={e => setFMobile(e.target.value)} />
+                  </div>
+                </div>
+                <div className="qf-field">
+                  <label className="qf-label">Source</label>
+                  <div className="qf-input-wrap">
+                    <svg className="qf-input-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                      <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    </svg>
+                    <input className="qf-input" placeholder="Search source…" value={fSource} onChange={e => setFSource(e.target.value)} />
+                  </div>
+                </div>
+                <div className="qf-field">
+                  <label className="qf-label">Date</label>
+                  <div className="qf-input-wrap">
+                    <svg className="qf-input-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                    <input className="qf-input" type="date" value={fDate} onChange={e => setFDate(e.target.value)} style={{ paddingLeft: 32 }} />
+                  </div>
+                </div>
+              </div>
+              {hasAny && (
+                <button className="qf-panel-reset" onClick={() => { setFName(''); setFMobile(''); setFSource(''); setFDate(''); }}>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                  Clear all filters
+                </button>
+              )}
+            </div>
+          )}
+
+          {hasAny && !open && (
+            <div className="qf-result-bar">
+              Showing {filtered.length} of {rows.length} enquiries
+            </div>
+          )}
 
           <div className="table-wrapper">
             {error ? (
@@ -703,26 +961,28 @@ export default function EnquiryPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {rows.length === 0 ? (
+                  {filtered.length === 0 ? (
                     <tr>
                       <td colSpan={9} style={{ textAlign: 'center', padding: '56px 0' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
                           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#d0d8e8" strokeWidth="1.4" strokeLinecap="round">
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                           </svg>
-                          <div style={{ fontSize: 14, fontWeight: 600, color: '#8898aa' }}>No enquiries yet</div>
-                          <div style={{ fontSize: 12.5, color: '#aab4c4' }}>Add your first enquiry to get started</div>
-                          <Link href="/enquiry" className="btn-primary" style={{ marginTop: 4 }}>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                            </svg>
-                            New Enquiry
-                          </Link>
+                          <div style={{ fontSize: 14, fontWeight: 600, color: '#8898aa' }}>{hasAny ? 'No results match your filters' : 'No enquiries yet'}</div>
+                          <div style={{ fontSize: 12.5, color: '#aab4c4' }}>{hasAny ? 'Try adjusting or clearing the filters' : 'Add your first enquiry to get started'}</div>
+                          {!hasAny && (
+                            <Link href="/enquiry" className="btn-primary" style={{ marginTop: 4 }}>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                              </svg>
+                              New Enquiry
+                            </Link>
+                          )}
                         </div>
                       </td>
                     </tr>
                   ) : (
-                    rows.map((r, i) => (
+                    filtered.map((r, i) => (
                       <tr
                         key={r.id}
                         className="table-row-clickable"

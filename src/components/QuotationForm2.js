@@ -576,6 +576,7 @@ function mapEnquiryToForm2(enq) {
     airReq:         product?.airReq || "",
     basePrice:      product?.basePrice || "",
     refDate:        todayISO(),
+    commodity:      enq.commodity || "",
   };
 }
 

@@ -3,10 +3,11 @@
 import { useState } from 'react';
 
 /* ─── Constants ───────────────────────────────────────────────── */
-const MODELS  = ['Pinnacle', 'Nandak'];
-const SIZES   = ['5', '6', '7', '8', '10'];
-const STATES  = ['Telangana', 'Karnataka'];
-const SOURCES = ['Cold Call', 'Reference', 'Exhibition', 'Online / Website', 'Social Media', 'Other'];
+const MODELS      = ['Pinnacle', 'Nandak'];
+const SIZES       = ['5', '6', '7', '8', '10'];
+const STATES      = ['Telangana', 'Karnataka'];
+const SOURCES     = ['Cold Call', 'Reference', 'Exhibition', 'Online / Website', 'Social Media', 'Other'];
+const COMMODITIES = ['Rice', 'Pulses', 'Multiproduct', 'Tuvar Dal', 'Moong Dal'];
 
 const PRICE_TABLE = {
   Telangana: { Pinnacle: { '5': '₹ 30 L', '6': '₹ 33 L', '7': '₹ 36 L', '8': '₹ 40 L', '10': '₹ 47 L' } },
@@ -36,11 +37,13 @@ const INIT = () => ({
   source: '',
 
   hasRequirement: null,
+  commodity: '',
   futureNote: '',
   followUpDate: '',
   probableMonth: '',
   orderChances: '',
   items: [{ id: 1, modelNo: '', size: '', qty: '', price: '' }],
+  remarks: '',
 });
 
 /* ─── CSS ─────────────────────────────────────────────────────── */
@@ -473,6 +476,18 @@ export default function EnquiryPage() {
               </div>
             </F>
 
+            {/* Commodity — shown when requirement type is selected */}
+            {form.hasRequirement !== null && (
+              <div style={{ marginTop: 16 }}>
+                <F label="Commodity">
+                  <select className="enqf-sel" value={form.commodity} onChange={e => set('commodity', e.target.value)}>
+                    <option value="">Select commodity</option>
+                    {COMMODITIES.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                </F>
+              </div>
+            )}
+
             {/* YES → items */}
             {form.hasRequirement === true && (
               <div className="enqf-items">
@@ -562,6 +577,13 @@ export default function EnquiryPage() {
                 </div>
               </div>
             )}
+
+            {/* ── Section 4 : Remarks ── */}
+            <Divider num="4" label="Remarks" />
+            <F label="Additional Remarks">
+              <textarea className="enqf-ta" placeholder="Any additional notes, observations, or remarks about this enquiry..."
+                rows={4} value={form.remarks} onChange={e => set('remarks', e.target.value)} />
+            </F>
 
             {/* ── Bottom save ── */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 16, marginTop: 36, paddingTop: 24, borderTop: '2px solid rgba(13,24,40,.08)' }}>

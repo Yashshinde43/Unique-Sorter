@@ -833,8 +833,9 @@ function mapEnquiryToForm(enq) {
     hsn:        modelMatch?.hsn || '84371000',
     qty:        item.qty ? `${item.qty} Set.` : '01 Set.',
     basePrice,
-    refDate:  today,
-    quotDate: today,
+    refDate:   today,
+    quotDate:  today,
+    commodity: enq.commodity || '',
   };
 }
 

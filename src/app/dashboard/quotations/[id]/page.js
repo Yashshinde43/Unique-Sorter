@@ -397,6 +397,22 @@ export default function QuotationViewPage() {
         {record.quotationType === 'detailed' && <span className="qv-bar-chip" style={{ background: 'rgba(82,186,79,.25)', borderColor: 'rgba(82,186,79,.5)', color: '#7edd7b' }}>DETAILED · 6 PG</span>}
         <div className="qv-bar-space" />
 
+        {/* Edit enquiry button */}
+        {record.enquiryId && (
+          <button
+            style={{ height: 30, padding: '0 14px', borderRadius: 6, border: '1px solid rgba(255,255,255,.18)', background: 'rgba(255,255,255,.07)', color: 'rgba(255,255,255,.75)', fontSize: 12, fontFamily: "'DM Sans',sans-serif", fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, transition: 'all .15s' }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,.35)'; e.currentTarget.style.color = '#fff'; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,.18)'; e.currentTarget.style.color = 'rgba(255,255,255,.75)'; }}
+            onClick={() => router.push(`/dashboard/enquiry/${record.enquiryId}`)}
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/>
+            </svg>
+            Edit Enquiry
+          </button>
+        )}
+
         {/* Share dropdown */}
         <div className="qv-share-wrap">
           <button className="qv-share-btn" onClick={() => setShowShare(s => !s)}>
