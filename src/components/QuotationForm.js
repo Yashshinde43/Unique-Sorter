@@ -965,28 +965,40 @@ export default function QuotationForm({ enquiryId = null, quotationType = null }
   };
 
   const handleShareWhatsApp = async () => {
-    await downloadBrochure();
+    setShowShare(false);
+    setSaved('downloading');
+    try {
+      await handleDownload();
+    } catch {}
     const phone = f.mobile?.replace(/\D/g, '');
-    const text = shareText() + '\n\nPlease find the company brochure in the downloaded file (UniqueSorter-Brochure.pdf).';
+    const text = shareText() + '\n\n[Quotation PDF has been downloaded to your device — please attach it to this message]';
     const msg = encodeURIComponent(text);
     const url = phone
       ? `https://wa.me/91${phone}?text=${msg}`
       : `https://wa.me/?text=${msg}`;
     window.open(url, '_blank');
-    setShowShare(false);
-    setSaved('brochure');
-    setTimeout(() => setSaved(false), 3000);
+    setSaved('pdf-ready');
+    setTimeout(() => setSaved(false), 5000);
   };
 
   const handleShareGmail = async () => {
-    await downloadBrochure();
-    const subject = encodeURIComponent(`Quotation ${f.quotNo || ''} — Unique Sorter & Equipments Pvt. Ltd.`);
-    const body = encodeURIComponent(shareText() + '\n\nPlease find the company brochure attached (UniqueSorter-Brochure.pdf — downloaded to your device).');
-    const to = f.email ? encodeURIComponent(f.email) : '';
-    window.open(`https://mail.google.com/mail/?view=cm&to=${to}&su=${subject}&body=${body}`, '_blank');
+    if (!f.email?.trim()) {
+      setShowShare(false);
+      setSaved('no-email');
+      setTimeout(() => setSaved(false), 4000);
+      return;
+    }
     setShowShare(false);
-    setSaved('brochure');
-    setTimeout(() => setSaved(false), 3000);
+    setSaved('downloading');
+    try {
+      await handleDownload();
+    } catch {}
+    const subject = encodeURIComponent(`Quotation ${f.quotNo || ''} — Unique Sorter & Equipments Pvt. Ltd.`);
+    const body = encodeURIComponent(shareText() + '\n\n[Quotation PDF has been downloaded to your device — please attach it to this email]');
+    const to = encodeURIComponent(f.email.trim());
+    window.open(`https://mail.google.com/mail/?view=cm&to=${to}&su=${subject}&body=${body}`, '_blank');
+    setSaved('pdf-ready-gmail');
+    setTimeout(() => setSaved(false), 5000);
   };
 
   const handleDownload = async () => {
@@ -1110,9 +1122,23 @@ export default function QuotationForm({ enquiryId = null, quotationType = null }
 
       {/* ── SAVE TOAST ── */}
       {saved && (
-        <div className="qf-toast">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          {saved === 'brochure' ? 'Brochure downloaded — please attach it to your message' : enquiryId ? 'Saved! Redirecting to quotations…' : 'Quotation saved successfully'}
+        <div className="qf-toast" style={saved === 'no-email' ? { background: '#c0392b' } : (saved === 'pdf-ready' || saved === 'pdf-ready-gmail') ? { background: '#1a7a3c' } : {}}>
+          {saved === 'no-email' || saved === 'downloading' ? (
+            saved === 'downloading'
+              ? <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{ animation: 'qf-spin 0.8s linear infinite' }}><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+              : <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          ) : (
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          )}
+          {saved === 'no-email'
+            ? 'Customer has not provided an email address'
+            : saved === 'downloading'
+            ? 'Generating PDF…'
+            : saved === 'pdf-ready'
+            ? 'PDF downloaded — please attach it to the WhatsApp message'
+            : saved === 'pdf-ready-gmail'
+            ? 'PDF downloaded — please attach it to the Gmail draft'
+            : enquiryId ? 'Saved! Redirecting to quotations…' : 'Quotation saved successfully'}
         </div>
       )}
 
@@ -1145,9 +1171,6 @@ export default function QuotationForm({ enquiryId = null, quotationType = null }
                   {/* backdrop to close */}
                   <div style={{ position: 'fixed', inset: 0, zIndex: 998 }} onClick={() => setShowShare(false)} />
                   <div className="qf-share-dropdown">
-                    <div style={{ padding: '7px 12px 5px', fontSize: 10.5, color: '#8a96aa', fontFamily: "'DM Sans',sans-serif", letterSpacing: '.2px' }}>
-                      Brochure PDF will also be downloaded
-                    </div>
                     <button className="qf-share-item" onClick={handleShareWhatsApp}>
                       <span className="qf-share-item-icon" style={{ background: '#e8f8ee' }}>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="#25D366">
@@ -1157,7 +1180,7 @@ export default function QuotationForm({ enquiryId = null, quotationType = null }
                       </span>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                         <span>Share on WhatsApp</span>
-                        <span style={{ fontSize: 10.5, color: '#9aa5b8' }}>+ Brochure downloaded</span>
+                        <span style={{ fontSize: 10.5, color: '#9aa5b8' }}>To: {f.mobile || 'no number provided'}</span>
                       </div>
                     </button>
                     <button className="qf-share-item" onClick={handleShareGmail}>
@@ -1166,7 +1189,7 @@ export default function QuotationForm({ enquiryId = null, quotationType = null }
                       </span>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                         <span>Send via Gmail</span>
-                        <span style={{ fontSize: 10.5, color: '#9aa5b8' }}>+ Brochure downloaded</span>
+                        <span style={{ fontSize: 10.5, color: f.email ? '#9aa5b8' : '#e05555' }}>{f.email || 'no email provided'}</span>
                       </div>
                     </button>
                     <div className="qf-share-sep"/>
@@ -1175,12 +1198,6 @@ export default function QuotationForm({ enquiryId = null, quotationType = null }
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1A37AA" strokeWidth="2.2" strokeLinecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                       </span>
                       <span>Download Quotation PDF</span>
-                    </button>
-                    <button className="qf-share-item" onClick={() => { downloadBrochure(); setShowShare(false); setSaved('brochure'); setTimeout(() => setSaved(false), 3000); }}>
-                      <span className="qf-share-item-icon" style={{ background: '#f0faf0' }}>
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#52ba4f" strokeWidth="2.2" strokeLinecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                      </span>
-                      <span>Download Brochure PDF</span>
                     </button>
                   </div>
                 </>
