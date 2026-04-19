@@ -256,6 +256,110 @@ const CSS = `
   }
   .eqd-popup-confirm:hover { box-shadow: 0 6px 20px rgba(26,55,170,0.45); transform: translateY(-1px); }
   .eqd-popup-confirm:active { transform: translateY(0); }
+  .eqd-popup-confirm:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  /* ── Quotation type selector ── */
+  .eqd-qtype-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .eqd-qtype-opt {
+    position: relative; cursor: pointer;
+    border: 2px solid #e0e8f4; border-radius: 12px;
+    padding: 14px 14px 14px 16px;
+    background: #f8faff;
+    transition: border-color .18s, background .18s, box-shadow .18s;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .eqd-qtype-opt:hover { border-color: #b8c8ee; background: #f2f6ff; }
+  .eqd-qtype-opt.selected {
+    border-color: #1A37AA;
+    background: linear-gradient(135deg, rgba(26,55,170,0.06) 0%, rgba(37,73,204,0.04) 100%);
+    box-shadow: 0 0 0 3px rgba(26,55,170,0.1), inset 0 1px 0 rgba(26,55,170,0.06);
+  }
+  .eqd-qtype-opt input { position: absolute; opacity: 0; pointer-events: none; }
+  .eqd-qtype-radio {
+    width: 16px; height: 16px; border-radius: 50%;
+    border: 2px solid #c8d4e8; background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 8px; flex-shrink: 0; transition: border-color .18s;
+  }
+  .eqd-qtype-opt.selected .eqd-qtype-radio {
+    border-color: #1A37AA;
+    background: #1A37AA;
+  }
+  .eqd-qtype-radio-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #fff; opacity: 0; transform: scale(0);
+    transition: opacity .15s, transform .2s cubic-bezier(0.34,1.4,0.64,1);
+  }
+  .eqd-qtype-opt.selected .eqd-qtype-radio-dot { opacity: 1; transform: scale(1); }
+  .eqd-qtype-name {
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700;
+    color: #0d1828; line-height: 1.2;
+  }
+  .eqd-qtype-desc {
+    font-family: 'DM Sans', sans-serif; font-size: 11.5px; color: #8898aa; line-height: 1.4;
+  }
+  .eqd-qtype-opt.selected .eqd-qtype-name { color: #1A37AA; }
+  .eqd-qtype-opt.selected .eqd-qtype-desc { color: #5a7ac0; }
+  .eqd-qtype-tag {
+    display: inline-block; margin-top: 6px;
+    padding: 2px 7px; border-radius: 5px;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.3px;
+    font-family: 'Barlow Condensed', sans-serif; text-transform: uppercase;
+  }
+  .eqd-qtype-tag--compact { background: rgba(82,186,79,.12); color: #2e8c2b; }
+  .eqd-qtype-tag--full    { background: rgba(26,55,170,.1);  color: #1A37AA; }
+
+  /* ── Popup customer banner ── */
+  .eqd-popup-cust-banner {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 18px;
+  }
+  .eqd-popup-cust-avatar {
+    width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0;
+    background: linear-gradient(135deg, #1A37AA 0%, #2549cc 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif; font-size: 17px; font-weight: 800;
+    color: #fff; letter-spacing: 0.5px;
+    box-shadow: 0 4px 12px rgba(26,55,170,.3);
+  }
+  .eqd-popup-cust-info { flex: 1; min-width: 0; }
+  .eqd-popup-cust-name {
+    font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
+    color: #0d1828; letter-spacing: -0.2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .eqd-popup-cust-sub {
+    font-family: 'DM Sans', sans-serif; font-size: 12px; color: #8898aa;
+    margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  /* ── Overwrite warning ── */
+  .eqd-overwrite-warn {
+    background: #fff8ed; border: 1.5px solid #f0a500;
+    border-radius: 10px; padding: 13px 15px; margin-bottom: 18px;
+    display: flex; gap: 12px; align-items: flex-start;
+  }
+  .eqd-overwrite-warn-icon {
+    width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+    background: #fef0cc; display: flex; align-items: center; justify-content: center;
+  }
+  .eqd-overwrite-warn-title {
+    font-family: 'Inter', sans-serif; font-size: 12.5px; font-weight: 700;
+    color: #92530a; margin-bottom: 3px;
+  }
+  .eqd-overwrite-warn-body {
+    font-family: 'DM Sans', sans-serif; font-size: 12px; color: #a0660f; line-height: 1.5;
+  }
+  .eqd-overwrite-warn-body strong { font-weight: 700; color: #7a4800; }
+  .eqd-confirm-overwrite {
+    width: 100%; padding: 11px 0; border-radius: 8px; border: none; cursor: pointer;
+    background: #d97706; color: #fff;
+    font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: background .15s, box-shadow .15s;
+  }
+  .eqd-confirm-overwrite:hover { background: #b45309; box-shadow: 0 4px 14px rgba(217,119,6,.35); }
+  .eqd-confirm-overwrite:disabled { opacity: .6; cursor: not-allowed; }
 
   @media (max-width: 640px) {
     .eqd-content { padding: 20px 16px 60px; }
@@ -303,7 +407,9 @@ export default function EnquiryDetailPage() {
   const [confirmDel, setConfirmDel] = useState(false);
   const [deleting,   setDeleting]   = useState(false);
   const [showGenConfirm, setShowGenConfirm] = useState(false);
-
+  const [quotationType, setQuotationType] = useState('1page');
+  const [existingQuotType, setExistingQuotType] = useState(null); // existing quotation type if any
+  const [overwriting, setOverwriting]       = useState(false);
   useEffect(() => {
     fetch(`/api/enquiry/${id}`)
       .then(r => r.json())
@@ -330,10 +436,12 @@ export default function EnquiryDetailPage() {
   const handleSave = async () => {
     setSaving(true); setSaveErr('');
     try {
-      const res  = await fetch(`/api/enquiry/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(draft) });
+      const payload = { ...draft, _editedBy: 'Admin Staff' };
+      const res  = await fetch(`/api/enquiry/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
       const data = await res.json();
       if (!data.success) throw new Error(data.error || 'Save failed');
-      setRow({ ...draft }); setEditing(false);
+      setRow({ ...draft });
+      setEditing(false);
     } catch (e) { setSaveErr(e.message); }
     finally { setSaving(false); }
   };
@@ -374,6 +482,29 @@ export default function EnquiryDetailPage() {
       </div>
     </div>
   );
+
+  const openGenPopup = async () => {
+    // Check if any quotation already exists for this enquiry
+    const types = ['1page', 'detailed'];
+    const results = await Promise.all(
+      types.map(t => fetch(`/api/quotations/${id}_${t}`).then(r => r.json()).catch(() => ({ success: false })))
+    );
+    const found = types.find((t, i) => results[i].success && results[i].data) || null;
+    setExistingQuotType(found);
+    setQuotationType('1page');
+    setShowGenConfirm(true);
+  };
+
+  const handleGenConfirm = async (router) => {
+    // Delete any existing quotation for this enquiry before generating new one
+    if (existingQuotType) {
+      setOverwriting(true);
+      await fetch(`/api/quotations/${id}_${existingQuotType}`, { method: 'DELETE' }).catch(() => {});
+      setOverwriting(false);
+    }
+    setShowGenConfirm(false);
+    router.push(`/dashboard/quotations/new?enquiryId=${id}&type=${quotationType}`);
+  };
 
   const isImmediate = draft.hasRequirement === true;
 
@@ -597,7 +728,7 @@ export default function EnquiryDetailPage() {
                   {saving ? 'Saving…' : 'Save Changes'}
                 </button>
               ) : (
-                <button className="eqd-btn eqd-btn--primary" onClick={() => setShowGenConfirm(true)}>
+                <button className="eqd-btn eqd-btn--primary" onClick={openGenPopup}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                     <polyline points="14 2 14 8 20 8"/>
@@ -617,13 +748,97 @@ export default function EnquiryDetailPage() {
       {showGenConfirm && (
         <div className="eqd-overlay" onClick={e => { if (e.target === e.currentTarget) setShowGenConfirm(false); }}>
           <div className="eqd-popup">
-            <div className="eqd-popup-body">
-              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: 15, fontWeight: 700, color: '#0d1828', marginBottom: 6 }}>Generate Quotation?</p>
-              <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: '#6b7a90', marginBottom: 20 }}>Are you sure you want to generate a quotation for <strong style={{ color: '#0d1828' }}>{row.customerName}</strong>?</p>
-              <div className="eqd-popup-actions">
-                <button className="eqd-popup-cancel" onClick={() => setShowGenConfirm(false)}>No, Cancel</button>
-                <Link href="/dashboard/quotations/new" className="eqd-popup-confirm" style={{ textDecoration: 'none' }}>Yes, Generate</Link>
+
+            {/* Dark header banner */}
+            <div className="eqd-popup-head">
+              <div className="eqd-popup-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="12" y1="18" x2="12" y2="12"/>
+                  <line x1="9" y1="15" x2="15" y2="15"/>
+                </svg>
               </div>
+              <div className="eqd-popup-title">Generate Quotation</div>
+              <div className="eqd-popup-subtitle">Choose the format before proceeding</div>
+            </div>
+
+            <div className="eqd-popup-body">
+
+              {/* Customer info banner */}
+              <div className="eqd-popup-cust-banner">
+                <div className="eqd-popup-cust-avatar">
+                  {(row.customerName || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
+                </div>
+                <div className="eqd-popup-cust-info">
+                  <div className="eqd-popup-cust-name">{row.customerName}</div>
+                  <div className="eqd-popup-cust-sub">{row.millName || row.location || 'Customer'}{row.location && row.millName ? ` · ${row.location}` : ''}</div>
+                </div>
+              </div>
+
+              {/* Quotation type selector */}
+              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 11.5, fontWeight: 700, color: '#8898aa', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: 10 }}>
+                Select Quotation Format
+              </div>
+              <div className="eqd-qtype-grid">
+                {[
+                  { id: '1page', name: '1 Page Quotation', desc: 'Compact summary — ideal for quick sharing', tag: 'Compact', tagCls: 'eqd-qtype-tag--compact' },
+                  { id: 'detailed', name: 'Detailed Quotation', desc: 'Full breakdown with specs & terms', tag: 'Full Detail', tagCls: 'eqd-qtype-tag--full' },
+                ].map(opt => (
+                  <label
+                    key={opt.id}
+                    className={`eqd-qtype-opt${quotationType === opt.id ? ' selected' : ''}`}
+                    onClick={() => setQuotationType(opt.id)}
+                  >
+                    <input type="radio" name="quotationType" value={opt.id} checked={quotationType === opt.id} onChange={() => setQuotationType(opt.id)} />
+                    <div className="eqd-qtype-radio">
+                      <div className="eqd-qtype-radio-dot" />
+                    </div>
+                    <div className="eqd-qtype-name">{opt.name}</div>
+                    <div className="eqd-qtype-desc">{opt.desc}</div>
+                    <span className={`eqd-qtype-tag ${opt.tagCls}`}>{opt.tag}</span>
+                  </label>
+                ))}
+              </div>
+
+              {/* Overwrite notice — shown when a quotation already exists */}
+              {existingQuotType && (
+                <div className="eqd-overwrite-warn">
+                  <div className="eqd-overwrite-warn-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2.2" strokeLinecap="round">
+                      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                      <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <div className="eqd-overwrite-warn-title">Previous quotation will be replaced</div>
+                    <div className="eqd-overwrite-warn-body">
+                      A <strong>{existingQuotType === '1page' ? '1-Page' : 'Detailed'} Quotation</strong> already exists for this enquiry. Generating a new one will permanently replace it.
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="eqd-popup-actions">
+                <button className="eqd-popup-cancel" onClick={() => setShowGenConfirm(false)}>Cancel</button>
+                <button
+                  className={existingQuotType ? 'eqd-confirm-overwrite' : 'eqd-popup-confirm'}
+                  disabled={overwriting}
+                  onClick={() => handleGenConfirm(router)}
+                >
+                  {overwriting ? (
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{ animation: 'eqd-spin .8s linear infinite' }}>
+                      <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                    </svg>
+                  ) : (
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                      <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                  )}
+                  {overwriting ? 'Replacing…' : existingQuotType ? 'Replace & Generate' : 'Generate Now'}
+                </button>
+              </div>
+
             </div>
           </div>
         </div>

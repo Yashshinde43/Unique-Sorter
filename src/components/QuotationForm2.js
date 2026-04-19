@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 /* ─── Helpers ─────────────────────────────────────────────────── */
@@ -158,7 +159,7 @@ const LETTERHEAD = `
   <div style="height:0;border-top:2px solid #444;margin:6px 0 0;"></div>`;
 
 /* ─── Build full 6-page HTML ──────────────────────────────────── */
-function buildHTML(f) {
+export function buildHTML(f) {
   const base = parseFloat(f.basePrice) || 0;
   const gst18 = base * 0.18;
   const total = base + gst18;
@@ -515,6 +516,7 @@ const CSS = `
   @keyframes qf-toast-in { from{opacity:0;transform:translate(-50%,12px)} to{opacity:1;transform:translate(-50%,0)} }
   .qf-overlay { position:fixed; inset:0; z-index:200; background:rgba(10,16,32,.72); backdrop-filter:blur(4px); display:flex; flex-direction:column; animation:qf-fade-in .18s ease both; }
   @keyframes qf-fade-in { from{opacity:0} to{opacity:1} }
+  @keyframes qf-spin { to { transform: rotate(360deg); } }
   .qf-modal-bar { flex-shrink:0; height:54px; background:#0d1828; border-bottom:1px solid rgba(255,255,255,.08); display:flex; align-items:center; gap:12px; padding:0 20px; }
   .qf-modal-title { font-family:'Inter',sans-serif; font-size:13px; font-weight:700; color:#fff; letter-spacing:.2px; flex:1; }
   .qf-modal-close { height:30px; padding:0 14px; border-radius:6px; border:1px solid rgba(255,255,255,.12); background:transparent; color:rgba(255,255,255,.5); font-size:12px; font-family:'DM Sans',sans-serif; font-weight:500; cursor:pointer; display:flex; align-items:center; gap:6px; transition:all .15s; }
@@ -547,14 +549,104 @@ function F({ label, required, children }) {
   );
 }
 
+/* ─── Map enquiry → QuotationForm2 fields ────────────────────── */
+function mapEnquiryToForm2(enq) {
+  const item = enq.items?.[0] || {};
+  const size = parseInt(item.size) || 0;
+  let productId = "pinnacle6v";
+  if (size >= 10) productId = "pinnacle10v";
+  else if (size >= 8) productId = "pinnacle8v";
+  else if (size >= 6) productId = "pinnacle6v";
+
+  const product = PRODUCTS.find((p) => p.id === productId);
+  const addrParts = [enq.address, enq.location, enq.state].filter(Boolean);
+
+  return {
+    ...INIT(),
+    company:        enq.millName || enq.customerName || "",
+    companyPrefix:  enq.millName ? "M/s." : "",
+    address:        addrParts.join(", "),
+    gstin:          enq.gst || "",
+    contact:        enq.customerName || "",
+    mobile:         enq.mobile || "",
+    productId:      product?.id || "",
+    model:          product?.model || "",
+    modules:        product?.modules || "",
+    cameras:        product?.cameras || "",
+    airReq:         product?.airReq || "",
+    basePrice:      product?.basePrice || "",
+    refDate:        todayISO(),
+  };
+}
+
 /* ════════════════════════════════════════════════════════════════ */
-export default function QuotationForm2() {
+export default function QuotationForm2({ enquiryId = null, quotationType = null }) {
+  const router = useRouter();
   const [f, setF] = useState(INIT());
   const [showPreview, setShowPreview] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [enquiryLoading, setEnquiryLoading] = useState(!!enquiryId);
+  const [enquiryName, setEnquiryName] = useState("");
+  const [showShare, setShowShare] = useState(false);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
   const iframeRef = useRef(null);
+  const savedRef  = useRef(false); // guard against Strict Mode double-fire
   const set = (k, v) => setF((p) => ({ ...p, [k]: v }));
+  const openPreview = () => { setIframeLoaded(false); setShowPreview(true); };
+
+  const saveToStorage = async (formData) => {
+    const base = parseFloat(formData.basePrice) || 0;
+    const gst18 = base * 0.18;
+    const total = base + gst18;
+    const localId = enquiryId ? `enq_${enquiryId}_det_${Date.now()}` : String(Date.now());
+    const record = {
+      id: localId,
+      savedAt: new Date().toISOString(),
+      enquiryId: enquiryId || undefined,
+      quotationType: "detailed",
+      ...formData,
+      gst18,
+      total,
+      gstRate: 18,
+    };
+    // Save to Firebase and wait for confirmation
+    if (enquiryId) {
+      const payload = { ...record };
+      delete payload.id;
+      try {
+        const res = await fetch("/api/quotations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (data.id) record.id = data.id;
+      } catch {}
+    }
+
+    return record;
+  };
+
+  // Auto-fetch enquiry, pre-fill, auto-save, open preview
+  useEffect(() => {
+    if (!enquiryId || savedRef.current) return;
+    savedRef.current = true;
+    fetch(`/api/enquiry/${enquiryId}`)
+      .then((r) => r.json())
+      .then(async (d) => {
+        if (d.success && d.data) {
+          const mapped = mapEnquiryToForm2(d.data);
+          setF(mapped);
+          setEnquiryName(d.data.customerName || "");
+          await saveToStorage(mapped);
+          openPreview();
+        }
+      })
+      .catch(() => {})
+      .finally(() => setEnquiryLoading(false));
+  }, [enquiryId]); // eslint-disable-line
+
   const selectProduct = (id) => {
     const p = PRODUCTS.find((x) => x.id === id);
     if (!p) return;
@@ -570,31 +662,63 @@ export default function QuotationForm2() {
   };
 
   const handleSave = () => {
-    const base = parseFloat(f.basePrice) || 0;
-    const gst18 = base * 0.18;
-    const total = base + gst18;
-    const record = {
-      id: Date.now(),
-      savedAt: new Date().toISOString(),
-      ...f,
-      gst18,
-      total,
-      gstRate: 18,
-    };
-    const existing = JSON.parse(
-      localStorage.getItem("usepl_quotations2") || "[]",
-    );
-    localStorage.setItem(
-      "usepl_quotations2",
-      JSON.stringify([record, ...existing]),
-    );
+    saveToStorage(f);
     setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
+    if (enquiryId) {
+      setTimeout(() => router.push("/dashboard/quotations"), 1200);
+    } else {
+      setTimeout(() => setSaved(false), 2500);
+    }
   };
 
   const base = parseFloat(f.basePrice) || 0;
   const gst18 = base * 0.18;
   const total = base + gst18;
+
+  const shareText = () => [
+    `Dear ${f.contact},`,
+    ``,
+    `Please find the quotation from Unique Sorter & Equipments Pvt. Ltd.`,
+    ``,
+    `Ref No: ${f.refNo || "—"}`,
+    `Product: ${f.model || "—"}`,
+    `Total Amount (incl. GST): ₹${new Intl.NumberFormat("en-IN", { minimumFractionDigits: 2 }).format(total)}`,
+    ``,
+    `For queries: raipur@uniquesorter.in | www.uniquesorter.in`,
+  ].join("\n");
+
+  const downloadBrochure = async () => {
+    try {
+      const res = await fetch("/brochure.pdf");
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "UniqueSorter-Brochure.pdf";
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {}
+  };
+
+  const handleShareWhatsApp = async () => {
+    await downloadBrochure();
+    const phone = f.mobile?.replace(/\D/g, "");
+    const text = shareText() + "\n\nPlease find the company brochure in the downloaded file (UniqueSorter-Brochure.pdf).";
+    window.open(`https://wa.me/${phone ? "91" + phone : ""}?text=${encodeURIComponent(text)}`, "_blank");
+    setShowShare(false);
+    setSaved("brochure");
+    setTimeout(() => setSaved(false), 3000);
+  };
+
+  const handleShareGmail = async () => {
+    await downloadBrochure();
+    const subject = encodeURIComponent(`Quotation ${f.refNo || ""} — Unique Sorter & Equipments Pvt. Ltd.`);
+    const body = encodeURIComponent(shareText() + "\n\nPlease find the company brochure attached (UniqueSorter-Brochure.pdf — downloaded to your device).");
+    window.open(`https://mail.google.com/mail/?view=cm&su=${subject}&body=${body}`, "_blank");
+    setShowShare(false);
+    setSaved("brochure");
+    setTimeout(() => setSaved(false), 3000);
+  };
 
   /* ── Download: capture each .page div as one PDF page ── */
   const handleDownload = async () => {
@@ -708,6 +832,19 @@ export default function QuotationForm2() {
     }
   };
 
+  if (enquiryLoading) return (
+    <div className="qf-root">
+      <style>{CSS}</style>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh", flexDirection: "column", gap: 16 }}>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1A37AA" strokeWidth="2.5" strokeLinecap="round" style={{ animation: "qf-spin 0.8s linear infinite" }}>
+          <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+        </svg>
+        <style>{`@keyframes qf-spin { to { transform: rotate(360deg); } }`}</style>
+        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: "#6b7a90" }}>Loading enquiry…</span>
+      </div>
+    </div>
+  );
+
   return (
     <div className="qf-root">
       <style>{CSS}</style>
@@ -726,7 +863,7 @@ export default function QuotationForm2() {
           >
             <polyline points="20 6 9 17 4 12" />
           </svg>
-          Quotation saved successfully
+          {saved === "brochure" ? "Brochure downloaded — please attach it to your message" : enquiryId ? "Saved! Redirecting to quotations…" : "Quotation saved successfully"}
         </div>
       )}
 
@@ -735,59 +872,105 @@ export default function QuotationForm2() {
         <div className="qf-overlay">
           <div className="qf-modal-bar">
             <span className="qf-modal-title">
-              Quotation Preview — 6 Pages{f.refNo && ` · ${f.refNo}`}
+              {enquiryId ? (
+                <>
+                  <span style={{ color: "rgba(255,255,255,.38)", fontWeight: 400 }}>Detailed Quotation</span>
+                  {enquiryName && <> &nbsp;·&nbsp; <span style={{ color: "#fff" }}>{enquiryName}</span></>}
+                </>
+              ) : (
+                <>Quotation Preview — 6 Pages{f.refNo && ` · ${f.refNo}`}</>
+              )}
             </span>
-            <button
-              className="qf-modal-download"
-              onClick={handleDownload}
-              disabled={downloading}
-            >
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.2"
-                strokeLinecap="round"
+
+            {/* Share dropdown */}
+            <div style={{ position: "relative" }}>
+              <button
+                style={{ height: 30, padding: "0 14px", borderRadius: 6, border: "1px solid rgba(255,255,255,.18)", background: "rgba(255,255,255,.07)", color: "rgba(255,255,255,.75)", fontSize: 12, fontFamily: "'DM Sans',sans-serif", fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
+                onClick={() => setShowShare((s) => !s)}
               >
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="7 10 12 15 17 10" />
-                <line x1="12" y1="15" x2="12" y2="3" />
-              </svg>
-              {downloading ? "Generating…" : "Download PDF"}
-            </button>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                </svg>
+                Share
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              {showShare && (
+                <>
+                  <div style={{ position: "fixed", inset: 0, zIndex: 998 }} onClick={() => setShowShare(false)} />
+                  <div style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, background: "#fff", border: "1px solid #e0e8f2", borderRadius: 12, padding: 6, boxShadow: "0 12px 40px rgba(13,24,40,.22)", minWidth: 220, zIndex: 999 }}>
+                    <div style={{ padding: "7px 12px 5px", fontSize: 10.5, color: "#8a96aa", fontFamily: "'DM Sans',sans-serif", letterSpacing: ".2px" }}>
+                      Brochure PDF will also be downloaded
+                    </div>
+                    <button onClick={handleShareWhatsApp} style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "9px 12px", borderRadius: 8, border: "none", background: "none", cursor: "pointer", fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 500, color: "#0d1828" }}>
+                      <span style={{ width: 28, height: 28, borderRadius: 7, background: "#e8f8ee", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M11.998 2C6.476 2 2 6.476 2 11.998c0 1.76.456 3.411 1.253 4.845L2 22l5.299-1.24A9.966 9.966 0 0 0 11.998 22C17.52 22 22 17.524 22 11.998 22 6.476 17.52 2 11.998 2z" fill="none" strokeWidth="0"/></svg>
+                      </span>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                        <span>Share on WhatsApp</span>
+                        <span style={{ fontSize: 10.5, color: "#9aa5b8" }}>+ Brochure downloaded</span>
+                      </div>
+                    </button>
+                    <button onClick={handleShareGmail} style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "9px 12px", borderRadius: 8, border: "none", background: "none", cursor: "pointer", fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 500, color: "#0d1828" }}>
+                      <span style={{ width: 28, height: 28, borderRadius: 7, background: "#fdecea", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z" fill="#EA4335"/></svg>
+                      </span>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                        <span>Send via Gmail</span>
+                        <span style={{ fontSize: 10.5, color: "#9aa5b8" }}>+ Brochure downloaded</span>
+                      </div>
+                    </button>
+                    <div style={{ height: 1, background: "#f0f3f8", margin: "4px 6px" }} />
+                    <button onClick={() => { handleDownload(); setShowShare(false); }} style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "9px 12px", borderRadius: 8, border: "none", background: "none", cursor: "pointer", fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 500, color: "#0d1828" }}>
+                      <span style={{ width: 28, height: 28, borderRadius: 7, background: "#eef1fb", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#1A37AA" strokeWidth="2.2" strokeLinecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      </span>
+                      Download Quotation PDF
+                    </button>
+                    <button onClick={() => { downloadBrochure(); setShowShare(false); setSaved("brochure"); setTimeout(() => setSaved(false), 3000); }} style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "9px 12px", borderRadius: 8, border: "none", background: "none", cursor: "pointer", fontFamily: "'DM Sans',sans-serif", fontSize: 13, fontWeight: 500, color: "#0d1828" }}>
+                      <span style={{ width: 28, height: 28, borderRadius: 7, background: "#f0faf0", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#52ba4f" strokeWidth="2.2" strokeLinecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                      </span>
+                      Download Brochure PDF
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+
             <button
               className="qf-modal-close"
-              onClick={() => setShowPreview(false)}
+              onClick={() => enquiryId ? router.push("/dashboard/quotations") : setShowPreview(false)}
             >
-              <svg
-                width="11"
-                height="11"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-              >
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
               </svg>
               Close
             </button>
           </div>
-          <div className="qf-modal-iframe-wrap">
+          <div className="qf-modal-iframe-wrap" style={{ position: "relative" }}>
+            {!iframeLoaded && (
+              <div style={{ position: "sticky", top: "50%", left: 0, right: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 14, zIndex: 10, padding: "40px 0" }}>
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" style={{ animation: "qf-spin 0.8s linear infinite", filter: "drop-shadow(0 2px 8px rgba(0,0,0,.4))" }}>
+                  <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                </svg>
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: "#fff", fontWeight: 600, textShadow: "0 1px 4px rgba(0,0,0,.5)" }}>Loading quotation…</span>
+              </div>
+            )}
             <iframe
               ref={iframeRef}
               srcDoc={buildHTML(f)}
               title="Quotation Preview"
+              onLoad={() => setIframeLoaded(true)}
               style={{
                 width: "860px",
-                height: "1200px",
+                height: "7400px",
                 border: "none",
-                background: "#fff",
-                boxShadow: "0 8px 48px rgba(0,0,0,.35)",
+                background: iframeLoaded ? "#fff" : "transparent",
+                boxShadow: iframeLoaded ? "0 8px 48px rgba(0,0,0,.35)" : "none",
                 flexShrink: 0,
+                opacity: iframeLoaded ? 1 : 0,
+                transition: "opacity 0.3s ease",
               }}
             />
           </div>
@@ -828,7 +1011,7 @@ export default function QuotationForm2() {
           </svg>
           Reset
         </button>
-        <button className="qf-bar-btn" onClick={() => setShowPreview(true)}>
+        <button className="qf-bar-btn" onClick={openPreview}>
           <svg
             width="12"
             height="12"
@@ -1184,7 +1367,7 @@ export default function QuotationForm2() {
               </button>
               <button
                 className="qf-footer-preview"
-                onClick={() => setShowPreview(true)}
+                onClick={openPreview}
               >
                 <svg
                   width="13"
