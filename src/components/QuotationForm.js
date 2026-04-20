@@ -61,9 +61,9 @@ const INIT = () => ({
   model:'', qty:'', shortName:'', descLine1:'', descLine2:'', hsn:'',
   basePrice:'', gstRate:'18',
   note:'',
-  payTerms:'',
-  delivery:'', leadDays:'', commodity:'', electricity:'', validity:'',
-  freight:'', warranty:'One year.',
+  payTerms:'50% advance with Purchase Order and balance before despatch.',
+  delivery:'', leadDays:'', commodity:'Rice', electricity:'220 V Frequency- 50Hz.', validity:'',
+  freight:'At actual in your scope.', warranty:'One year.',
   cancellation:'Order once confirmed & processed cannot be cancelled.',
 });
 
@@ -809,12 +809,8 @@ function mapEnquiryToForm(enq) {
     ? modelMatch.descLine1 + (sizeLabel ? ` ${sizeLabel}` : '')
     : item.modelNo ? `Color Sorting Machine — ${item.modelNo} ${sizeLabel}`.trim() : '';
 
-  // Parse price from enquiry if available (format: "₹ 30 L")
   let basePrice = modelMatch?.price || '';
-  if (!basePrice && item.price) {
-    const lakhs = parseFloat(item.price.replace(/[^\d.]/g, ''));
-    if (!isNaN(lakhs)) basePrice = String(Math.round(lakhs * 100000));
-  }
+  if (!basePrice && item.price) basePrice = String(parseInt(item.price) || '');
 
   const today = todayISO();
   return {
@@ -835,7 +831,14 @@ function mapEnquiryToForm(enq) {
     basePrice,
     refDate:   today,
     quotDate:  today,
-    commodity: enq.commodity || '',
+    commodity:    enq.commodity    || 'Rice',
+    payTerms:     enq.payTerms     || '50% advance with Purchase Order and balance before despatch.',
+    delivery:     enq.delivery     || '',
+    electricity:  enq.electricity  || '220 V Frequency- 50Hz.',
+    validity:     enq.validity     || '',
+    freight:      enq.freight      || 'At actual in your scope.',
+    warranty:     enq.warranty     || 'One year.',
+    cancellation: enq.cancellation || 'Order once confirmed & processed cannot be cancelled.',
   };
 }
 

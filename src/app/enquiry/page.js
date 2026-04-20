@@ -10,17 +10,16 @@ const SOURCES     = ['Cold Call', 'Reference', 'Exhibition', 'Online / Website',
 const COMMODITIES = ['Rice', 'Pulses', 'Multiproduct', 'Tuvar Dal', 'Moong Dal'];
 
 const PRICE_TABLE = {
-  Telangana: { Pinnacle: { '5': '₹ 30 L', '6': '₹ 33 L', '7': '₹ 36 L', '8': '₹ 40 L', '10': '₹ 47 L' } },
-  Karnataka: { Pinnacle: { '5': '₹ 30 L', '6': '₹ 33 L', '7': '₹ 36 L', '8': '₹ 40 L', '10': '₹ 47 L' } },
+  Telangana: { Pinnacle: { '5': 3000000, '6': 3300000, '7': 3600000, '8': 4000000, '10': 4700000 } },
+  Karnataka: { Pinnacle: { '5': 3000000, '6': 3300000, '7': 3600000, '8': 4000000, '10': 4700000 } },
 };
 
 const getBasePrice = (state, model, size) => PRICE_TABLE[state]?.[model]?.[size] || '';
 const getPrice = (state, model, size, qty) => {
   const base = PRICE_TABLE[state]?.[model]?.[size];
   if (!base) return '';
-  const num = parseFloat(base.replace(/[^\d.]/g, ''));
   const q = parseInt(qty) || 1;
-  return `₹ ${(num * q).toFixed(num * q % 1 === 0 ? 0 : 1)} L`;
+  return String(base * q);
 };
 
 let _id = 2;

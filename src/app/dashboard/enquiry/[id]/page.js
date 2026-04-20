@@ -10,15 +10,14 @@ const STATES  = ['Telangana','Karnataka'];
 const SOURCES = ['Cold Call','Reference','Exhibition','Online / Website','Social Media','Other'];
 
 const PRICE_TABLE = {
-  Telangana: { Pinnacle: { '5':'₹ 30 L','6':'₹ 33 L','7':'₹ 36 L','8':'₹ 40 L','10':'₹ 47 L' } },
-  Karnataka: { Pinnacle: { '5':'₹ 30 L','6':'₹ 33 L','7':'₹ 36 L','8':'₹ 40 L','10':'₹ 47 L' } },
+  Telangana: { Pinnacle: { '5': 3000000, '6': 3300000, '7': 3600000, '8': 4000000, '10': 4700000 } },
+  Karnataka: { Pinnacle: { '5': 3000000, '6': 3300000, '7': 3600000, '8': 4000000, '10': 4700000 } },
 };
 const getPrice = (state, model, size, qty) => {
   const base = PRICE_TABLE[state]?.[model]?.[size];
   if (!base) return '';
-  const num = parseFloat(base.replace(/[^\d.]/g, ''));
   const q = parseInt(qty) || 1;
-  return `₹ ${(num * q).toFixed(num * q % 1 === 0 ? 0 : 1)} L`;
+  return String(base * q);
 };
 
 const fmtDate = iso => {
@@ -352,7 +351,7 @@ const CSS = `
   }
   .eqd-overwrite-warn-body strong { font-weight: 700; color: #7a4800; }
   .eqd-confirm-overwrite {
-    width: 100%; padding: 11px 0; border-radius: 8px; border: none; cursor: pointer;
+    flex: 2; height: 42px; padding: 0 16px; border-radius: 10px; border: none; cursor: pointer;
     background: #d97706; color: #fff;
     font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 700;
     display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -413,7 +412,30 @@ export default function EnquiryDetailPage() {
   useEffect(() => {
     fetch(`/api/enquiry/${id}`)
       .then(r => r.json())
-      .then(d => { if (d.success) { setRow(d.data); setDraft(d.data); } else setFetchErr(d.error || 'Not found'); })
+      .then(d => {
+        if (d.success) {
+          const TERM_DEFAULTS = {
+            payTerms:     '50% advance with Purchase Order and balance before despatch.',
+            commodity:    'Rice',
+            electricity:  '220 V Frequency- 50Hz.',
+            freight:      'At actual in your scope.',
+            warranty:     'One year.',
+            cancellation: 'Order once confirmed & processed cannot be cancelled.',
+          };
+          const normPrice = p => {
+            if (!p) return '';
+            if (/₹|L$/i.test(String(p))) {
+              const n = parseFloat(String(p).replace(/[^\d.]/g, ''));
+              return isNaN(n) ? '' : String(Math.round(n * 100000));
+            }
+            return p;
+          };
+          const raw = { ...TERM_DEFAULTS, ...d.data };
+          if (raw.items) raw.items = raw.items.map(it => ({ ...it, price: normPrice(it.price) }));
+          setRow(raw);
+          setDraft(raw);
+        } else setFetchErr(d.error || 'Not found');
+      })
       .catch(() => setFetchErr('Failed to load'))
       .finally(() => setLoading(false));
   }, [id]);
@@ -428,7 +450,10 @@ export default function EnquiryDetailPage() {
   const setItem = (idx, k, v) => setDraft(d => {
     const items = [...(d.items || [])];
     const updated = { ...items[idx], [k]: v };
-    updated.price = getPrice(d.state, updated.modelNo, updated.size, updated.qty);
+    if (k !== 'price') {
+      const auto = getPrice(d.state, updated.modelNo, updated.size, updated.qty);
+      if (auto) updated.price = auto;
+    }
     items[idx] = updated;
     return { ...d, items };
   });
@@ -666,15 +691,9 @@ export default function EnquiryDetailPage() {
                         {editing ? <input className="eqd-in" value={item.qty || ''} onChange={e => setItem(idx, 'qty', e.target.value)} /> : <Val v={item.qty} />}
                       </Field>
                       <Field label="Price">
-                        {editing ? (
-                          <div className="eqd-val" style={{
-                            background: item.price ? 'rgba(26,55,170,0.05)' : undefined,
-                            color: item.price ? '#1A37AA' : undefined,
-                            fontWeight: item.price ? 700 : 400,
-                          }}>
-                            {item.price || 'Auto-filled based on state & size'}
-                          </div>
-                        ) : <Val v={item.price} />}
+                        {editing
+                          ? <input className="eqd-in" value={item.price || ''} onChange={e => setItem(idx, 'price', e.target.value)} placeholder="Auto-filled based on state & size" />
+                          : <Val v={item.price} />}
                       </Field>
                     </div>
                   </div>
@@ -708,6 +727,51 @@ export default function EnquiryDetailPage() {
               </div>
             </div>
           )}
+
+          {/* ── Section 4: Quotation Terms ── */}
+          <Divider num="4" label="Quotation Terms" />
+          <div className="g2">
+            <Field label="Payment Terms" cls="full">
+              {editing
+                ? <textarea className="eqd-ta" rows={2} value={draft.payTerms || ''} onChange={e => set('payTerms', e.target.value)} placeholder="50% advance with Purchase Order and balance before despatch." />
+                : <Val v={draft.payTerms} muted />}
+            </Field>
+            <Field label="Point of Delivery" cls="full">
+              {editing
+                ? <input className="eqd-in" value={draft.delivery || ''} onChange={e => set('delivery', e.target.value)} placeholder="e.g. Budhapara Near Hanuman Temple, Raipur" />
+                : <Val v={draft.delivery} muted />}
+            </Field>
+            <Field label="Commodity">
+              {editing
+                ? <input className="eqd-in" value={draft.commodity || ''} onChange={e => set('commodity', e.target.value)} placeholder="Rice" />
+                : <Val v={draft.commodity} muted />}
+            </Field>
+            <Field label="Validity (Days)">
+              {editing
+                ? <input className="eqd-in" value={draft.validity || ''} onChange={e => set('validity', e.target.value)} placeholder="90" />
+                : <Val v={draft.validity ? `${draft.validity} Days` : null} muted />}
+            </Field>
+            <Field label="Electricity Supply">
+              {editing
+                ? <input className="eqd-in" value={draft.electricity || ''} onChange={e => set('electricity', e.target.value)} placeholder="220 V Frequency- 50Hz." />
+                : <Val v={draft.electricity} muted />}
+            </Field>
+            <Field label="Freight">
+              {editing
+                ? <input className="eqd-in" value={draft.freight || ''} onChange={e => set('freight', e.target.value)} placeholder="At actual in your scope." />
+                : <Val v={draft.freight} muted />}
+            </Field>
+            <Field label="Warranty">
+              {editing
+                ? <input className="eqd-in" value={draft.warranty || ''} onChange={e => set('warranty', e.target.value)} placeholder="One year." />
+                : <Val v={draft.warranty} muted />}
+            </Field>
+            <Field label="Cancellation Policy">
+              {editing
+                ? <textarea className="eqd-ta" rows={2} value={draft.cancellation || ''} onChange={e => set('cancellation', e.target.value)} placeholder="Order once confirmed & processed cannot be cancelled." />
+                : <Val v={draft.cancellation} muted />}
+            </Field>
+          </div>
 
           {/* ── Footer ── */}
           <div className="eqd-footer">
