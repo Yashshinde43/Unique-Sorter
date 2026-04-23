@@ -319,7 +319,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    padding: '20px',
+    padding: '16px',
     fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif",
     position: 'relative',
     overflow: 'hidden',
@@ -350,9 +350,13 @@ const styles = {
     background: '#ffffff',
     borderRadius: '20px',
     boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255,255,255,0.1)',
-    padding: '48px 40px',
+    padding: '40px 32px',
     position: 'relative',
     zIndex: 1,
+    '@media (max-width: 480px)': {
+      padding: '28px 20px',
+      borderRadius: '16px',
+    },
   },
   logoSection: {
     textAlign: 'center',

@@ -246,6 +246,384 @@ const CSS = `
   .qv-body { flex: 1; display: flex; overflow: hidden; }
 
   @keyframes qv-spin { to { transform: rotate(360deg); } }
+
+  /* ==========================================================
+     RESPONSIVE STYLES - Mobile First
+     ========================================================== */
+
+  /* Mobile base styles */
+  .qv-root {
+    height: 100vh;
+    background: #a0a8b8;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .qv-bar {
+    height: auto;
+    min-height: 56px;
+    padding: 10px 12px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .qv-bar-back {
+    font-size: 11px;
+    gap: 4px;
+  }
+
+  .qv-bar-dot {
+    display: none;
+  }
+
+  .qv-bar-title {
+    display: none;
+  }
+
+  .qv-bar-name {
+    font-size: 12px;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 120px;
+  }
+
+  .qv-bar-sep {
+    display: none;
+  }
+
+  .qv-bar-space {
+    display: none;
+  }
+
+  .qv-bar-chip {
+    display: none;
+  }
+
+  /* Share and Close buttons */
+  .qv-share-btn,
+  .qv-close-btn {
+    height: 36px;
+    padding: 0 12px;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  .qv-share-btn span,
+  .qv-close-btn span {
+    display: none;
+  }
+
+  /* Iframe wrapper */
+  .qv-iframe-wrap {
+    flex: 1;
+    overflow: auto;
+    background: #a0a8b8;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 12px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .qv-iframe-wrap iframe {
+    border: none;
+    width: 860px;
+    height: 1200px;
+    flex-shrink: 0;
+    background: #fff;
+    box-shadow: 0 4px 24px rgba(0,0,0,.2);
+    transform-origin: top center;
+    transform: scale(0.35);
+    max-width: none;
+  }
+
+  /* Scale up on larger phones */
+  @media (min-width: 400px) {
+    .qv-iframe-wrap iframe {
+      transform: scale(0.42);
+    }
+  }
+
+  @media (min-width: 480px) {
+    .qv-iframe-wrap iframe {
+      transform: scale(0.5);
+    }
+  }
+
+  @media (min-width: 640px) {
+    .qv-iframe-wrap iframe {
+      transform: scale(0.65);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .qv-iframe-wrap iframe {
+      transform: scale(0.85);
+    }
+  }
+
+  /* Audit panel - hidden by default on mobile */
+  .qv-body {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    flex-direction: column;
+  }
+
+  .qv-audit-panel {
+    flex-shrink: 0;
+    background: #07111e;
+    border-top: 1px solid rgba(99,140,255,.12);
+    border-left: none;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    width: 100%;
+    height: 48px;
+    transition: height .3s cubic-bezier(.4,0,.2,1);
+  }
+
+  .qv-audit-panel.open {
+    width: 100%;
+    height: 300px;
+  }
+
+  .qv-audit-panel.closed {
+    width: 100%;
+    height: 48px;
+  }
+
+  /* Collapsed tab - horizontal on mobile */
+  .qv-audit-tab {
+    position: relative;
+    inset: auto;
+    flex-direction: row;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    height: 48px;
+  }
+
+  .qv-audit-panel.open .qv-audit-tab {
+    display: none;
+  }
+
+  .qv-audit-tab-label {
+    writing-mode: horizontal-tb;
+    transform: none;
+    font-size: 12px;
+  }
+
+  /* Audit panel header */
+  .qv-audit-head {
+    padding: 0 14px;
+    height: 48px;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(99,140,255,.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .qv-audit-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .qv-audit-panel.closed .qv-audit-scroll {
+    opacity: 0;
+    pointer-events: none;
+    height: 0;
+  }
+
+  /* Entry cards */
+  .qv-entry-card {
+    padding: 10px 12px;
+  }
+
+  .qv-entry-time {
+    font-size: 10px;
+    margin-bottom: 6px;
+  }
+
+  .qv-entry-tag {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+
+  /* Share dropdown */
+  .qv-share-dropdown {
+    position: fixed;
+    top: auto;
+    bottom: 60px;
+    left: 12px;
+    right: 12px;
+    min-width: auto;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  /* Loading spinner */
+  .qv-loading {
+    position: fixed;
+    inset: 0;
+    background: rgba(13,24,40,.95);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    z-index: 9999;
+  }
+
+  /* Tablet (768px and up) */
+  @media (min-width: 768px) {
+    .qv-bar {
+      height: 54px;
+      min-height: auto;
+      padding: 0 20px;
+      gap: 12px;
+      flex-wrap: nowrap;
+    }
+
+    .qv-bar-back {
+      font-size: 12px;
+      gap: 6px;
+    }
+
+    .qv-bar-dot {
+      display: block;
+    }
+
+    .qv-bar-title {
+      display: block;
+    }
+
+    .qv-bar-name {
+      font-size: 13px;
+      flex: none;
+      max-width: none;
+    }
+
+    .qv-bar-sep {
+      display: inline;
+    }
+
+    .qv-bar-space {
+      display: block;
+    }
+
+    .qv-bar-chip {
+      display: block;
+    }
+
+    .qv-share-btn,
+    .qv-close-btn {
+      height: 30px;
+      padding: 0 14px;
+      font-size: 12px;
+    }
+
+    .qv-share-btn span,
+    .qv-close-btn span {
+      display: inline;
+    }
+
+    .qv-iframe-wrap {
+      padding: 24px 16px 48px;
+    }
+
+    .qv-iframe-wrap iframe {
+      width: 860px;
+      height: 1200px;
+      box-shadow: 0 8px 48px rgba(0,0,0,.35);
+      transform: none;
+    }
+
+    /* Audit panel on the right */
+    .qv-body {
+      flex-direction: row;
+    }
+
+    .qv-audit-panel {
+      border-top: none;
+      border-left: 1px solid rgba(99,140,255,.12);
+      width: auto;
+      height: auto;
+    }
+
+    .qv-audit-panel.open {
+      width: 320px;
+      height: auto;
+    }
+
+    .qv-audit-panel.closed {
+      width: 40px;
+      height: auto;
+    }
+
+    .qv-audit-tab {
+      position: absolute;
+      inset: 0;
+      flex-direction: column;
+      justify-content: center;
+      gap: 14px;
+      padding: 0;
+    }
+
+    .qv-audit-tab-label {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      font-size: 10px;
+    }
+
+    .qv-audit-scroll {
+      padding: 18px 16px 32px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .qv-audit-panel.open .qv-audit-scroll {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .qv-share-dropdown {
+      position: absolute;
+      top: calc(100% + 8px);
+      bottom: auto;
+      left: auto;
+      right: 0;
+      min-width: 200px;
+      max-width: none;
+    }
+  }
+
+  /* Extra small mobile */
+  @media (max-width: 360px) {
+    .qv-bar {
+      min-height: 52px;
+      padding: 8px 10px;
+    }
+
+    .qv-bar-name {
+      max-width: 100px;
+    }
+
+    .qv-iframe-wrap {
+      padding: 8px;
+    }
+
+    .qv-iframe-wrap iframe {
+      transform: scale(0.32);
+    }
+  }
 `;
 
 export default function QuotationViewPage() {

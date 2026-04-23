@@ -1,3 +1,8 @@
+export const metadata = {
+  title: 'Settings — Unique Sorter',
+  description: 'Account Settings',
+};
+
 export default function SettingsPage() {
   return (
     <div className="page-wrapper">

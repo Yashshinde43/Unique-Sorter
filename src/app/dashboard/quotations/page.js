@@ -9,6 +9,303 @@ const fmtDate = iso => { if (!iso) return '—'; const d = new Date(iso); return
 const CSS = `
   @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
+  /* ==========================================================
+     QUOTATIONS PAGE - FULLY RESPONSIVE
+     ========================================================== */
+
+  /* Mobile First - Base styles */
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 12px;
+    padding: 16px;
+  }
+  
+  .card-title {
+    font-size: 18px;
+    font-weight: 700;
+  }
+  
+  .card-subtitle {
+    font-size: 13px;
+    color: #64748b;
+  }
+  
+  .card-actions {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+  }
+  
+  /* Move chips above buttons on mobile */
+  .qf-chips {
+    width: 100%;
+    order: -1;
+    margin-bottom: 8px;
+  }
+  
+  /* Filter buttons equal size */
+  .qf-wrap {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .qf-btn {
+    width: 100%;
+    height: 44px;
+    padding: 0 12px;
+    font-size: 13px;
+    justify-content: center;
+    border-radius: 8px;
+  }
+  
+  /* Filter panel */
+  .qf-panel-inner {
+    padding: 12px 16px;
+  }
+  
+  .qf-field-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .qf-field {
+    margin-bottom: 0;
+  }
+  
+  .qf-input {
+    height: 44px;
+    min-height: 44px;
+    font-size: 14px;
+  }
+  
+  .qf-result-bar {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+    margin-top: 12px;
+    padding-top: 12px;
+  }
+  
+  /* Table - card view on mobile */
+  .table-wrapper {
+    margin: 0;
+    width: 100%;
+    overflow-x: hidden;
+    padding: 0 16px;
+  }
+  
+  .data-table {
+    display: block;
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  /* Hide table headers on mobile */
+  .data-table thead {
+    display: none;
+  }
+  
+  .data-table tbody {
+    display: block;
+    width: 100%;
+  }
+  
+  .data-table tr {
+    display: block;
+    width: 100%;
+    margin-bottom: 16px;
+    border: 1px solid #e2e8f2;
+    border-radius: 12px;
+    padding: 16px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  
+  .data-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 10px 0;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 14px;
+  }
+  
+  .data-table td:last-child {
+    border-bottom: none;
+  }
+  
+  .data-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #64748b;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-right: 12px;
+  }
+  
+  /* Empty state */
+  .data-table tbody tr:only-child {
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    padding: 40px 16px;
+  }
+  
+  .data-table tbody tr:only-child td {
+    display: block;
+    text-align: center;
+    border: none;
+    padding: 0;
+  }
+  
+  .data-table tbody tr:only-child td::before {
+    display: none;
+  }
+
+  /* Tablet (768px and up) */
+  @media (min-width: 768px) {
+    .card-header {
+      flex-direction: row;
+      align-items: center !important;
+      padding: 20px 24px;
+    }
+    
+    .card-actions {
+      width: auto;
+      flex-wrap: nowrap;
+    }
+    
+    .qf-chips {
+      width: auto;
+      order: 0;
+      margin-bottom: 0;
+    }
+    
+    .qf-wrap {
+      flex: none;
+    }
+    
+    .qf-btn {
+      width: auto;
+      height: 32px;
+      font-size: 12.5px;
+    }
+    
+    .qf-panel-inner {
+      padding: 16px 20px 18px;
+    }
+    
+    .qf-field-row {
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    
+    .qf-input {
+      height: 36px;
+      min-height: 36px;
+    }
+    
+    .qf-result-bar {
+      flex-direction: row;
+      align-items: center;
+    }
+    
+    /* Table - normal view */
+    .table-wrapper {
+      padding: 0;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .data-table {
+      display: table;
+      min-width: 800px;
+    }
+    
+    .data-table thead {
+      display: table-header-group;
+    }
+    
+    .data-table tbody {
+      display: table-row-group;
+    }
+    
+    .data-table tr {
+      display: table-row;
+      margin-bottom: 0;
+      border: none;
+      border-radius: 0;
+      padding: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+    
+    .data-table td {
+      display: table-cell;
+      width: auto;
+      padding: 12px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 13px;
+    }
+    
+    .data-table td::before {
+      content: none;
+    }
+  }
+
+  /* Desktop (1024px and up) */
+  @media (min-width: 1024px) {
+    .card-header {
+      padding: 24px;
+    }
+    
+    .qf-field-row {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .data-table {
+      min-width: 900px;
+    }
+  }
+
+  /* Extra small mobile */
+  @media (max-width: 360px) {
+    .card-header {
+      padding: 12px;
+    }
+    
+    .card-title {
+      font-size: 16px;
+    }
+    
+    .qf-btn {
+      height: 40px;
+      font-size: 12px;
+    }
+    
+    .qf-input {
+      font-size: 16px; /* Prevent iOS zoom */
+    }
+    
+    .data-table tr {
+      padding: 12px;
+    }
+  }
+
+  /* Touch device optimizations */
+  @media (hover: none) and (pointer: coarse) {
+    .ql-row:hover td { background: transparent; }
+    .ql-row:active td { background: #f7f9ff; }
+    .qf-input {
+      font-size: 16px;
+    }
+  }
+
   /* ── table rows ── */
   .ql-row { cursor: pointer; transition: background .1s; }
   .ql-row:hover td { background: #f7f9ff; }
@@ -266,7 +563,7 @@ export default function QuotationsPage() {
             </div>
 
             {/* right: chips + filter button */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
+            <div className="card-header-right">
 
               {/* active chips */}
               {hasAny && (
@@ -309,11 +606,11 @@ export default function QuotationsPage() {
             </div>
           </div>
 
-          {/* ── INLINE FILTER PANEL ── */}
+           {/* ── INLINE FILTER PANEL ── */}
           {open && (
             <div className="qf-panel">
               <div className="qf-panel-inner">
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 16, alignItems: 'flex-start' }}>
+                <div className="qf-field-row">
 
                   {/* Name / Company */}
                   <div className="qf-field">
@@ -402,26 +699,26 @@ export default function QuotationsPage() {
                   </td></tr>
                 ) : filtered.map(r => (
                   <tr key={r.id} className="ql-row" onClick={() => router.push(`/dashboard/quotations/${r.id}`)} title="Open quotation">
-                    <td style={{ fontWeight: 600, color: '#1A37AA', fontSize: 13, fontFamily: "'JetBrains Mono',monospace" }}>
+                    <td data-label="Quote ID" style={{ fontWeight: 600, color: '#1A37AA', fontSize: 13, fontFamily: "'JetBrains Mono',monospace" }}>
                       <Hl text={r.quotNo || r.refNo} query={fNum} />
                     </td>
-                    <td>
+                    <td data-label="Type">
                       {r.quotationType === 'detailed'
                         ? <span className="ql-badge ql-badge-detailed">Detailed</span>
                         : <span className="ql-badge ql-badge-1page">1-Page</span>}
                     </td>
-                    <td>
+                    <td data-label="Client">
                       <div style={{ fontWeight: 600, fontSize: 13 }}><Hl text={r.company} query={fName} /></div>
                       {r.city && <div style={{ fontSize: 11.5, color: '#8898aa' }}>{r.city}{r.state ? `, ${r.state}` : ''}</div>}
                     </td>
-                    <td>
+                    <td data-label="Contact">
                       <div style={{ fontSize: 13 }}>{r.salutation} <Hl text={r.contact} query={fName} /></div>
                       {r.mobile && <div style={{ fontSize: 11.5, color: '#8898aa' }}>{r.mobile}</div>}
                     </td>
-                    <td style={{ fontSize: 12.5 }}>{r.model || r.descLine1 || '—'}</td>
-                    <td style={{ fontWeight: 700, fontSize: 13, color: '#1a2a1a' }}>{fmtINR(r.total)}</td>
-                    <td style={{ fontSize: 12.5, color: '#556' }}>{fmtDate(r.quotDate || r.savedAt || r.createdAt)}</td>
-                    <td style={{ fontSize: 12.5, color: '#556' }}>
+                    <td data-label="Model" style={{ fontSize: 12.5 }}>{r.model || r.descLine1 || '—'}</td>
+                    <td data-label="Amount" style={{ fontWeight: 700, fontSize: 13, color: '#1a2a1a' }}>{fmtINR(r.total)}</td>
+                    <td data-label="Date" style={{ fontSize: 12.5, color: '#556' }}>{fmtDate(r.quotDate || r.savedAt || r.createdAt)}</td>
+                    <td data-label="Validity" style={{ fontSize: 12.5, color: '#556' }}>
                       {r.validity ? `${r.validity} days` : r.quotationValidity ? `${r.quotationValidity} days` : '—'}
                     </td>
                   </tr>

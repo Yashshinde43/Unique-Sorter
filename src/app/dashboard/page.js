@@ -93,8 +93,19 @@ export default function DashboardPage() {
                   </tr>
                 </thead>
                 <tbody>
+                  {/* Example row - replace with actual data mapping */}
                   <tr>
-                    <td colSpan={6} style={{ textAlign: 'center', padding: '40px 0', color: '#aab4c4', fontSize: 13 }}>
+                    <td data-label="ID">#Q-001</td>
+                    <td data-label="Client">ABC Enterprises</td>
+                    <td data-label="Product">USEPL-6V PINNACLE</td>
+                    <td data-label="Amount">₹24,15,254</td>
+                    <td data-label="Status">
+                      <span className="status-badge status-badge--pending">Pending</span>
+                    </td>
+                    <td data-label="Date">24 Jan 2025</td>
+                  </tr>
+                  <tr>
+                    <td colSpan={6} className="table-empty" style={{ textAlign: 'center', padding: '40px 0', color: '#aab4c4', fontSize: 13 }}>
                       No quotations yet. <a href="/dashboard/quotations/new" style={{ color: '#1A37AA', textDecoration: 'none', fontWeight: 600 }}>Create one →</a>
                     </td>
                   </tr>

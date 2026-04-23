@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 /* ─── Constants ───────────────────────────────────────────────── */
 const MODELS      = ['Pinnacle', 'Nandak'];
@@ -123,13 +123,34 @@ const CSS = `
   .enqf-divider-line { flex: 1; height: 1px; background: rgba(13,24,40,.1); }
 
   /* ── Grid helpers ── */
-  .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .g2 { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 16px; 
+    width: 100%;
+  }
+  .g3 { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr 1fr; 
+    gap: 16px; 
+    width: 100%;
+  }
   .full { grid-column: 1 / -1; }
   .mt { margin-top: 16px; }
+  
+  /* Fix grid items overflow */
+  .g2 > *, .g3 > * {
+    min-width: 0;
+  }
 
   /* ── Field ── */
-  .enqf-f { display: flex; flex-direction: column; gap: 5px; }
+  .enqf-f { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 5px; 
+    width: 100%;
+    min-width: 0;
+  }
   .enqf-lbl {
     font-size: 11px; font-weight: 600; color: #4a5568;
     letter-spacing: .3px; display: flex; align-items: center; gap: 4px;
@@ -153,10 +174,45 @@ const CSS = `
     box-shadow: 0 0 0 3px rgba(224,85,85,.1) !important;
   }
   .enqf-sel {
-    appearance: none; cursor: pointer;
+    appearance: none; 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
     background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%238898aa' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: right 12px center;
-    padding-right: 32px;
+    background-repeat: no-repeat; 
+    background-position: right 12px center;
+    background-color: #fff;
+    padding: 10px 40px 10px 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 48px;
+    max-width: 100%;
+    box-sizing: border-box;
+    text-indent: 0;
+    text-shadow: none;
+    display: block;
+  }
+  
+  /* Fix for dropdown options */
+  .enqf-sel option {
+    padding: 12px;
+    font-size: 14px;
+    color: #0d1828;
+    background: #fff;
+    white-space: normal;
+    overflow: visible;
+  }
+  
+  /* Ensure dropdown doesn't overflow */
+  .enqf-sel:focus {
+    background-color: #fff;
+    color: #0d1828;
+  }
+  
+  /* Hide default dropdown arrow in IE/Edge */
+  .enqf-sel::-ms-expand {
+    display: none;
   }
   .enqf-ta { resize: vertical; min-height: 80px; }
   .enqf-err { font-size: 11px; color: #c0392b; font-weight: 500; margin-top: 1px; }
@@ -275,10 +331,491 @@ const CSS = `
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  @media (max-width: 640px) {
-    .enqf-content { padding: 20px 16px 60px; }
-    .g2, .g3 { grid-template-columns: 1fr; }
-    .enqf-page-head { flex-direction: column; align-items: flex-start; gap: 6px; }
+  /* ==========================================================
+     FULLY RESPONSIVE STYLES - Mobile First
+     ========================================================== */
+  
+  /* Mobile base styles */
+  .enqf-navbar {
+    height: 56px;
+    padding: 0 16px;
+  }
+  
+  .enqf-content { 
+    max-width: 860px; 
+    margin: 0 auto; 
+    padding: 20px 16px 60px; 
+  }
+  
+  /* Mobile-only submit row - hidden by default */
+  .enqf-submit-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 2px solid rgba(13,24,40,.08);
+  }
+  
+  /* Desktop bottom save row - hidden on mobile */
+  .enqf-bottom-save {
+    display: none;
+  }
+  
+  .enqf-page-head {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+  }
+  
+  .enqf-page-head h1 {
+    font-size: 20px;
+  }
+  
+  .enqf-page-head p {
+    font-size: 13px;
+  }
+  
+  .enqf-page-head-actions { 
+    display: none; 
+  }
+  
+  /* Grids stack on mobile */
+  .g2, .g3 { 
+    grid-template-columns: 1fr; 
+    gap: 12px; 
+  }
+  
+  /* Toggle buttons stack */
+  .enqf-toggle { 
+    flex-direction: column; 
+    gap: 8px;
+  }
+  
+  .enqf-toggle-btn { 
+    width: 100%; 
+    justify-content: center;
+    padding: 12px 20px;
+    min-height: 44px;
+  }
+  
+  /* Item cards */
+  .enqf-items { 
+    gap: 12px; 
+    margin-top: 12px;
+  }
+  
+  .enqf-item-body { 
+    padding: 14px; 
+  }
+  
+  .enqf-item-body .g2 { 
+    gap: 12px; 
+  }
+  
+  /* Form inputs - touch friendly */
+  .enqf-in, .enqf-sel, .enqf-ta {
+    min-height: 48px;
+    padding: 12px 14px;
+    font-size: 16px; /* Prevent iOS zoom */
+  }
+  
+  /* Dropdown specific fixes for mobile */
+  .enqf-sel {
+    padding-right: 40px !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    max-width: 100% !important;
+  }
+  
+  /* Fix dropdown container */
+  .enqf-f {
+    width: 100%;
+    overflow: visible;
+  }
+  
+  /* Ensure select wrapper handles overflow */
+  .enqf-f select {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Specific fix for Lead Source and State dropdowns */
+  select.enqf-sel {
+    padding-right: 40px !important;
+    background-position: calc(100% - 12px) center !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    line-height: normal !important;
+    height: auto !important;
+    min-height: 48px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* Constrain dropdown options - match select width */
+  select.enqf-sel {
+    width: 100% !important;
+  }
+  
+  select.enqf-sel option {
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    padding: 10px 16px !important;
+    font-size: 14px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Fix dropdown width on mobile */
+  @media (max-width: 767px) {
+    select.enqf-sel {
+      font-size: 16px !important;
+    }
+    
+    select.enqf-sel option {
+      font-size: 16px !important;
+      padding: 12px 16px !important;
+    }
+  }
+  
+  /* Section dividers */
+  .enqf-divider { 
+    margin: 28px 0 18px; 
+  }
+  
+  .enqf-divider-label { 
+    font-size: 12px; 
+  }
+  
+  /* Buttons full width on mobile */
+  .enqf-btn-save, .enqf-btn-reset {
+    width: 100%;
+    justify-content: center;
+    height: 48px;
+  }
+  
+  /* Add item button */
+  .enqf-add-btn {
+    width: 100%;
+    justify-content: center;
+    margin-top: 8px;
+  }
+  
+  /* Future requirement badge */
+  .enqf-future-badge {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+  
+  /* Success card */
+  .enqf-success-card {
+    margin: 16px;
+    padding: 32px 24px;
+  }
+  
+  .enqf-success-title { 
+    font-size: 20px; 
+  }
+  
+  .enqf-success-actions { 
+    flex-direction: column; 
+    width: 100%;
+  }
+  
+  .enqf-success-actions button { 
+    width: 100%; 
+    height: 48px;
+    justify-content: center;
+  }
+
+  /* Small mobile */
+  @media (max-width: 480px) {
+    .enqf-content { 
+      padding: 16px 12px 40px; 
+    }
+    
+    .enqf-page-head h1 { 
+      font-size: 18px; 
+    }
+    
+    .enqf-page-head p { 
+      font-size: 12px; 
+    }
+    
+    .enqf-divider { 
+      margin: 24px 0 16px; 
+      gap: 10px;
+    }
+    
+    .enqf-divider-num {
+      width: 22px;
+      height: 22px;
+      font-size: 11px;
+    }
+    
+    .enqf-item-head { 
+      padding: 10px 12px; 
+    }
+    
+    .enqf-item-label { 
+      font-size: 10px; 
+    }
+    
+    .enqf-item-body {
+      padding: 12px;
+    }
+    
+    .enqf-future-badge { 
+      font-size: 11px; 
+      padding: 6px 12px; 
+    }
+  }
+
+  /* Extra small mobile */
+  @media (max-width: 360px) {
+    .enqf-content { 
+      padding: 12px 10px 32px; 
+    }
+    
+    .enqf-page-head h1 { 
+      font-size: 16px; 
+    }
+    
+    .enqf-in, .enqf-sel, .enqf-ta {
+      padding: 10px 12px;
+      font-size: 15px;
+    }
+  }
+
+  /* Tablet */
+  @media (min-width: 768px) {
+    .enqf-navbar {
+      height: 60px;
+      padding: 0 24px;
+    }
+    
+    .enqf-content { 
+      padding: 32px 24px 80px; 
+    }
+    
+    .enqf-page-head {
+      flex-direction: row;
+      align-items: center !important;
+      gap: 16px;
+    }
+    
+    .enqf-page-head h1 {
+      font-size: 22px;
+    }
+    
+    .enqf-page-head-actions { 
+      display: flex; 
+    }
+    
+    /* Hide mobile submit row on desktop */
+    .enqf-submit-row {
+      display: none !important;
+    }
+    
+    /* Show desktop bottom save */
+    .enqf-bottom-save {
+      display: flex !important;
+    }
+    
+    .enqf-btn-save, .enqf-btn-reset {
+      width: auto;
+      height: 40px;
+    }
+    
+    .g2 { 
+      grid-template-columns: 1fr 1fr; 
+      gap: 16px; 
+    }
+    
+    .g3 { 
+      grid-template-columns: repeat(3, 1fr); 
+    }
+    
+    .enqf-toggle { 
+      flex-direction: row; 
+    }
+    
+    .enqf-toggle-btn { 
+      width: auto; 
+    }
+    
+    .enqf-add-btn {
+      width: auto;
+    }
+    
+    .enqf-future-badge {
+      width: auto;
+    }
+    
+    .enqf-success-card {
+      margin: 0;
+      padding: 48px 40px 40px;
+    }
+    
+    .enqf-success-actions { 
+      flex-direction: row; 
+    }
+    
+    .enqf-success-actions button { 
+      width: auto; 
+    }
+  }
+
+  /* Desktop */
+  @media (min-width: 1024px) {
+    .enqf-content {
+      padding: 36px 32px 80px;
+    }
+    
+    .enqf-in, .enqf-sel, .enqf-ta {
+      font-size: 14px;
+    }
+  }
+
+  /* Touch device optimizations */
+  @media (hover: none) and (pointer: coarse) {
+    .enqf-in, .enqf-sel, .enqf-ta {
+      font-size: 16px; /* Prevent zoom on iOS */
+    }
+  }
+  
+  /* Custom Dropdown Styles */
+  .enqf-dropdown {
+    position: relative;
+    width: 100%;
+  }
+  
+  .enqf-dropdown-trigger {
+    width: 100%;
+    height: 48px;
+    padding: 0 40px 0 13px;
+    border: 1.5px solid #d8dfe8;
+    border-radius: 8px;
+    background: #fff;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    color: #0d1828;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: border-color .18s, box-shadow .18s;
+  }
+  
+  .enqf-dropdown-trigger:hover {
+    border-color: #b0bbc9;
+  }
+  
+  .enqf-dropdown-trigger:focus,
+  .enqf-dropdown-trigger.active {
+    border-color: #1A37AA;
+    box-shadow: 0 0 0 3px rgba(26,55,170,.1);
+    outline: none;
+  }
+  
+  .enqf-dropdown-trigger--err {
+    border-color: #e05555 !important;
+    box-shadow: 0 0 0 3px rgba(224,85,85,.1) !important;
+  }
+  
+  .enqf-dropdown-arrow {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 8px;
+    pointer-events: none;
+    transition: transform 0.2s;
+  }
+  
+  .enqf-dropdown-trigger.active .enqf-dropdown-arrow {
+    transform: translateY(-50%) rotate(180deg);
+  }
+  
+  .enqf-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 4px;
+    background: #fff;
+    border: 1.5px solid #d8dfe8;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(13,24,40,.12);
+    max-height: 240px;
+    overflow-y: auto;
+    z-index: 100;
+    display: none;
+  }
+  
+  .enqf-dropdown-menu.open {
+    display: block;
+    animation: dropdownSlide 0.2s ease;
+  }
+  
+  @keyframes dropdownSlide {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .enqf-dropdown-item {
+    padding: 12px 16px;
+    font-size: 14px;
+    color: #0d1828;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: all .15s;
+    border-bottom: 1px solid #f0f2f5;
+  }
+  
+  .enqf-dropdown-item:last-child {
+    border-bottom: none;
+  }
+  
+  .enqf-dropdown-item:hover {
+    background: #1A37AA;
+    color: #fff;
+  }
+  
+  .enqf-dropdown-item.selected {
+    background: #1A37AA;
+    color: #fff;
+    font-weight: 500;
+  }
+  
+  .enqf-dropdown-placeholder {
+    color: #b0bbc9;
+  }
+  
+  .enqf-dropdown-value {
+    color: #0d1828;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 `;
 
@@ -423,10 +960,12 @@ export default function EnquiryPage() {
                   value={form.gst} onChange={e => set('gst', e.target.value.toUpperCase())} maxLength={15} />
               </F>
               <F label="Lead Source">
-                <select className="enqf-sel" value={form.source} onChange={e => set('source', e.target.value)}>
-                  <option value="">Select source</option>
-                  {SOURCES.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
+                <CustomDropdown
+                  value={form.source}
+                  onChange={(val) => set('source', val)}
+                  options={SOURCES.map(s => ({ value: s, label: s }))}
+                  placeholder="Select source"
+                />
               </F>
             </div>
 
@@ -439,10 +978,12 @@ export default function EnquiryPage() {
                   value={form.location} onChange={e => set('location', e.target.value)} />
               </F>
               <F label="State">
-                <select className="enqf-sel" value={form.state} onChange={e => set('state', e.target.value)}>
-                  <option value="">Select state</option>
-                  {STATES.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
+                <CustomDropdown
+                  value={form.state}
+                  onChange={(val) => set('state', val)}
+                  options={STATES.map(s => ({ value: s, label: s }))}
+                  placeholder="Select state"
+                />
               </F>
               <F label="Full Address" req err={errors.address} cls="full">
                 <textarea className={`enqf-ta${errors.address ? ' enqf-ta--err' : ''}`}
@@ -479,10 +1020,12 @@ export default function EnquiryPage() {
             {form.hasRequirement !== null && (
               <div style={{ marginTop: 16 }}>
                 <F label="Commodity">
-                  <select className="enqf-sel" value={form.commodity} onChange={e => set('commodity', e.target.value)}>
-                    <option value="">Select commodity</option>
-                    {COMMODITIES.map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
+                  <CustomDropdown
+                    value={form.commodity}
+                    onChange={(val) => set('commodity', val)}
+                    options={COMMODITIES.map(c => ({ value: c, label: c }))}
+                    placeholder="Select commodity"
+                  />
                 </F>
               </div>
             )}
@@ -505,18 +1048,21 @@ export default function EnquiryPage() {
                     <div className="enqf-item-body">
                       <div className="g2">
                         <F label="Model" req err={errors[`item_${idx}_modelNo`]}>
-                          <select className={`enqf-sel${errors[`item_${idx}_modelNo`] ? ' enqf-sel--err' : ''}`}
-                            value={item.modelNo} onChange={e => setItem(item.id, 'modelNo', e.target.value)}>
-                            <option value="">Select model</option>
-                            {MODELS.map(m => <option key={m} value={m}>{m}</option>)}
-                          </select>
+                          <CustomDropdown
+                            value={item.modelNo}
+                            onChange={(val) => setItem(item.id, 'modelNo', val)}
+                            options={MODELS.map(m => ({ value: m, label: m }))}
+                            placeholder="Select model"
+                            error={!!errors[`item_${idx}_modelNo`]}
+                          />
                         </F>
                         <F label="Size">
-                          <select className="enqf-sel" value={item.size}
-                            onChange={e => setItem(item.id, 'size', e.target.value)}>
-                            <option value="">Select size</option>
-                            {SIZES.map(s => <option key={s} value={s}>{s}</option>)}
-                          </select>
+                          <CustomDropdown
+                            value={item.size}
+                            onChange={(val) => setItem(item.id, 'size', val)}
+                            options={SIZES.map(s => ({ value: s, label: s }))}
+                            placeholder="Select size"
+                          />
                         </F>
                         <F label="Quantity" req err={errors[`item_${idx}_qty`]}>
                           <input className={`enqf-in${errors[`item_${idx}_qty`] ? ' enqf-in--err' : ''}`}
@@ -584,8 +1130,36 @@ export default function EnquiryPage() {
                 rows={4} value={form.remarks} onChange={e => set('remarks', e.target.value)} />
             </F>
 
-            {/* ── Bottom save ── */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 16, marginTop: 36, paddingTop: 24, borderTop: '2px solid rgba(13,24,40,.08)' }}>
+            {/* Mobile-only submit buttons - Reset + Save */}
+            <div className="enqf-submit-row">
+              <button type="button" className="enqf-btn-reset" onClick={handleReset}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/>
+                </svg>
+                Reset
+              </button>
+              <button type="submit" className="enqf-btn-save" disabled={status === 'loading'}>
+                {status === 'loading' ? (
+                  <>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
+                      style={{ animation: 'enqf-spin 0.8s linear infinite' }}>
+                      <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+                    </svg>
+                    Saving…
+                  </>
+                ) : (
+                  <>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                    Save Enquiry
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* ── Bottom save (desktop only) ── */}
+            <div className="enqf-bottom-save" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 16, marginTop: 36, paddingTop: 24, borderTop: '2px solid rgba(13,24,40,.08)' }}>
 
               {/* Error message */}
               {status === 'error' && (
@@ -648,6 +1222,63 @@ function Divider({ num, label }) {
       <span className="enqf-divider-num">{num}</span>
       <span className="enqf-divider-label">{label}</span>
       <span className="enqf-divider-line" />
+    </div>
+  );
+}
+
+/* Custom Dropdown Component */
+function CustomDropdown({ value, onChange, options, placeholder, error }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedValue, setSelectedValue] = useState(value);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    setSelectedValue(value);
+  }, [value]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleSelect = (optionValue) => {
+    setSelectedValue(optionValue);
+    onChange(optionValue);
+    setIsOpen(false);
+  };
+
+  const selectedLabel = options.find(opt => opt.value === selectedValue)?.label || placeholder;
+
+  return (
+    <div className="enqf-dropdown" ref={dropdownRef}>
+      <button
+        type="button"
+        className={`enqf-dropdown-trigger${error ? ' enqf-dropdown-trigger--err' : ''}${isOpen ? ' active' : ''}`}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <span className={selectedValue ? 'enqf-dropdown-value' : 'enqf-dropdown-placeholder'}>
+          {selectedLabel}
+        </span>
+        <svg className="enqf-dropdown-arrow" width="12" height="8" viewBox="0 0 12 8" fill="none">
+          <path d="M1 1L6 6L11 1" stroke="#8898aa" strokeWidth="1.5" strokeLinecap="round"/>
+        </svg>
+      </button>
+      <div className={`enqf-dropdown-menu${isOpen ? ' open' : ''}`}>
+        {options.map((option) => (
+          <div
+            key={option.value}
+            className={`enqf-dropdown-item${option.value === selectedValue ? ' selected' : ''}`}
+            onClick={() => handleSelect(option.value)}
+          >
+            {option.label}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

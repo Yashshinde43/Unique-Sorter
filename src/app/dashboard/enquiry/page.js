@@ -757,6 +757,318 @@ export default function EnquiryPage() {
   return (
     <div className="page-wrapper">
       <style>{`
+        /* ==========================================================
+           ENQUIRY PAGE - FULLY RESPONSIVE
+           ========================================================== */
+
+        /* Mobile First - Base styles for small screens */
+        .card-header {
+          flex-direction: column;
+          align-items: flex-start !important;
+          gap: 12px;
+          padding: 16px;
+        }
+        
+        .card-header-left {
+          width: 100%;
+        }
+        
+        .card-header-right {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        
+        .card-title {
+          font-size: 20px;
+          font-weight: 700;
+          margin-bottom: 4px;
+        }
+        
+        .card-subtitle {
+          font-size: 13px;
+          color: var(--text-muted);
+        }
+        
+        /* Chips on top */
+        .card-header-right .qf-chips {
+          width: 100%;
+          order: -1;
+        }
+        
+        .card-actions {
+          width: 100%;
+          display: flex;
+          flex-direction: row;
+          gap: 10px;
+          align-items: center;
+        }
+        
+        /* Filter and New buttons - equal size side by side */
+        .card-actions .eq-filter-wrap,
+        .card-actions a.btn-primary {
+          flex: 1;
+          min-width: 0;
+        }
+        
+        .card-actions .qf-btn,
+        .card-actions a.btn-primary {
+          height: 48px;
+          padding: 0 16px;
+          font-size: 14px;
+          width: 100%;
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          text-align: center;
+          gap: 8px;
+          white-space: nowrap;
+          border-radius: 10px;
+          font-weight: 600;
+        }
+        
+        /* Ensure Link wrapper doesn't affect button */
+        .card-actions a.btn-primary {
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          text-decoration: none;
+        }
+        
+        /* Filter panel */
+        .qf-panel {
+          padding: 12px;
+        }
+        
+        .qf-grid {
+          grid-template-columns: 1fr !important;
+          gap: 12px;
+        }
+        
+        .qf-field {
+          width: 100%;
+        }
+        
+        .qf-input {
+          width: 100%;
+          height: 44px;
+        }
+        
+        /* Table - card view on mobile */
+        .table-wrapper {
+          margin: 0;
+          width: 100%;
+          overflow-x: hidden;
+        }
+        
+        .data-table {
+          min-width: unset;
+        }
+        
+        .data-table thead {
+          display: none;
+        }
+        
+        .data-table, .data-table tbody, .data-table tr, .data-table td {
+          display: block;
+          width: 100%;
+        }
+        
+        .data-table tr {
+          margin-bottom: 16px;
+          border: 1px solid var(--border);
+          border-radius: 12px;
+          padding: 16px;
+          background: var(--surface);
+          box-shadow: var(--shadow-sm);
+        }
+        
+        .data-table td {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 10px 0;
+          border-bottom: 1px solid var(--border);
+          font-size: 14px;
+        }
+        
+        .data-table td:last-child {
+          border-bottom: none;
+        }
+        
+        .data-table td::before {
+          content: attr(data-label);
+          font-weight: 600;
+          color: var(--text-muted);
+          font-size: 11px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          flex-shrink: 0;
+        }
+        
+        .data-table .status-pill {
+          font-size: 11px;
+          padding: 4px 10px;
+        }
+        
+        /* Empty state */
+        .data-table tbody tr:only-child {
+          border: none;
+          box-shadow: none;
+          background: transparent;
+          padding: 40px 16px;
+        }
+        
+        .data-table tbody tr:only-child td {
+          display: block;
+          text-align: center;
+          border: none;
+          padding: 0;
+        }
+        
+        .data-table tbody tr:only-child td::before {
+          display: none;
+        }
+        
+        .qf-result-bar {
+          padding: 12px 16px;
+          font-size: 12px;
+        }
+
+        /* Tablet (768px and up) */
+        @media (min-width: 768px) {
+          .card-header {
+            flex-direction: row;
+            align-items: center !important;
+            justify-content: space-between;
+            padding: 20px 24px;
+          }
+          
+          .card-header-left {
+            width: auto;
+          }
+          
+          .card-header-right {
+            width: auto;
+            flex-direction: row;
+            align-items: center;
+            gap: 16px;
+          }
+          
+          .card-header-right .qf-chips {
+            order: 0;
+            width: auto;
+          }
+          
+          .card-actions {
+            width: auto;
+            gap: 10px;
+          }
+          
+          .card-actions .qf-btn,
+          .card-actions a.btn-primary {
+            width: auto;
+            height: 40px;
+            padding: 0 18px;
+          }
+          
+          a.btn-primary {
+            text-decoration: none;
+          }
+          
+          .qf-panel {
+            padding: 20px;
+          }
+          
+          .qf-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 14px;
+          }
+          
+          /* Table - normal view */
+          .data-table {
+            display: table;
+            min-width: 600px;
+          }
+          
+          .data-table thead {
+            display: table-header-group;
+          }
+          
+          .data-table tbody {
+            display: table-row-group;
+          }
+          
+          .data-table tr {
+            display: table-row;
+            margin-bottom: 0;
+            border: none;
+            border-radius: 0;
+            padding: 0;
+            background: transparent;
+            box-shadow: none;
+          }
+          
+          .data-table td {
+            display: table-cell;
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+          }
+          
+          .data-table td::before {
+            content: none;
+          }
+          
+          .data-table th:nth-child(1),
+          .data-table td:nth-child(1) {
+            display: none;
+          }
+          
+          .table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+          }
+        }
+
+        /* Desktop (1024px and up) */
+        @media (min-width: 1024px) {
+          .card-header {
+            padding: 24px;
+          }
+          
+          .qf-grid {
+            grid-template-columns: repeat(4, 1fr) !important;
+          }
+          
+          .data-table th:nth-child(1),
+          .data-table td:nth-child(1) {
+            display: table-cell;
+          }
+          
+          .data-table th,
+          .data-table td {
+            padding: 14px 16px;
+          }
+        }
+
+        /* Extra small mobile */
+        @media (max-width: 360px) {
+          .card-actions {
+            flex-direction: column;
+          }
+          
+          .card-actions .eq-filter-wrap,
+          .card-actions .btn-primary {
+            width: 100%;
+          }
+          
+          .qf-btn, .btn-primary {
+            width: 100%;
+          }
+        }
+
         .eq-filter-wrap { position: relative; display: inline-flex; align-items: center; gap: 8px; }
         .qf-btn {
           display: inline-flex; align-items: center; gap: 7px;
@@ -831,14 +1143,14 @@ export default function EnquiryPage() {
       `}</style>
       <div className="page-content">
         <div className="card">
-          <div className="card-header">
-            <div>
+            <div className="card-header">
+            <div className="card-header-left">
               <h2 className="card-title">All Enquiries</h2>
               <p className="card-subtitle">
                 {loading ? 'Loading…' : `${filtered.length} record${filtered.length !== 1 ? 's' : ''} found`}
               </p>
             </div>
-            <div className="card-actions" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div className="card-header-right">
               {hasAny && (
                 <div className="qf-chips">
                   {chips.map(c => (
@@ -853,27 +1165,29 @@ export default function EnquiryPage() {
                   ))}
                 </div>
               )}
-              <div className="eq-filter-wrap">
-                <button className={`qf-btn${open ? ' qf-open' : ''}`} onClick={() => setOpen(v => !v)}>
-                  {open ? (
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round">
-                      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                  ) : (
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round">
-                      <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="12" y1="18" x2="12" y2="18"/>
-                    </svg>
-                  )}
-                  {open ? 'Close' : 'Filter'}
-                  {!open && hasAny && <span className="qf-count">{chips.length}</span>}
-                </button>
+              <div className="card-actions">
+                <div className="eq-filter-wrap">
+                  <button className={`qf-btn${open ? ' qf-open' : ''}`} onClick={() => setOpen(v => !v)}>
+                    {open ? (
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                      </svg>
+                    ) : (
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round">
+                        <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="12" y1="18" x2="12" y2="18"/>
+                      </svg>
+                    )}
+                    {open ? 'Close' : 'Filter'}
+                    {!open && hasAny && <span className="qf-count">{chips.length}</span>}
+                  </button>
+                </div>
+                <Link href="/enquiry" className="btn-primary">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
+                  New
+                </Link>
               </div>
-              <Link href="/enquiry" className="btn-primary">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                </svg>
-                New
-              </Link>
             </div>
           </div>
 
@@ -989,19 +1303,19 @@ export default function EnquiryPage() {
                         onClick={() => router.push(`/dashboard/enquiry/${r.id}`)}
                         style={{ cursor: 'pointer' }}
                       >
-                        <td className="table-id">{i + 1}</td>
-                        <td className="table-primary">{r.customerName || '—'}</td>
-                        <td>{r.millName || '—'}</td>
-                        <td>{r.mobile || '—'}</td>
-                        <td>{[r.location, r.state].filter(Boolean).join(', ') || '—'}</td>
-                        <td>
+                        <td className="table-id" data-label="#">{i + 1}</td>
+                        <td className="table-primary" data-label="Customer">{r.customerName || '—'}</td>
+                        <td data-label="Mill / Company">{r.millName || '—'}</td>
+                        <td data-label="Mobile">{r.mobile || '—'}</td>
+                        <td data-label="Location">{[r.location, r.state].filter(Boolean).join(', ') || '—'}</td>
+                        <td data-label="Requirement">
                           <span className={`status-pill ${r.hasRequirement ? 'status-pill--green' : 'status-pill--yellow'}`}>
                             {r.hasRequirement ? 'Immediate' : 'Future'}
                           </span>
                         </td>
-                        <td className="table-muted">{r.source || '—'}</td>
-                        <td className="table-muted">{r.followUpDate || '—'}</td>
-                        <td className="table-muted">{fmtDate(r.createdAt)}</td>
+                        <td className="table-muted" data-label="Source">{r.source || '—'}</td>
+                        <td className="table-muted" data-label="Follow-up">{r.followUpDate || '—'}</td>
+                        <td className="table-muted" data-label="Date">{fmtDate(r.createdAt)}</td>
                       </tr>
                     ))
                   )}
