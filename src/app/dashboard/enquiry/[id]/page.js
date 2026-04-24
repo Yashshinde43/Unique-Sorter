@@ -360,6 +360,173 @@ const CSS = `
   .eqd-confirm-overwrite:hover { background: #b45309; box-shadow: 0 4px 14px rgba(217,119,6,.35); }
   .eqd-confirm-overwrite:disabled { opacity: .6; cursor: not-allowed; }
 
+  /* Hide mobile elements on desktop */
+  .eqd-overwrite-warn-inline { display: none; }
+
+  /* ── Mobile Optimized Quotation Selector (CRM-style) ── */
+  @media (max-width: 640px) {
+    /* Show mobile warning, hide desktop */
+    .eqd-overwrite-warn-desktop { display: none; }
+    .eqd-overwrite-warn-inline { display: flex; }
+    /* Compact customer header */
+    .eqd-popup-cust-banner {
+      gap: 8px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e8edf4;
+    }
+    .eqd-popup-cust-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      font-size: 13px;
+      box-shadow: 0 2px 6px rgba(26,55,170,.25);
+    }
+    .eqd-popup-cust-name {
+      font-size: 13px;
+    }
+    .eqd-popup-cust-sub {
+      font-size: 11px;
+      margin-top: 1px;
+    }
+
+    /* Compact section label */
+    .eqd-qtype-section-label {
+      font-size: 10px !important;
+      margin-bottom: 8px !important;
+    }
+
+    /* Compact radio list instead of cards */
+    .eqd-qtype-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .eqd-qtype-opt {
+      flex-direction: row;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border-width: 1.5px;
+      gap: 10px;
+    }
+    .eqd-qtype-opt.selected {
+      box-shadow: 0 0 0 2px rgba(26,55,170,0.08);
+    }
+    .eqd-qtype-radio {
+      width: 18px;
+      height: 18px;
+      margin-bottom: 0;
+      border-width: 2px;
+    }
+    .eqd-qtype-radio-dot {
+      width: 7px;
+      height: 7px;
+    }
+    .eqd-qtype-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .eqd-qtype-name {
+      font-size: 12px;
+      line-height: 1.3;
+    }
+    .eqd-qtype-desc {
+      font-size: 10px;
+      line-height: 1.35;
+      color: #6b7a90;
+    }
+    .eqd-qtype-tag {
+      margin-top: 0;
+      margin-left: auto;
+      padding: 2px 6px;
+      font-size: 9px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    /* Compact inline warning */
+    .eqd-overwrite-warn-inline {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 8px 10px;
+      margin-bottom: 12px;
+      background: #fff8ed;
+      border: 1px solid #f0d0a0;
+      border-radius: 6px;
+      font-size: 11px;
+      line-height: 1.4;
+      color: #8b5a00;
+    }
+    .eqd-overwrite-warn-inline svg {
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .eqd-overwrite-warn-inline strong {
+      font-weight: 600;
+      color: #6b4200;
+    }
+
+    /* Compact buttons side by side */
+    .eqd-popup-actions {
+      flex-direction: row;
+      gap: 8px;
+    }
+    .eqd-popup-cancel,
+    .eqd-popup-confirm,
+    .eqd-confirm-overwrite {
+      flex: 1;
+      height: 38px;
+      font-size: 12px;
+      border-radius: 8px;
+    }
+
+    /* Reduce popup padding */
+    .eqd-popup-body {
+      padding: 14px 16px;
+    }
+    .eqd-popup-head {
+      padding: 16px 16px 14px;
+    }
+    .eqd-popup-icon {
+      width: 36px;
+      height: 36px;
+      margin-bottom: 10px;
+    }
+    .eqd-popup-title {
+      font-size: 15px;
+    }
+    .eqd-popup-subtitle {
+      font-size: 11px;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .eqd-popup-body {
+      padding: 12px 14px;
+    }
+    .eqd-qtype-opt {
+      padding: 9px 10px;
+    }
+    .eqd-qtype-name {
+      font-size: 11.5px;
+    }
+    .eqd-qtype-desc {
+      font-size: 9.5px;
+    }
+    .eqd-popup-cancel,
+    .eqd-popup-confirm,
+    .eqd-confirm-overwrite {
+      height: 36px;
+      font-size: 11.5px;
+    }
+  }
+
   /* ── Mobile ── */
   @media (max-width: 640px) {
     .eqd-content { padding: 20px 16px 60px; }
@@ -900,13 +1067,13 @@ export default function EnquiryDetailPage() {
               </div>
 
               {/* Quotation type selector */}
-              <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 11.5, fontWeight: 700, color: '#8898aa', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: 10 }}>
+              <div className="eqd-qtype-section-label" style={{ fontFamily: "'Inter', sans-serif", fontSize: 11.5, fontWeight: 700, color: '#8898aa', letterSpacing: '0.5px', textTransform: 'uppercase', marginBottom: 10 }}>
                 Select Quotation Format
               </div>
               <div className="eqd-qtype-grid">
                 {[
-                  { id: '1page', name: '1 Page Quotation', desc: 'Compact summary — ideal for quick sharing', tag: 'Compact', tagCls: 'eqd-qtype-tag--compact' },
-                  { id: 'detailed', name: 'Detailed Quotation', desc: 'Full breakdown with specs & terms', tag: 'Full Detail', tagCls: 'eqd-qtype-tag--full' },
+                  { id: '1page', name: '1 Page Quotation', desc: 'Compact summary — ideal for quick sharing', tag: 'COMPACT', tagCls: 'eqd-qtype-tag--compact' },
+                  { id: 'detailed', name: 'Detailed Quotation', desc: 'Full breakdown with specs & terms', tag: 'FULL', tagCls: 'eqd-qtype-tag--full' },
                 ].map(opt => (
                   <label
                     key={opt.id}
@@ -917,8 +1084,10 @@ export default function EnquiryDetailPage() {
                     <div className="eqd-qtype-radio">
                       <div className="eqd-qtype-radio-dot" />
                     </div>
-                    <div className="eqd-qtype-name">{opt.name}</div>
-                    <div className="eqd-qtype-desc">{opt.desc}</div>
+                    <div className="eqd-qtype-content">
+                      <div className="eqd-qtype-name">{opt.name}</div>
+                      <div className="eqd-qtype-desc">{opt.desc}</div>
+                    </div>
                     <span className={`eqd-qtype-tag ${opt.tagCls}`}>{opt.tag}</span>
                   </label>
                 ))}
@@ -926,35 +1095,51 @@ export default function EnquiryDetailPage() {
 
               {/* Overwrite notice — shown when a quotation already exists */}
               {existingQuotType && (
-                <div className="eqd-overwrite-warn">
-                  <div className="eqd-overwrite-warn-icon">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2.2" strokeLinecap="round">
+                <>
+                  {/* Desktop: Full warning box */}
+                  <div className="eqd-overwrite-warn eqd-overwrite-warn-desktop">
+                    <div className="eqd-overwrite-warn-icon">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2.2" strokeLinecap="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="eqd-overwrite-warn-title">
+                        {quotationType === existingQuotType 
+                          ? 'Regenerate existing quotation'
+                          : 'Switch quotation type'}
+                      </div>
+                      <div className="eqd-overwrite-warn-body">
+                        {quotationType === existingQuotType ? (
+                          <>
+                            A <strong>{existingQuotType === '1page' ? '1-Page' : 'Detailed'} Quotation</strong> already exists. 
+                            Generating will replace it with a new one.
+                          </>
+                        ) : (
+                          <>
+                            You currently have a <strong>{existingQuotType === '1page' ? '1-Page' : 'Detailed'} Quotation</strong>. 
+                            Only one quotation type is allowed per enquiry. 
+                            Switching to <strong>{quotationType === '1page' ? '1-Page' : 'Detailed'}</strong> will delete the existing one permanently.
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  {/* Mobile: Compact inline warning */}
+                  <div className="eqd-overwrite-warn-inline">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2" strokeLinecap="round">
                       <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
                       <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
                     </svg>
-                  </div>
-                  <div>
-                    <div className="eqd-overwrite-warn-title">
+                    <span>
                       {quotationType === existingQuotType 
-                        ? 'Regenerate existing quotation'
-                        : 'Switch quotation type'}
-                    </div>
-                    <div className="eqd-overwrite-warn-body">
-                      {quotationType === existingQuotType ? (
-                        <>
-                          A <strong>{existingQuotType === '1page' ? '1-Page' : 'Detailed'} Quotation</strong> already exists. 
-                          Generating will replace it with a new one.
-                        </>
-                      ) : (
-                        <>
-                          You currently have a <strong>{existingQuotType === '1page' ? '1-Page' : 'Detailed'} Quotation</strong>. 
-                          Only one quotation type is allowed per enquiry. 
-                          Switching to <strong>{quotationType === '1page' ? '1-Page' : 'Detailed'}</strong> will delete the existing one permanently.
-                        </>
-                      )}
-                    </div>
+                        ? <><strong>Replace:</strong> {existingQuotType === '1page' ? '1-Page' : 'Detailed'} quotation exists. New will overwrite it.</>
+                        : <><strong>Switch:</strong> Current {existingQuotType === '1page' ? '1-Page' : 'Detailed'} will be deleted.</>
+                      }
+                    </span>
                   </div>
-                </div>
+                </>
               )}
 
               <div className="eqd-popup-actions">
