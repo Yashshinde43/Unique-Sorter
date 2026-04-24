@@ -2,6 +2,7 @@ import { adminDb } from '@/lib/firebase-admin';
 
 export async function GET(request, { params }) {
   try {
+    if (!adminDb) return Response.json({ success: true, data: [] });
     const { id } = await params;
     const snapshot = await adminDb
       .collection('enquiry')

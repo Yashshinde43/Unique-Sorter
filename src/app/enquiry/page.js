@@ -1159,7 +1159,7 @@ export default function EnquiryPage() {
             </div>
 
             {/* ── Bottom save (desktop only) ── */}
-            <div className="enqf-bottom-save" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 16, marginTop: 36, paddingTop: 24, borderTop: '2px solid rgba(13,24,40,.08)' }}>
+            <div className="enqf-bottom-save" style={{ alignItems: 'center', justifyContent: 'flex-end', gap: 16, marginTop: 36, paddingTop: 24, borderTop: '2px solid rgba(13,24,40,.08)' }}>
 
               {/* Error message */}
               {status === 'error' && (

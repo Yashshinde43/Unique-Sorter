@@ -360,10 +360,43 @@ const CSS = `
   .eqd-confirm-overwrite:hover { background: #b45309; box-shadow: 0 4px 14px rgba(217,119,6,.35); }
   .eqd-confirm-overwrite:disabled { opacity: .6; cursor: not-allowed; }
 
+  /* ── Mobile ── */
   @media (max-width: 640px) {
     .eqd-content { padding: 20px 16px 60px; }
-    .g2, .g3 { grid-template-columns: 1fr; }
-    .eqd-page-head { flex-direction: column; align-items: flex-start; }
+    .g2, .g3 { grid-template-columns: 1fr; gap: 12px; }
+    .eqd-page-head { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .eqd-page-head-title { font-size: 18px; }
+    .eqd-page-head-actions { width: 100%; flex-wrap: wrap; }
+    .eqd-btn { height: 40px; font-size: 12px; min-height: 44px; }
+    .eqd-footer { flex-direction: column; align-items: stretch; gap: 12px; }
+    .eqd-footer-actions { width: 100%; }
+    .eqd-btn--primary { width: 100%; justify-content: center; }
+    .eqd-divider { margin: 24px 0 16px; gap: 10px; }
+    .eqd-divider-label { font-size: 12px; }
+    .eqd-toggle { flex-direction: column; gap: 8px; }
+    .eqd-toggle-btn { width: 100%; justify-content: center; min-height: 44px; }
+    .eqd-in, .eqd-sel, .eqd-ta { font-size: 16px; min-height: 44px; }
+    .eqd-val { font-size: 13px; padding: 8px 12px; }
+    .eqd-item-body { padding: 14px; }
+    /* Popup responsive */
+    .eqd-popup { max-width: calc(100vw - 24px); }
+    .eqd-popup-head { padding: 20px 20px 16px; }
+    .eqd-popup-body { padding: 18px 20px; }
+    .eqd-qtype-grid { grid-template-columns: 1fr; }
+    .eqd-popup-actions { flex-direction: column; }
+    .eqd-popup-cancel, .eqd-popup-confirm, .eqd-confirm-overwrite { flex: none; width: 100%; }
+  }
+
+  /* ── Extra small ── */
+  @media (max-width: 400px) {
+    .eqd-content { padding: 16px 12px 48px; }
+    .eqd-page-head-title { font-size: 16px; }
+    .eqd-in, .eqd-sel, .eqd-ta { padding: 8px 10px; }
+  }
+
+  /* ── Tablet ── */
+  @media (min-width: 641px) and (max-width: 1023px) {
+    .eqd-content { padding: 28px 24px 70px; }
   }
 `;
 
@@ -409,34 +442,58 @@ export default function EnquiryDetailPage() {
   const [quotationType, setQuotationType] = useState('1page');
   const [existingQuotType, setExistingQuotType] = useState(null); // existing quotation type if any
   const [overwriting, setOverwriting]       = useState(false);
+
+  // Dummy data for when Firebase is unavailable
+  const DUMMY_ENQUIRIES = {
+    'enq-001': { id: 'enq-001', customerName: 'Rajesh Kumar', millName: 'Sri Balaji Rice Mill', mobile: '9876543210', email: 'rajesh@example.com', gst: '27AABCU9603R1ZM', location: 'Nagpur', state: 'Telangana', address: 'Plot No 45, Industrial Area, MIDC Nagpur, Maharashtra 440001', source: 'Exhibition', hasRequirement: true, commodity: 'Rice', remarks: 'Customer visited our stall at Agri Expo 2026. Very interested in Pinnacle series.', createdAt: '2026-04-20T10:30:00Z', items: [{ modelNo: 'Pinnacle', size: '6', qty: '2', price: '6600000' }] },
+    'enq-002': { id: 'enq-002', customerName: 'Amit Sharma', millName: 'Sharma Agro Industries', mobile: '8765432109', email: 'amit@sharmaagro.in', gst: '36AADCS1234F1Z5', location: 'Hyderabad', state: 'Telangana', address: '12-3-456, Balanagar Industrial Area, Hyderabad 500037', source: 'Reference', hasRequirement: true, commodity: 'Pulses', remarks: 'Referred by existing client Ravi Enterprises.', createdAt: '2026-04-18T14:15:00Z', items: [{ modelNo: 'Pinnacle', size: '8', qty: '1', price: '4000000' }] },
+    'enq-003': { id: 'enq-003', customerName: 'Priya Patel', millName: 'Patel Foods Pvt Ltd', mobile: '7654321098', email: 'priya@patelfoods.com', gst: '29AABCP5678G1ZK', location: 'Bangalore', state: 'Karnataka', address: 'Survey No 78, Peenya Industrial Estate, Bangalore 560058', source: 'Cold Call', hasRequirement: false, commodity: 'Multiproduct', createdAt: '2026-04-15T09:00:00Z', futureNote: 'Interested in Pinnacle 10 for new plant expansion in Q3. Currently finalizing land acquisition.', followUpDate: '2026-05-15', probableMonth: 'August 2026', orderChances: '60' },
+    'enq-004': { id: 'enq-004', customerName: 'Vikram Singh', millName: 'Singh Dal Mill', mobile: '9988776655', email: '', gst: '', location: 'Raipur', state: 'Telangana', address: 'Near Hanuman Temple, Budhapara, Raipur, Chhattisgarh 492001', source: 'Online / Website', hasRequirement: true, commodity: 'Rice', createdAt: '2026-04-12T16:45:00Z', items: [{ modelNo: 'Pinnacle', size: '5', qty: '3', price: '9000000' }] },
+    'enq-005': { id: 'enq-005', customerName: 'Sunita Devi', millName: 'Devi Rice Processing', mobile: '8877665544', email: 'sunita@devirice.in', gst: '36AABCD9012E1Z8', location: 'Warangal', state: 'Telangana', address: 'Plot 22, Food Processing Park, Warangal 506002', source: 'Social Media', hasRequirement: false, commodity: 'Rice', createdAt: '2026-04-10T11:20:00Z', futureNote: 'Planning to upgrade existing sorting line next year. Wants detailed specs for Pinnacle 8.', followUpDate: '2026-06-01', probableMonth: 'January 2027', orderChances: '40' },
+  };
+
   useEffect(() => {
+    const TERM_DEFAULTS = {
+      payTerms:     '50% advance with Purchase Order and balance before despatch.',
+      commodity:    'Rice',
+      electricity:  '220 V Frequency- 50Hz.',
+      freight:      'At actual in your scope.',
+      warranty:     'One year.',
+      cancellation: 'Order once confirmed & processed cannot be cancelled.',
+    };
+    const normPrice = p => {
+      if (!p) return '';
+      if (/₹|L$/i.test(String(p))) {
+        const n = parseFloat(String(p).replace(/[^\d.]/g, ''));
+        return isNaN(n) ? '' : String(Math.round(n * 100000));
+      }
+      return p;
+    };
+    const applyDefaults = (data) => {
+      const raw = { ...TERM_DEFAULTS, ...data };
+      if (raw.items) raw.items = raw.items.map(it => ({ ...it, price: normPrice(it.price) }));
+      setRow(raw);
+      setDraft(raw);
+    };
+
     fetch(`/api/enquiry/${id}`)
       .then(r => r.json())
       .then(d => {
         if (d.success) {
-          const TERM_DEFAULTS = {
-            payTerms:     '50% advance with Purchase Order and balance before despatch.',
-            commodity:    'Rice',
-            electricity:  '220 V Frequency- 50Hz.',
-            freight:      'At actual in your scope.',
-            warranty:     'One year.',
-            cancellation: 'Order once confirmed & processed cannot be cancelled.',
-          };
-          const normPrice = p => {
-            if (!p) return '';
-            if (/₹|L$/i.test(String(p))) {
-              const n = parseFloat(String(p).replace(/[^\d.]/g, ''));
-              return isNaN(n) ? '' : String(Math.round(n * 100000));
-            }
-            return p;
-          };
-          const raw = { ...TERM_DEFAULTS, ...d.data };
-          if (raw.items) raw.items = raw.items.map(it => ({ ...it, price: normPrice(it.price) }));
-          setRow(raw);
-          setDraft(raw);
-        } else setFetchErr(d.error || 'Not found');
+          applyDefaults(d.data);
+        } else {
+          // Fallback to dummy data
+          const dummy = DUMMY_ENQUIRIES[id];
+          if (dummy) applyDefaults(dummy);
+          else setFetchErr('Not found');
+        }
       })
-      .catch(() => setFetchErr('Failed to load'))
+      .catch(() => {
+        // Fallback to dummy data
+        const dummy = DUMMY_ENQUIRIES[id];
+        if (dummy) applyDefaults(dummy);
+        else setFetchErr('Failed to load');
+      })
       .finally(() => setLoading(false));
   }, [id]);
 

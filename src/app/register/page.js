@@ -75,19 +75,26 @@ export default function RegisterPage() {
   if (success) {
     return (
       <div style={styles.container}>
-        <div style={styles.card}>
+        <style>{`
+          @media (max-width: 480px) {
+            .reg-success-card { padding: 28px 20px !important; border-radius: 16px !important; }
+            .reg-success-title { font-size: 22px !important; }
+            .reg-success-btn { min-height: 48px !important; font-size: 15px !important; }
+          }
+        `}</style>
+        <div className="reg-success-card" style={styles.card}>
           <div style={styles.successIcon}>
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2">
               <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
               <polyline points="22 4 12 14.01 9 11.01"/>
             </svg>
           </div>
-          <h2 style={styles.successTitle}>Registration Successful!</h2>
+          <h2 className="reg-success-title" style={styles.successTitle}>Registration Successful!</h2>
           <p style={styles.successText}>
             Your account has been created. You can now login with your phone number and password.
           </p>
           <div style={styles.buttonGroup}>
-            <button onClick={() => router.push('/login')} style={styles.button}>
+            <button onClick={() => router.push('/login')} className="reg-success-btn" style={styles.button}>
               Go to Login
             </button>
           </div>
@@ -98,21 +105,61 @@ export default function RegisterPage() {
 
   return (
     <div style={styles.container}>
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @media (max-width: 480px) {
+          .reg-card {
+            padding: 28px 20px !important;
+            border-radius: 16px !important;
+          }
+          .reg-title {
+            font-size: 22px !important;
+          }
+          .reg-input {
+            padding: 12px 14px !important;
+            font-size: 16px !important;
+          }
+          .reg-phone-input {
+            padding-left: 52px !important;
+          }
+          .reg-btn {
+            padding: 14px 20px !important;
+            font-size: 15px !important;
+            min-height: 48px !important;
+          }
+          .reg-logo-icon {
+            width: 48px !important;
+            height: 48px !important;
+          }
+          .reg-logo-icon svg {
+            width: 26px !important;
+            height: 26px !important;
+          }
+        }
+        @media (max-width: 360px) {
+          .reg-card {
+            padding: 24px 16px !important;
+          }
+          .reg-title {
+            font-size: 20px !important;
+          }
+        }
+      `}</style>
       {/* Background decoration */}
       <div style={styles.bgDecoration}></div>
       <div style={styles.bgDecoration2}></div>
       
-      <div style={styles.card}>
+      <div className="reg-card" style={styles.card}>
         {/* Logo Section */}
         <div style={styles.logoSection}>
-          <div style={styles.logoIcon}>
+          <div className="reg-logo-icon" style={styles.logoIcon}>
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 2L2 7l10 5 10-5-10-5z"/>
               <path d="M2 17l10 5 10-5"/>
               <path d="M2 12l10 5 10-5"/>
             </svg>
           </div>
-          <h1 style={styles.title}>Create Account</h1>
+          <h1 className="reg-title" style={styles.title}>Create Account</h1>
           <p style={styles.subtitle}>Register to access the inquiry system</p>
         </div>
 
@@ -141,6 +188,7 @@ export default function RegisterPage() {
                 value={formData.phone}
                 onChange={handleChange}
                 placeholder="9876543210"
+                className="reg-input reg-phone-input"
                 style={{...styles.input, ...styles.phoneInput}}
                 required
               />
@@ -157,6 +205,7 @@ export default function RegisterPage() {
               value={formData.password}
               onChange={handleChange}
               placeholder="Create a password"
+              className="reg-input"
               style={styles.input}
               required
               minLength={6}
@@ -172,13 +221,14 @@ export default function RegisterPage() {
               value={formData.confirmPassword}
               onChange={handleChange}
               placeholder="Confirm your password"
+              className="reg-input"
               style={styles.input}
               required
             />
           </div>
 
           {/* Submit Button */}
-          <button type="submit" disabled={loading} style={loading ? {...styles.button, ...styles.buttonDisabled} : styles.button}>
+          <button type="submit" disabled={loading} className="reg-btn" style={loading ? {...styles.button, ...styles.buttonDisabled} : styles.button}>
             {loading ? (
               <>
                 <span style={styles.spinner}></span>

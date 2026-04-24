@@ -141,22 +141,74 @@ export default function LoginPage() {
 
   return (
     <div style={styles.container}>
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @media (max-width: 480px) {
+          .login-card {
+            padding: 28px 20px !important;
+            border-radius: 16px !important;
+          }
+          .login-title {
+            font-size: 24px !important;
+          }
+          .login-subtitle {
+            font-size: 14px !important;
+          }
+          .login-logo-icon {
+            width: 56px !important;
+            height: 56px !important;
+          }
+          .login-logo-icon svg {
+            width: 28px !important;
+            height: 28px !important;
+          }
+          .login-input {
+            padding: 12px 14px 12px 48px !important;
+            font-size: 16px !important;
+          }
+          .login-phone-input {
+            padding-left: 56px !important;
+          }
+          .login-btn {
+            padding: 14px 20px !important;
+            font-size: 15px !important;
+            min-height: 48px !important;
+          }
+          .login-otp-input {
+            font-size: 24px !important;
+            letter-spacing: 8px !important;
+            padding: 14px !important;
+          }
+        }
+        @media (max-width: 360px) {
+          .login-card {
+            padding: 24px 16px !important;
+          }
+          .login-title {
+            font-size: 22px !important;
+          }
+          .login-otp-input {
+            font-size: 20px !important;
+            letter-spacing: 6px !important;
+          }
+        }
+      `}</style>
       {/* Background decoration */}
       <div style={styles.bgDecoration}></div>
       <div style={styles.bgDecoration2}></div>
       
-      <div style={styles.card}>
+      <div className="login-card" style={styles.card}>
         {/* Logo Section */}
         <div style={styles.logoSection}>
-          <div style={styles.logoIcon}>
+          <div className="login-logo-icon" style={styles.logoIcon}>
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 2L2 7l10 5 10-5-10-5z"/>
               <path d="M2 17l10 5 10-5"/>
               <path d="M2 12l10 5 10-5"/>
             </svg>
           </div>
-          <h1 style={styles.title}>Unique Sorter</h1>
-          <p style={styles.subtitle}>
+          <h1 className="login-title" style={styles.title}>Unique Sorter</h1>
+          <p className="login-subtitle" style={styles.subtitle}>
             {step === 1 ? 'Welcome back! Please sign in to continue.' : 'Verify your identity'}
           </p>
         </div>
@@ -186,6 +238,7 @@ export default function LoginPage() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
                   placeholder="9876543210"
+                  className="login-input login-phone-input"
                   style={{...styles.input, ...styles.phoneInput}}
                   required
                 />
@@ -209,6 +262,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
+                  className="login-input"
                   style={styles.input}
                   required
                 />
@@ -222,7 +276,7 @@ export default function LoginPage() {
             </div>
 
             {/* Submit Button */}
-            <button type="submit" disabled={loading} style={loading ? {...styles.button, ...styles.buttonDisabled} : styles.button}>
+            <button type="submit" disabled={loading} className="login-btn" style={loading ? {...styles.button, ...styles.buttonDisabled} : styles.button}>
               {loading ? (
                 <>
                   <span style={styles.spinner}></span>
@@ -262,6 +316,7 @@ export default function LoginPage() {
                 value={otp}
                 onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
                 placeholder="000000"
+                className="login-otp-input"
                 style={styles.otpInput}
                 maxLength={6}
                 required
@@ -269,7 +324,7 @@ export default function LoginPage() {
             </div>
 
             {/* Verify Button */}
-            <button type="submit" disabled={loading} style={loading ? {...styles.button, ...styles.buttonDisabled} : styles.button}>
+            <button type="submit" disabled={loading} className="login-btn" style={loading ? {...styles.button, ...styles.buttonDisabled} : styles.button}>
               {loading ? (
                 <>
                   <span style={styles.spinner}></span>

@@ -3,6 +3,7 @@ import { FieldValue } from 'firebase-admin/firestore';
 
 export async function GET() {
   try {
+    if (!adminDb) return Response.json({ success: false, error: 'Database not configured' }, { status: 503 });
     const snapshot = await adminDb
       .collection('quotations')
       .orderBy('createdAt', 'desc')
@@ -25,6 +26,7 @@ export async function GET() {
 
 export async function POST(request) {
   try {
+    if (!adminDb) return Response.json({ success: false, error: 'Database not configured' }, { status: 503 });
     const body = await request.json();
 
     // Use deterministic doc ID when coming from an enquiry to prevent duplicates

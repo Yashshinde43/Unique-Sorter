@@ -38,6 +38,7 @@ function diffFields(oldData, newData) {
 
 export async function GET(request, { params }) {
   try {
+    if (!adminDb) return Response.json({ success: false, error: 'Database not configured' }, { status: 503 });
     const { id } = await params;
     const doc = await adminDb.collection('enquiry').doc(id).get();
     if (!doc.exists) return Response.json({ success: false, error: 'Not found' }, { status: 404 });
@@ -53,6 +54,7 @@ export async function GET(request, { params }) {
 
 export async function PATCH(request, { params }) {
   try {
+    if (!adminDb) return Response.json({ success: false, error: 'Database not configured. Changes saved locally only.' }, { status: 503 });
     const { id } = await params;
     const body = await request.json();
     const { id: _id, createdAt, _editedBy, ...fields } = body;
@@ -88,6 +90,7 @@ export async function PATCH(request, { params }) {
 
 export async function DELETE(request, { params }) {
   try {
+    if (!adminDb) return Response.json({ success: false, error: 'Database not configured' }, { status: 503 });
     const { id } = await params;
     await adminDb.collection('enquiry').doc(id).delete();
     return Response.json({ success: true });

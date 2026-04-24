@@ -2,6 +2,7 @@ import { adminDb } from '@/lib/firebase-admin';
 
 export async function GET(_, { params }) {
   try {
+    if (!adminDb) return Response.json({ success: false, error: 'Database not configured' }, { status: 503 });
     const { id } = await params;
     const doc = await adminDb.collection('quotations').doc(id).get();
     if (!doc.exists) {
@@ -23,6 +24,7 @@ export async function GET(_, { params }) {
 
 export async function DELETE(_, { params }) {
   try {
+    if (!adminDb) return Response.json({ success: false, error: 'Database not configured' }, { status: 503 });
     const { id } = await params;
     await adminDb.collection('quotations').doc(id).delete();
     return Response.json({ success: true });
