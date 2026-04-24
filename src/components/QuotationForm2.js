@@ -561,6 +561,28 @@ function mapEnquiryToForm2(enq) {
   const product = PRODUCTS.find((p) => p.id === productId);
   const addrParts = [enq.address, enq.location, enq.state].filter(Boolean);
 
+  // Parse delivery days to delivery weeks range for detailed quotation
+  let deliveryFrom = "7";
+  let deliveryTo = "8";
+  if (enq.delivery) {
+    const deliveryDays = parseInt(enq.delivery);
+    if (!isNaN(deliveryDays)) {
+      // Convert days to weeks (rough approximation)
+      const weeks = Math.ceil(deliveryDays / 7);
+      deliveryFrom = String(weeks);
+      deliveryTo = String(weeks + 1);
+    }
+  }
+
+  // Parse validity days
+  let quotationValidity = "30";
+  if (enq.validity) {
+    const validityDays = parseInt(enq.validity);
+    if (!isNaN(validityDays)) {
+      quotationValidity = String(validityDays);
+    }
+  }
+
   return {
     ...INIT(),
     company:        enq.millName || enq.customerName || "",
@@ -576,7 +598,13 @@ function mapEnquiryToForm2(enq) {
     airReq:         product?.airReq || "",
     basePrice:      product?.basePrice || "",
     refDate:        todayISO(),
-    commodity:      enq.commodity || "",
+    // Map all quotation terms from enquiry
+    commodity:      enq.commodity || INIT().commodity,
+    freight:        enq.freight || INIT().freight,
+    paymentTerms:   enq.payTerms || INIT().paymentTerms,
+    deliveryFrom:   deliveryFrom,
+    deliveryTo:     deliveryTo,
+    quotationValidity: quotationValidity,
   };
 }
 
