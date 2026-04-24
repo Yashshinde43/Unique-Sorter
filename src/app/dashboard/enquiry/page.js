@@ -1210,21 +1210,17 @@ export default function EnquiryPage() {
               <table className="data-table">
                 <thead>
                   <tr>
-                    <th>#</th>
                     <th>Customer Name</th>
                     <th>Mill / Company</th>
                     <th>Mobile</th>
-                    <th>Location</th>
                     <th>Requirement</th>
-                    <th>Source</th>
-                    <th>Follow-up</th>
-                    <th>Date</th>
+                    <th>Location</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filtered.length === 0 ? (
                     <tr>
-                      <td colSpan={9} style={{ textAlign: 'center', padding: '56px 0' }}>
+                      <td colSpan={5} style={{ textAlign: 'center', padding: '56px 0' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
                           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#d0d8e8" strokeWidth="1.4" strokeLinecap="round">
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -1243,26 +1239,22 @@ export default function EnquiryPage() {
                       </td>
                     </tr>
                   ) : (
-                    filtered.map((r, i) => (
+                    filtered.map((r) => (
                       <tr
                         key={r.id}
                         className="table-row-clickable"
                         onClick={() => router.push(`/dashboard/enquiry/${r.id}`)}
                         style={{ cursor: 'pointer' }}
                       >
-                        <td className="table-id" data-label="#">{i + 1}</td>
                         <td className="table-primary" data-label="Customer">{r.customerName || '—'}</td>
                         <td data-label="Mill / Company">{r.millName || '—'}</td>
                         <td data-label="Mobile">{r.mobile || '—'}</td>
-                        <td data-label="Location">{[r.location, r.state].filter(Boolean).join(', ') || '—'}</td>
                         <td data-label="Requirement">
                           <span className={`status-pill ${r.hasRequirement ? 'status-pill--green' : 'status-pill--yellow'}`}>
                             {r.hasRequirement ? 'Immediate' : 'Future'}
                           </span>
                         </td>
-                        <td className="table-muted" data-label="Source">{r.source || '—'}</td>
-                        <td className="table-muted" data-label="Follow-up">{r.followUpDate || '—'}</td>
-                        <td className="table-muted" data-label="Date">{fmtDate(r.createdAt)}</td>
+                        <td data-label="Location">{[r.location, r.state].filter(Boolean).join(', ') || '—'}</td>
                       </tr>
                     ))
                   )}
