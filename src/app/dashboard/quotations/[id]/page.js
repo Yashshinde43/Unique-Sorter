@@ -53,10 +53,10 @@ const CSS = `
   }
   .qv-share-btn:hover { border-color: rgba(255,255,255,.35); background: rgba(255,255,255,.12); color: #fff; }
   .qv-share-dropdown {
-    position: absolute; top: calc(100% + 8px); right: 0;
+    position: fixed;
     background: #fff; border: 1px solid #e0e8f2; border-radius: 12px; padding: 6px;
     box-shadow: 0 12px 40px rgba(13,24,40,.22), 0 2px 8px rgba(13,24,40,.08);
-    min-width: 200px; z-index: 999;
+    min-width: 200px; z-index: 9999;
     animation: qv-drop-in .18s cubic-bezier(.34,1.3,.64,1) both;
   }
   @keyframes qv-drop-in {
@@ -324,45 +324,17 @@ const CSS = `
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding: 12px;
+    padding: 12px 8px;
     -webkit-overflow-scrolling: touch;
   }
 
   .qv-iframe-wrap iframe {
     border: none;
     width: 860px;
-    height: 1200px;
     flex-shrink: 0;
     background: #fff;
     box-shadow: 0 4px 24px rgba(0,0,0,.2);
-    transform-origin: top center;
-    transform: scale(0.35);
-    max-width: none;
-  }
-
-  /* Scale up on larger phones */
-  @media (min-width: 400px) {
-    .qv-iframe-wrap iframe {
-      transform: scale(0.42);
-    }
-  }
-
-  @media (min-width: 480px) {
-    .qv-iframe-wrap iframe {
-      transform: scale(0.5);
-    }
-  }
-
-  @media (min-width: 640px) {
-    .qv-iframe-wrap iframe {
-      transform: scale(0.65);
-    }
-  }
-
-  @media (min-width: 768px) {
-    .qv-iframe-wrap iframe {
-      transform: scale(0.85);
-    }
+    zoom: var(--iframe-scale, 1);
   }
 
   /* Audit panel - hidden by default on mobile */
@@ -388,7 +360,9 @@ const CSS = `
 
   .qv-audit-panel.open {
     width: 100%;
-    height: 300px;
+    height: 40vh;
+    min-height: 240px;
+    max-height: 420px;
   }
 
   .qv-audit-panel.closed {
@@ -457,17 +431,6 @@ const CSS = `
     padding: 2px 6px;
   }
 
-  /* Share dropdown */
-  .qv-share-dropdown {
-    position: fixed;
-    top: auto;
-    bottom: 60px;
-    left: 12px;
-    right: 12px;
-    min-width: auto;
-    max-width: 400px;
-    margin: 0 auto;
-  }
 
   /* Loading spinner */
   .qv-loading {
@@ -540,10 +503,7 @@ const CSS = `
     }
 
     .qv-iframe-wrap iframe {
-      width: 860px;
-      height: 1200px;
       box-shadow: 0 8px 48px rgba(0,0,0,.35);
-      transform: none;
     }
 
     /* Audit panel on the right */
@@ -594,15 +554,6 @@ const CSS = `
       pointer-events: auto;
     }
 
-    .qv-share-dropdown {
-      position: absolute;
-      top: calc(100% + 8px);
-      bottom: auto;
-      left: auto;
-      right: 0;
-      min-width: 200px;
-      max-width: none;
-    }
   }
 
   /* Extra small mobile */
@@ -617,11 +568,7 @@ const CSS = `
     }
 
     .qv-iframe-wrap {
-      padding: 8px;
-    }
-
-    .qv-iframe-wrap iframe {
-      transform: scale(0.32);
+      padding: 8px 4px;
     }
   }
 `;
@@ -632,9 +579,25 @@ export default function QuotationViewPage() {
   const [record, setRecord]     = useState(null);
   const [notFound, setNotFound] = useState(false);
   const [showShare, setShowShare] = useState(false);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
+  const shareBtnRef = useRef(null);
   const [auditLog, setAuditLog] = useState([]);
   const [auditLoading, setAuditLoading] = useState(false);
   const [auditOpen, setAuditOpen] = useState(true);
+  const iframeWrapRef = useRef(null);
+
+  // Zoom iframe to fit available width on mobile
+  useEffect(() => {
+    const applyScale = () => {
+      if (!iframeWrapRef.current) return;
+      const available = iframeWrapRef.current.clientWidth - 16; // subtract padding
+      const scale = available < 860 ? Math.max(0.28, available / 860) : 1;
+      iframeWrapRef.current.style.setProperty('--iframe-scale', scale);
+    };
+    applyScale();
+    window.addEventListener('resize', applyScale);
+    return () => window.removeEventListener('resize', applyScale);
+  }, [record]);
 
   useEffect(() => {
     // Extract enquiryId from composite doc ID (e.g. "abc123_1page" → "abc123")
@@ -793,7 +756,15 @@ export default function QuotationViewPage() {
 
         {/* Share dropdown */}
         <div className="qv-share-wrap">
-          <button className="qv-share-btn" onClick={() => setShowShare(s => !s)}>
+          <button className="qv-share-btn" ref={shareBtnRef} onClick={() => {
+            if (!showShare && shareBtnRef.current) {
+              const r = shareBtnRef.current.getBoundingClientRect();
+              const dropW = 212;
+              const left = Math.min(r.right - dropW, window.innerWidth - dropW - 8);
+              setDropdownPos({ top: r.bottom + 8, left: Math.max(8, left) });
+            }
+            setShowShare(s => !s);
+          }}>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
               <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
@@ -804,7 +775,7 @@ export default function QuotationViewPage() {
           {showShare && (
             <>
               <div style={{ position: 'fixed', inset: 0, zIndex: 998 }} onClick={() => setShowShare(false)} />
-              <div className="qv-share-dropdown">
+              <div className="qv-share-dropdown" style={{ position: 'fixed', top: dropdownPos.top, left: dropdownPos.left, right: 'auto' }}>
                 <button className="qv-share-item" onClick={handleShareWhatsApp}>
                   <span className="qv-share-icon" style={{ background: '#e8f8ee' }}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="#25D366">
@@ -841,8 +812,12 @@ export default function QuotationViewPage() {
       </div>
 
       <div className="qv-body">
-        <div className="qv-iframe-wrap">
-          <iframe srcDoc={html} title="Quotation" />
+        <div ref={iframeWrapRef} className="qv-iframe-wrap">
+          <iframe
+            srcDoc={html}
+            title="Quotation"
+            style={{ height: record.quotationType === 'detailed' ? 8400 : 1400 }}
+          />
         </div>
 
         {/* Audit log panel */}

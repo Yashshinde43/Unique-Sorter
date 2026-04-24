@@ -524,7 +524,8 @@ const CSS = `
   .qf-modal-download { height:30px; padding:0 16px; border-radius:6px; border:none; background:#52ba4f; color:#fff; font-size:12px; font-family:'DM Sans',sans-serif; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:6px; box-shadow:0 2px 10px rgba(82,186,79,.4); transition:all .15s; }
   .qf-modal-download:hover { background:#47a844; transform:translateY(-1px); }
   .qf-modal-iframe-wrap { flex:1; overflow:auto; background:#a0a8b8; display:flex; flex-direction:column; align-items:center; padding:24px 16px 40px; gap:20px; }
-  .qf-modal-iframe-wrap iframe { border:none; width:860px; height:1200px; flex-shrink:0; background:#fff; box-shadow:0 8px 48px rgba(0,0,0,.35); }
+  .qf-modal-iframe-wrap iframe { border:none; width:860px; height:7400px; flex-shrink:0; background:#fff; box-shadow:0 8px 48px rgba(0,0,0,.35); zoom:var(--iframe-scale,1); }
+  @media (max-width:900px) { .qf-modal-iframe-wrap { padding:16px 8px 32px; } }
 `;
 
 /* ─── Tiny helpers ────────────────────────────────────────────── */
@@ -619,10 +620,25 @@ export default function QuotationForm2({ enquiryId = null, quotationType = null 
   const [enquiryName, setEnquiryName] = useState("");
   const [showShare, setShowShare] = useState(false);
   const [iframeLoaded, setIframeLoaded] = useState(false);
-  const iframeRef = useRef(null);
-  const savedRef  = useRef(false); // guard against Strict Mode double-fire
+  const iframeRef     = useRef(null);
+  const iframeWrapRef = useRef(null);
+  const savedRef      = useRef(false); // guard against Strict Mode double-fire
   const set = (k, v) => setF((p) => ({ ...p, [k]: v }));
   const openPreview = () => { setIframeLoaded(false); setShowPreview(true); };
+
+  // Zoom iframe to fit available width on mobile
+  useEffect(() => {
+    if (!showPreview) return;
+    const applyScale = () => {
+      if (!iframeWrapRef.current) return;
+      const available = iframeWrapRef.current.clientWidth - 32;
+      const scale = available < 860 ? Math.max(0.28, available / 860) : 1;
+      iframeWrapRef.current.style.setProperty("--iframe-scale", scale);
+    };
+    applyScale();
+    window.addEventListener("resize", applyScale);
+    return () => window.removeEventListener("resize", applyScale);
+  }, [showPreview]);
 
   const saveToStorage = async (formData) => {
     const base = parseFloat(formData.basePrice) || 0;
@@ -977,7 +993,7 @@ export default function QuotationForm2({ enquiryId = null, quotationType = null 
               Close
             </button>
           </div>
-          <div className="qf-modal-iframe-wrap" style={{ position: "relative" }}>
+          <div ref={iframeWrapRef} className="qf-modal-iframe-wrap" style={{ position: "relative" }}>
             {!iframeLoaded && (
               <div style={{ position: "sticky", top: "50%", left: 0, right: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 14, zIndex: 10, padding: "40px 0" }}>
                 <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" style={{ animation: "qf-spin 0.8s linear infinite", filter: "drop-shadow(0 2px 8px rgba(0,0,0,.4))" }}>

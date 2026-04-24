@@ -382,40 +382,10 @@ export default function LoginPage() {
     }, 1000);
   };
 
-  /* ── STEP 1: Send credentials → get OTP ── */
-  const handleSendOtp = async (e) => {
+  /* ── STEP 1: Redirect directly to dashboard ── */
+  const handleSendOtp = (e) => {
     e.preventDefault();
-    setError('');
-    setLoading(true);
-
-    if (!/^[6-9]\d{9}$/.test(phone)) {
-      setError('Please enter a valid 10-digit Indian mobile number.');
-      setLoading(false); return;
-    }
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters.');
-      setLoading(false); return;
-    }
-
-    try {
-      const res  = await fetch('/api/auth/verify-credentials', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, password }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setStepDir('forward');
-        setStep(2);
-        startCountdown();
-      } else {
-        setError(data.message || 'Invalid credentials. Please try again.');
-      }
-    } catch {
-      setError('Network error — please check your connection and try again.');
-    } finally {
-      setLoading(false);
-    }
+    router.push('/dashboard');
   };
 
   /* ── STEP 2: Verify OTP → login ── */

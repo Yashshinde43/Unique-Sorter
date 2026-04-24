@@ -99,19 +99,15 @@ export default function Sidebar() {
     return pathname === item.href || pathname.startsWith(item.href + '/');
   };
 
+  // Listen for hamburger event dispatched by TopBar
+  useEffect(() => {
+    const handler = () => setMobileOpen(true);
+    window.addEventListener('sidebar-open', handler);
+    return () => window.removeEventListener('sidebar-open', handler);
+  }, []);
+
   return (
     <>
-      {/* Mobile hamburger trigger - hidden when sidebar is open */}
-      {!mobileOpen && (
-        <button
-          className="mobile-hamburger"
-          onClick={() => setMobileOpen(true)}
-          aria-label="Open navigation"
-        >
-          <span /><span /><span />
-        </button>
-      )}
-
       {/* Backdrop (mobile only) */}
       {mobileOpen && (
         <div

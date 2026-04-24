@@ -732,10 +732,14 @@ const CSS = `
   .qf-modal-iframe-wrap iframe {
     border: none;
     width: 860px;
-    height: 1200px;
+    height: 1400px;
     flex-shrink: 0;
     background: #fff;
     box-shadow: 0 8px 48px rgba(0,0,0,.35);
+    zoom: var(--iframe-scale, 1);
+  }
+  @media (max-width: 900px) {
+    .qf-modal-iframe-wrap { padding: 16px 8px 32px; }
   }
 
   /* ── Share dropdown ── */
@@ -851,9 +855,24 @@ export default function QuotationForm({ enquiryId = null, quotationType = null }
   const [enquiryLoading, setEnquiryLoading] = useState(!!enquiryId);
   const [enquiryName, setEnquiryName] = useState('');
   const [showShare, setShowShare]     = useState(false);
-  const iframeRef  = useRef(null);
-  const savedRef   = useRef(false); // guard against Strict Mode double-fire
+  const iframeRef     = useRef(null);
+  const iframeWrapRef = useRef(null);
+  const savedRef      = useRef(false); // guard against Strict Mode double-fire
   const set = (k, v) => setF(p => ({ ...p, [k]: v }));
+
+  // Zoom iframe to fit available width on mobile
+  useEffect(() => {
+    if (!showPreview) return;
+    const applyScale = () => {
+      if (!iframeWrapRef.current) return;
+      const available = iframeWrapRef.current.clientWidth - 32;
+      const scale = available < 860 ? Math.max(0.28, available / 860) : 1;
+      iframeWrapRef.current.style.setProperty('--iframe-scale', scale);
+    };
+    applyScale();
+    window.addEventListener('resize', applyScale);
+    return () => window.removeEventListener('resize', applyScale);
+  }, [showPreview]);
 
   const saveToStorage = async (formData) => {
     const base    = Math.round(parseFloat(formData.basePrice) || 0);
@@ -1215,7 +1234,7 @@ export default function QuotationForm({ enquiryId = null, quotationType = null }
               Close
             </button>
           </div>
-          <div className="qf-modal-iframe-wrap">
+          <div ref={iframeWrapRef} className="qf-modal-iframe-wrap">
             <iframe
               ref={iframeRef}
               srcDoc={buildHTML(f, calc)}
