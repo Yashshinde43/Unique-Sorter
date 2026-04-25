@@ -1,18 +1,1082 @@
-export const metadata = {
-  title: 'Settings — Unique Sorter',
-  description: 'Account Settings',
-};
+'use client';
 
-export default function SettingsPage() {
+import { useState } from 'react';
+
+/* ─── mock user list ─── */
+const INITIAL_USERS = [
+  { id: 1, name: 'Ashok Sharma',   phone: '9876543210', role: 'Admin',  avatar: 'AS', active: true  },
+  { id: 2, name: 'Priya Mehta',    phone: '9123456789', role: 'User',   avatar: 'PM', active: true  },
+  { id: 3, name: 'Rahul Verma',    phone: '9988776655', role: 'User',   avatar: 'RV', active: false },
+];
+
+const SECTIONS = [
+  { id: 'users',    label: 'User Management', icon: <IconUsers /> },
+];
+
+function initials(name) {
+  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+}
+
+const AVATAR_COLORS = ['#1A37AA', '#0ea574', '#d4791a', '#9c3ab8', '#c2302e'];
+function avatarColor(id) { return AVATAR_COLORS[id % AVATAR_COLORS.length]; }
+
+/* ─── icons ─── */
+function IconUsers() {
   return (
-    <div className="page-wrapper">
-      <div className="page-content">
-        <div className="card coming-soon-card">
-          <div className="coming-soon-icon">🚧</div>
-          <h2 className="coming-soon-title">Settings</h2>
-          <p className="coming-soon-text">This section is under construction. Check back soon.</p>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+    </svg>
+  );
+}
+function IconPlus() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+    </svg>
+  );
+}
+function IconEdit() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+    </svg>
+  );
+}
+function IconTrash() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+      <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+    </svg>
+  );
+}
+function IconEye() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+    </svg>
+  );
+}
+function IconEyeOff() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+      <line x1="1" y1="1" x2="23" y2="23"/>
+    </svg>
+  );
+}
+function IconClose() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+  );
+}
+function IconShield() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+    </svg>
+  );
+}
+function IconCheck() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+  );
+}
+
+/* ─── User Form Modal ─── */
+function UserModal({ user, onSave, onClose }) {
+  const isEdit = !!user?.id;
+  const [form, setForm] = useState({
+    name:     user?.name     || '',
+    phone:    user?.phone    || '',
+    password: '',
+    role:     user?.role     || 'User',
+    active:   user?.active   ?? true,
+  });
+  const [showPass, setShowPass] = useState(false);
+  const [errors, setErrors]     = useState({});
+  const [saving, setSaving]     = useState(false);
+  const [saved, setSaved]       = useState(false);
+
+  const set = (k, v) => { setForm(f => ({ ...f, [k]: v })); setErrors(e => ({ ...e, [k]: '' })); };
+
+  const validate = () => {
+    const e = {};
+    if (!form.name.trim())                         e.name     = 'Name is required';
+    if (!/^[6-9]\d{9}$/.test(form.phone))          e.phone    = 'Enter a valid 10-digit number';
+    if (!isEdit && form.password.length < 6)        e.password = 'Min 6 characters';
+    if (isEdit && form.password && form.password.length < 6) e.password = 'Min 6 characters';
+    return e;
+  };
+
+  const handleSave = () => {
+    const e = validate();
+    if (Object.keys(e).length) { setErrors(e); return; }
+    setSaving(true);
+    setTimeout(() => {
+      setSaving(false);
+      setSaved(true);
+      setTimeout(() => { onSave({ ...form, id: user?.id || Date.now(), avatar: initials(form.name) }); }, 700);
+    }, 800);
+  };
+
+  return (
+    <div style={styles.overlay} onClick={e => e.target === e.currentTarget && onClose()}>
+      <div style={styles.modal}>
+        {/* Header */}
+        <div style={styles.modalHeader}>
+          <div>
+            <p style={styles.modalEyebrow}>{isEdit ? 'Edit User' : 'Add New User'}</p>
+            <h2 style={styles.modalTitle}>{isEdit ? form.name || 'Edit User' : 'Create User Account'}</h2>
+          </div>
+          <button style={styles.modalClose} onClick={onClose}><IconClose /></button>
+        </div>
+
+        {/* Body */}
+        <div style={styles.modalBody}>
+          {/* Avatar preview */}
+          <div style={styles.avatarPreview}>
+            <div style={{ ...styles.avatarLg, background: avatarColor(user?.id || 99) }}>
+              {form.name ? initials(form.name) : '?'}
+            </div>
+            <div>
+              <p style={styles.avatarPreviewName}>{form.name || 'New User'}</p>
+              <span style={{ ...styles.rolePill, ...(form.role === 'Admin' ? styles.rolePillAdmin : styles.rolePillUser) }}>
+                {form.role === 'Admin' && <IconShield />} {form.role}
+              </span>
+            </div>
+          </div>
+
+          {/* Fields */}
+          <div style={styles.fieldGrid}>
+            <Field label="Full Name" error={errors.name}>
+              <input
+                style={{ ...styles.input, ...(errors.name ? styles.inputError : {}) }}
+                value={form.name} placeholder="e.g. Ashok Sharma"
+                onChange={e => set('name', e.target.value)}
+              />
+            </Field>
+            <Field label="Phone Number" error={errors.phone}>
+              <div style={styles.inputWrap}>
+                <span style={styles.inputPrefix}>+91</span>
+                <input
+                  style={{ ...styles.input, ...styles.inputWithPrefix, ...(errors.phone ? styles.inputError : {}) }}
+                  value={form.phone} placeholder="9876543210" maxLength={10}
+                  onChange={e => set('phone', e.target.value.replace(/\D/g, ''))}
+                />
+              </div>
+            </Field>
+            <Field label={isEdit ? 'New Password (leave blank to keep)' : 'Password'} error={errors.password}>
+              <div style={styles.inputWrap}>
+                <input
+                  type={showPass ? 'text' : 'password'}
+                  style={{ ...styles.input, paddingRight: 40, ...(errors.password ? styles.inputError : {}) }}
+                  value={form.password} placeholder={isEdit ? '••••••••' : 'Min 6 characters'}
+                  onChange={e => set('password', e.target.value)}
+                />
+                <button style={styles.eyeBtn} onClick={() => setShowPass(s => !s)}>
+                  {showPass ? <IconEyeOff /> : <IconEye />}
+                </button>
+              </div>
+            </Field>
+            <Field label="Role">
+              <div style={styles.roleToggle}>
+                {['Admin', 'User'].map(r => (
+                  <button
+                    key={r}
+                    style={{ ...styles.roleOption, ...(form.role === r ? styles.roleOptionActive : {}) }}
+                    onClick={() => set('role', r)}
+                  >
+                    {r === 'Admin' && <IconShield />} {r}
+                  </button>
+                ))}
+              </div>
+            </Field>
+            {isEdit && (
+              <Field label="Account Status">
+                <div style={styles.toggleRow}>
+                  <button
+                    style={{ ...styles.toggle, ...(form.active ? styles.toggleOn : styles.toggleOff) }}
+                    onClick={() => set('active', !form.active)}
+                  >
+                    <span style={{ ...styles.toggleThumb, ...(form.active ? styles.toggleThumbOn : {}) }} />
+                  </button>
+                  <span style={styles.toggleLabel}>{form.active ? 'Active' : 'Inactive'}</span>
+                </div>
+              </Field>
+            )}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div style={styles.modalFooter}>
+          <button style={styles.btnGhost} onClick={onClose}>Cancel</button>
+          <button style={{ ...styles.btnPrimary, ...(saved ? styles.btnSuccess : {}) }} onClick={handleSave} disabled={saving || saved}>
+            {saving ? <Spinner /> : saved ? <><IconCheck /> Saved!</> : isEdit ? 'Save Changes' : 'Create User'}
+          </button>
         </div>
       </div>
     </div>
   );
 }
+
+function Field({ label, error, children }) {
+  return (
+    <div style={styles.field}>
+      <label style={styles.label}>{label}</label>
+      {children}
+      {error && <p style={styles.fieldError}>{error}</p>}
+    </div>
+  );
+}
+
+function Spinner() {
+  return (
+    <span style={{ width: 16, height: 16, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} />
+  );
+}
+
+/* ─── Delete Confirm ─── */
+function DeleteConfirm({ user, onConfirm, onClose }) {
+  const [deleting, setDeleting] = useState(false);
+  const go = () => { setDeleting(true); setTimeout(() => onConfirm(user.id), 800); };
+  return (
+    <div style={styles.overlay} onClick={e => e.target === e.currentTarget && onClose()}>
+      <div style={{ ...styles.modal, maxWidth: 400 }}>
+        <div style={styles.deleteIcon}>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+            <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+          </svg>
+        </div>
+        <h3 style={styles.deleteTitle}>Remove User?</h3>
+        <p style={styles.deleteDesc}>
+          <strong>{user.name}</strong> will be permanently removed from the system. This action cannot be undone.
+        </p>
+        <div style={{ ...styles.modalFooter, borderTop: 'none', paddingTop: 0 }}>
+          <button style={styles.btnGhost} onClick={onClose}>Cancel</button>
+          <button style={styles.btnDanger} onClick={go} disabled={deleting}>
+            {deleting ? <Spinner /> : 'Remove User'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Main Page ─── */
+export default function SettingsPage() {
+  const [activeSection] = useState('users');
+  const [users, setUsers]       = useState(INITIAL_USERS);
+  const [modal, setModal]       = useState(null); // null | { type:'add'|'edit'|'delete', user? }
+  const [search, setSearch]     = useState('');
+  const [roleFilter, setRoleFilter] = useState('All');
+  const [toast, setToast]       = useState(null);
+
+  const showToast = (msg, type = 'success') => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const filtered = users.filter(u => {
+    const q = search.toLowerCase();
+    const matchQ = u.name.toLowerCase().includes(q) || u.phone.includes(q);
+    const matchR = roleFilter === 'All' || u.role === roleFilter;
+    return matchQ && matchR;
+  });
+
+  const handleSave = (data) => {
+    if (data.id && users.find(u => u.id === data.id)) {
+      setUsers(us => us.map(u => u.id === data.id ? { ...u, ...data } : u));
+      showToast('User updated successfully');
+    } else {
+      setUsers(us => [...us, { ...data, active: true }]);
+      showToast('User created successfully');
+    }
+    setModal(null);
+  };
+
+  const handleDelete = (id) => {
+    setUsers(us => us.filter(u => u.id !== id));
+    setModal(null);
+    showToast('User removed', 'info');
+  };
+
+  return (
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Barlow+Condensed:wght@600;700&display=swap');
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes slideUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+        @keyframes toastIn { from { opacity:0; transform:translateY(12px) scale(0.96); } to { opacity:1; transform:translateY(0) scale(1); } }
+        @keyframes toastOut { from { opacity:1; } to { opacity:0; transform:translateY(8px); } }
+        .user-row:hover { background: #f7f9fd !important; }
+        .user-row:hover .row-actions { opacity: 1 !important; }
+        .row-actions { opacity: 0; transition: opacity 0.15s; }
+        .action-btn:hover { background: #eef2fb !important; color: #1A37AA !important; }
+        .action-btn-del:hover { background: #fef2f2 !important; color: #dc2626 !important; }
+        .filter-btn:hover { border-color: #1A37AA !important; color: #1A37AA !important; }
+        .filter-btn.active { background: #1A37AA !important; color: #fff !important; border-color: #1A37AA !important; }
+        @media (max-width: 640px) {
+          .settings-header-row { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
+          .settings-toolbar { flex-direction: column !important; gap: 10px !important; }
+          .settings-toolbar input { width: 100% !important; }
+          .user-table-name { font-size: 13px !important; }
+          .user-table-meta { font-size: 11px !important; }
+          .row-actions { opacity: 1 !important; }
+        }
+      `}</style>
+
+      <div style={styles.root}>
+        {/* Page header */}
+        <div style={styles.pageHeader} className="settings-header-row">
+          <div>
+            <p style={styles.pageEyebrow}>Platform Configuration</p>
+            <h1 style={styles.pageTitle}>Settings</h1>
+          </div>
+        </div>
+
+        {/* Section nav (horizontal pills) */}
+        <div style={styles.sectionNav}>
+          {SECTIONS.map(s => (
+            <div key={s.id} style={{ ...styles.sectionPill, ...(activeSection === s.id ? styles.sectionPillActive : {}) }}>
+              {s.icon} {s.label}
+            </div>
+          ))}
+        </div>
+
+        {/* ── User Management ── */}
+        <div style={styles.card}>
+          {/* Card header */}
+          <div style={styles.cardHeader} className="settings-header-row">
+            <div style={styles.cardHeaderLeft}>
+              <div style={styles.cardIconWrap}><IconUsers /></div>
+              <div>
+                <h2 style={styles.cardTitle}>User Management</h2>
+                <p style={styles.cardSubtitle}>{users.length} team member{users.length !== 1 ? 's' : ''} · {users.filter(u => u.role === 'Admin').length} admin{users.filter(u => u.role === 'Admin').length !== 1 ? 's' : ''}</p>
+              </div>
+            </div>
+            <button style={styles.btnPrimary} onClick={() => setModal({ type: 'add' })}>
+              <IconPlus /> Add User
+            </button>
+          </div>
+
+          {/* Toolbar */}
+          <div style={styles.toolbar} className="settings-toolbar">
+            <div style={styles.searchWrap}>
+              <svg style={styles.searchIcon} width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8898aa" strokeWidth="2" strokeLinecap="round">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <input
+                style={styles.searchInput}
+                placeholder="Search by name or phone…"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
+            </div>
+            <div style={styles.filterGroup}>
+              {['All', 'Admin', 'User'].map(r => (
+                <button
+                  key={r}
+                  className={`filter-btn${roleFilter === r ? ' active' : ''}`}
+                  style={styles.filterBtn}
+                  onClick={() => setRoleFilter(r)}
+                >{r}</button>
+              ))}
+            </div>
+          </div>
+
+          {/* Table */}
+          <div style={styles.tableWrap}>
+            {/* Head */}
+            <div style={styles.tableHead}>
+              <span style={{ flex: '1 1 200px' }}>User</span>
+              <span style={{ flex: '0 0 140px' }}>Phone</span>
+              <span style={{ flex: '0 0 100px' }}>Role</span>
+              <span style={{ flex: '0 0 90px' }}>Status</span>
+              <span style={{ flex: '0 0 90px', textAlign: 'right' }}>Actions</span>
+            </div>
+
+            {/* Rows */}
+            {filtered.length === 0 ? (
+              <div style={styles.emptyState}>
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#c8d0dc" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                <p style={{ color: 'var(--text-muted)', fontSize: 14, marginTop: 10 }}>No users match your search</p>
+              </div>
+            ) : filtered.map((u, i) => (
+              <div
+                key={u.id}
+                className="user-row"
+                style={{ ...styles.tableRow, animationDelay: `${i * 60}ms` }}
+              >
+                {/* User */}
+                <div style={{ flex: '1 1 200px', display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+                  <div style={{ ...styles.avatarSm, background: avatarColor(u.id) }}>{u.avatar}</div>
+                  <div style={{ minWidth: 0 }}>
+                    <p style={styles.userName} className="user-table-name">{u.name}</p>
+                    <p style={styles.userMeta} className="user-table-meta">ID #{String(u.id).padStart(4, '0')}</p>
+                  </div>
+                </div>
+
+                {/* Phone */}
+                <div style={{ flex: '0 0 140px' }}>
+                  <span style={styles.phoneChip}>+91 {u.phone}</span>
+                </div>
+
+                {/* Role */}
+                <div style={{ flex: '0 0 100px' }}>
+                  <span style={{ ...styles.rolePill, ...(u.role === 'Admin' ? styles.rolePillAdmin : styles.rolePillUser) }}>
+                    {u.role === 'Admin' && <IconShield />} {u.role}
+                  </span>
+                </div>
+
+                {/* Status */}
+                <div style={{ flex: '0 0 90px' }}>
+                  <span style={{ ...styles.statusDot, background: u.active ? '#dcfce7' : '#f1f5f9', color: u.active ? '#16a34a' : '#64748b' }}>
+                    <span style={{ width: 6, height: 6, borderRadius: '50%', background: u.active ? '#22c55e' : '#94a3b8', display: 'inline-block' }} />
+                    {u.active ? 'Active' : 'Inactive'}
+                  </span>
+                </div>
+
+                {/* Actions */}
+                <div style={{ flex: '0 0 90px', display: 'flex', justifyContent: 'flex-end', gap: 4 }} className="row-actions">
+                  <button
+                    className="action-btn"
+                    style={styles.actionBtn}
+                    title="Edit"
+                    onClick={() => setModal({ type: 'edit', user: u })}
+                  ><IconEdit /></button>
+                  <button
+                    className="action-btn action-btn-del"
+                    style={styles.actionBtn}
+                    title="Remove"
+                    onClick={() => setModal({ type: 'delete', user: u })}
+                  ><IconTrash /></button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Footer count */}
+          <div style={styles.cardFooter}>
+            Showing {filtered.length} of {users.length} users
+          </div>
+        </div>
+      </div>
+
+      {/* Modals */}
+      {modal?.type === 'add'    && <UserModal user={null}       onSave={handleSave} onClose={() => setModal(null)} />}
+      {modal?.type === 'edit'   && <UserModal user={modal.user} onSave={handleSave} onClose={() => setModal(null)} />}
+      {modal?.type === 'delete' && <DeleteConfirm user={modal.user} onConfirm={handleDelete} onClose={() => setModal(null)} />}
+
+      {/* Toast */}
+      {toast && (
+        <div style={{ ...styles.toast, background: toast.type === 'info' ? '#1e3347' : '#0f1923' }}>
+          {toast.type === 'success' && <span style={{ color: '#22c55e' }}><IconCheck /></span>}
+          {toast.msg}
+        </div>
+      )}
+    </>
+  );
+}
+
+/* ─── Styles ─── */
+const styles = {
+  root: {
+    padding: '28px 24px 48px',
+    maxWidth: 1100,
+    margin: '0 auto',
+    fontFamily: "'DM Sans', sans-serif",
+  },
+  pageHeader: {
+    display: 'flex',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    marginBottom: 24,
+    gap: 16,
+  },
+  pageEyebrow: {
+    fontSize: 11,
+    fontWeight: 600,
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
+    color: '#1A37AA',
+    marginBottom: 4,
+  },
+  pageTitle: {
+    fontFamily: "'Syne', sans-serif",
+    fontSize: 'clamp(22px, 4vw, 30px)',
+    fontWeight: 800,
+    color: '#0f1923',
+    letterSpacing: '-0.5px',
+    lineHeight: 1.15,
+  },
+  sectionNav: {
+    display: 'flex',
+    gap: 8,
+    marginBottom: 24,
+    flexWrap: 'wrap',
+  },
+  sectionPill: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 7,
+    padding: '8px 16px',
+    borderRadius: 10,
+    fontSize: 13,
+    fontWeight: 600,
+    color: '#5a6a7e',
+    background: '#fff',
+    border: '1px solid #e8ecf4',
+    cursor: 'pointer',
+    transition: 'all 0.15s',
+  },
+  sectionPillActive: {
+    background: '#1A37AA',
+    color: '#fff',
+    border: '1px solid #1A37AA',
+    boxShadow: '0 4px 14px rgba(26,55,170,0.25)',
+  },
+  card: {
+    background: '#fff',
+    borderRadius: 16,
+    border: '1px solid #e8ecf4',
+    boxShadow: '0 4px 16px rgba(15,25,35,0.06)',
+    overflow: 'hidden',
+    animation: 'slideUp 0.4s cubic-bezier(0.4,0,0.2,1) both',
+  },
+  cardHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '20px 24px',
+    borderBottom: '1px solid #f0f4fa',
+    gap: 16,
+    flexWrap: 'wrap',
+  },
+  cardHeaderLeft: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 14,
+  },
+  cardIconWrap: {
+    width: 42,
+    height: 42,
+    borderRadius: 11,
+    background: 'rgba(26,55,170,0.08)',
+    color: '#1A37AA',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  cardTitle: {
+    fontFamily: "'Syne', sans-serif",
+    fontSize: 17,
+    fontWeight: 700,
+    color: '#0f1923',
+    letterSpacing: '-0.2px',
+    lineHeight: 1.2,
+  },
+  cardSubtitle: {
+    fontSize: 12,
+    color: '#8898aa',
+    marginTop: 2,
+  },
+  toolbar: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 12,
+    padding: '14px 24px',
+    borderBottom: '1px solid #f0f4fa',
+    flexWrap: 'wrap',
+  },
+  searchWrap: {
+    position: 'relative',
+    flex: '1 1 220px',
+  },
+  searchIcon: {
+    position: 'absolute',
+    left: 12,
+    top: '50%',
+    transform: 'translateY(-50%)',
+    pointerEvents: 'none',
+  },
+  searchInput: {
+    width: '100%',
+    height: 38,
+    paddingLeft: 36,
+    paddingRight: 12,
+    borderRadius: 9,
+    border: '1px solid #e8ecf4',
+    background: '#f8f9fc',
+    fontSize: 13,
+    color: '#0f1923',
+    fontFamily: "'DM Sans', sans-serif",
+    outline: 'none',
+    transition: 'border-color 0.15s',
+  },
+  filterGroup: {
+    display: 'flex',
+    gap: 6,
+  },
+  filterBtn: {
+    height: 36,
+    padding: '0 14px',
+    borderRadius: 8,
+    border: '1px solid #e8ecf4',
+    background: '#fff',
+    fontSize: 12,
+    fontWeight: 600,
+    color: '#5a6a7e',
+    cursor: 'pointer',
+    fontFamily: "'DM Sans', sans-serif",
+    transition: 'all 0.15s',
+  },
+  tableWrap: {
+    overflowX: 'auto',
+  },
+  tableHead: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+    padding: '10px 24px',
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: '0.06em',
+    textTransform: 'uppercase',
+    color: '#8898aa',
+    borderBottom: '1px solid #f0f4fa',
+    minWidth: 580,
+  },
+  tableRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8,
+    padding: '14px 24px',
+    borderBottom: '1px solid #f7f9fc',
+    transition: 'background 0.12s',
+    minWidth: 580,
+    animation: 'slideUp 0.35s cubic-bezier(0.4,0,0.2,1) both',
+  },
+  avatarSm: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: 12,
+    fontWeight: 700,
+    color: '#fff',
+    letterSpacing: '0.03em',
+    flexShrink: 0,
+  },
+  userName: {
+    fontSize: 14,
+    fontWeight: 600,
+    color: '#0f1923',
+    lineHeight: 1.3,
+  },
+  userMeta: {
+    fontSize: 11,
+    color: '#8898aa',
+    marginTop: 1,
+  },
+  phoneChip: {
+    fontSize: 12,
+    fontFamily: "'Barlow Condensed', sans-serif",
+    fontWeight: 600,
+    letterSpacing: '0.03em',
+    color: '#5a6a7e',
+  },
+  rolePill: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 4,
+    padding: '3px 9px',
+    borderRadius: 6,
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: '0.04em',
+  },
+  rolePillAdmin: {
+    background: 'rgba(26,55,170,0.09)',
+    color: '#1A37AA',
+  },
+  rolePillUser: {
+    background: '#f1f5f9',
+    color: '#475569',
+  },
+  statusDot: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 5,
+    padding: '3px 9px',
+    borderRadius: 6,
+    fontSize: 11,
+    fontWeight: 600,
+  },
+  actionBtn: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    border: '1px solid #e8ecf4',
+    background: '#f8f9fc',
+    color: '#5a6a7e',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    transition: 'all 0.12s',
+    flexShrink: 0,
+  },
+  cardFooter: {
+    padding: '12px 24px',
+    fontSize: 12,
+    color: '#8898aa',
+    borderTop: '1px solid #f0f4fa',
+  },
+  emptyState: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '48px 24px',
+  },
+
+  /* ── Modal ── */
+  overlay: {
+    position: 'fixed',
+    inset: 0,
+    background: 'rgba(10,18,30,0.55)',
+    backdropFilter: 'blur(4px)',
+    zIndex: 1000,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+    animation: 'fadeIn 0.18s ease both',
+  },
+  modal: {
+    background: '#fff',
+    borderRadius: 18,
+    width: '100%',
+    maxWidth: 520,
+    boxShadow: '0 24px 64px rgba(10,18,30,0.22), 0 4px 16px rgba(10,18,30,0.1)',
+    animation: 'slideUp 0.25s cubic-bezier(0.34,1.2,0.64,1) both',
+    maxHeight: '90vh',
+    overflowY: 'auto',
+  },
+  modalHeader: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    padding: '22px 24px 18px',
+    borderBottom: '1px solid #f0f4fa',
+  },
+  modalEyebrow: {
+    fontSize: 11,
+    fontWeight: 700,
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
+    color: '#1A37AA',
+    marginBottom: 3,
+  },
+  modalTitle: {
+    fontFamily: "'Syne', sans-serif",
+    fontSize: 19,
+    fontWeight: 800,
+    color: '#0f1923',
+    letterSpacing: '-0.3px',
+  },
+  modalClose: {
+    width: 34,
+    height: 34,
+    borderRadius: 9,
+    border: '1px solid #e8ecf4',
+    background: '#f8f9fc',
+    color: '#5a6a7e',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    flexShrink: 0,
+    marginTop: 2,
+  },
+  modalBody: {
+    padding: '20px 24px',
+  },
+  avatarPreview: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 14,
+    padding: '14px 16px',
+    borderRadius: 12,
+    background: '#f8f9fc',
+    border: '1px solid #f0f4fa',
+    marginBottom: 22,
+  },
+  avatarLg: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: 16,
+    fontWeight: 800,
+    color: '#fff',
+    letterSpacing: '0.03em',
+    flexShrink: 0,
+  },
+  avatarPreviewName: {
+    fontSize: 15,
+    fontWeight: 700,
+    color: '#0f1923',
+    lineHeight: 1.2,
+    marginBottom: 5,
+  },
+  fieldGrid: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 16,
+  },
+  field: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 6,
+  },
+  label: {
+    fontSize: 12,
+    fontWeight: 600,
+    color: '#5a6a7e',
+    letterSpacing: '0.02em',
+  },
+  input: {
+    width: '100%',
+    height: 42,
+    padding: '0 14px',
+    borderRadius: 10,
+    border: '1.5px solid #e8ecf4',
+    background: '#f8f9fc',
+    fontSize: 14,
+    color: '#0f1923',
+    fontFamily: "'DM Sans', sans-serif",
+    outline: 'none',
+    transition: 'border-color 0.15s, box-shadow 0.15s',
+  },
+  inputError: {
+    borderColor: '#fca5a5',
+    background: '#fef2f2',
+  },
+  inputWrap: {
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center',
+  },
+  inputPrefix: {
+    position: 'absolute',
+    left: 14,
+    fontSize: 13,
+    fontWeight: 600,
+    color: '#8898aa',
+    pointerEvents: 'none',
+    fontFamily: "'Barlow Condensed', sans-serif",
+    letterSpacing: '0.03em',
+  },
+  inputWithPrefix: {
+    paddingLeft: 44,
+  },
+  eyeBtn: {
+    position: 'absolute',
+    right: 12,
+    background: 'none',
+    border: 'none',
+    color: '#8898aa',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    padding: 0,
+  },
+  fieldError: {
+    fontSize: 11,
+    color: '#dc2626',
+    fontWeight: 500,
+    marginTop: 1,
+  },
+  roleToggle: {
+    display: 'flex',
+    gap: 8,
+  },
+  roleOption: {
+    flex: 1,
+    height: 42,
+    borderRadius: 10,
+    border: '1.5px solid #e8ecf4',
+    background: '#f8f9fc',
+    fontSize: 13,
+    fontWeight: 600,
+    color: '#5a6a7e',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    transition: 'all 0.15s',
+    fontFamily: "'DM Sans', sans-serif",
+  },
+  roleOptionActive: {
+    background: 'rgba(26,55,170,0.08)',
+    borderColor: '#1A37AA',
+    color: '#1A37AA',
+  },
+  toggleRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+  },
+  toggle: {
+    width: 44,
+    height: 24,
+    borderRadius: 12,
+    border: 'none',
+    cursor: 'pointer',
+    padding: 2,
+    display: 'flex',
+    alignItems: 'center',
+    transition: 'background 0.2s',
+    flexShrink: 0,
+  },
+  toggleOn:  { background: '#1A37AA' },
+  toggleOff: { background: '#d1d5db' },
+  toggleThumb: {
+    width: 20,
+    height: 20,
+    borderRadius: '50%',
+    background: '#fff',
+    boxShadow: '0 1px 4px rgba(0,0,0,0.2)',
+    transition: 'transform 0.2s',
+  },
+  toggleThumbOn: { transform: 'translateX(20px)' },
+  toggleLabel: { fontSize: 13, fontWeight: 500, color: '#5a6a7e' },
+
+  modalFooter: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    gap: 10,
+    padding: '16px 24px 20px',
+    borderTop: '1px solid #f0f4fa',
+  },
+
+  /* ── Buttons ── */
+  btnPrimary: {
+    height: 40,
+    padding: '0 20px',
+    borderRadius: 10,
+    border: 'none',
+    background: '#1A37AA',
+    color: '#fff',
+    fontSize: 13,
+    fontWeight: 700,
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 7,
+    fontFamily: "'DM Sans', sans-serif",
+    boxShadow: '0 4px 14px rgba(26,55,170,0.28)',
+    transition: 'all 0.15s',
+    flexShrink: 0,
+  },
+  btnSuccess: {
+    background: '#16a34a',
+    boxShadow: '0 4px 14px rgba(22,163,74,0.28)',
+  },
+  btnGhost: {
+    height: 40,
+    padding: '0 18px',
+    borderRadius: 10,
+    border: '1.5px solid #e8ecf4',
+    background: '#f8f9fc',
+    color: '#5a6a7e',
+    fontSize: 13,
+    fontWeight: 600,
+    cursor: 'pointer',
+    fontFamily: "'DM Sans', sans-serif",
+    transition: 'all 0.15s',
+  },
+  btnDanger: {
+    height: 40,
+    padding: '0 20px',
+    borderRadius: 10,
+    border: 'none',
+    background: '#dc2626',
+    color: '#fff',
+    fontSize: 13,
+    fontWeight: 700,
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 7,
+    fontFamily: "'DM Sans', sans-serif",
+    boxShadow: '0 4px 14px rgba(220,38,38,0.25)',
+  },
+
+  /* ── Delete dialog ── */
+  deleteIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 16,
+    background: '#fef2f2',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: '24px auto 16px',
+  },
+  deleteTitle: {
+    fontFamily: "'Syne', sans-serif",
+    fontSize: 18,
+    fontWeight: 800,
+    color: '#0f1923',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  deleteDesc: {
+    fontSize: 13,
+    color: '#5a6a7e',
+    textAlign: 'center',
+    lineHeight: 1.6,
+    padding: '0 24px 20px',
+  },
+
+  /* ── Toast ── */
+  toast: {
+    position: 'fixed',
+    bottom: 24,
+    left: '50%',
+    transform: 'translateX(-50%)',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+    padding: '12px 20px',
+    borderRadius: 12,
+    color: '#fff',
+    fontSize: 13,
+    fontWeight: 600,
+    fontFamily: "'DM Sans', sans-serif",
+    boxShadow: '0 8px 32px rgba(10,18,30,0.3)',
+    zIndex: 2000,
+    whiteSpace: 'nowrap',
+    animation: 'toastIn 0.25s cubic-bezier(0.34,1.2,0.64,1) both',
+  },
+};
