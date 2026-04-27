@@ -1,17 +1,69 @@
 import { NextResponse } from 'next/server';
 import db from '@/lib/db';
-import { isFirebaseConfigured, checkFirestoreAccess } from '@/lib/firebase';
+import { isFirebaseConfigured, db as firebaseDb } from '@/lib/firebase';
+import { doc, getDoc, deleteDoc } from 'firebase/firestore';
 
 // Simple JWT token generation
 const generateToken = (user) => {
   const payload = {
     userId: user.id,
     phone: user.phone,
+    role: (user.role || 'USER').toUpperCase(),
     iat: Date.now(),
     exp: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
   };
   return Buffer.from(JSON.stringify(payload)).toString('base64');
 };
+
+/**
+ * Fetch user from Firebase Firestore
+ * @param {string} phone - User's phone number
+ * @returns {Object|null} - User object or null if not found
+ */
+async function fetchUserFromFirebase(phone) {
+  if (!isFirebaseConfigured || !firebaseDb) {
+    return null;
+  }
+
+  try {
+    // Check userdata collection (where registration stores users)
+    const userDocRef = doc(firebaseDb, 'userdata', phone);
+    const userDoc = await getDoc(userDocRef);
+
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      return {
+        id: userData.id || phone,
+        name: userData.name || '',
+        phone: userData.phone || phone,
+        password: userData.password,
+        role: (userData.role || 'USER').toUpperCase(),
+        createdAt: userData.createdAt,
+      };
+    }
+
+    // Also check users collection as fallback
+    const usersDocRef = doc(firebaseDb, 'users', phone);
+    const usersDoc = await getDoc(usersDocRef);
+
+    if (usersDoc.exists()) {
+      const userData = usersDoc.data();
+      return {
+        id: userData.id || phone,
+        name: userData.name || '',
+        phone: userData.phone || phone,
+        password: userData.password,
+        role: (userData.role || 'USER').toUpperCase(),
+        createdAt: userData.createdAt,
+      };
+    }
+
+    return null;
+  } catch (error) {
+    console.error('Error fetching user from Firebase:', error.message);
+    return null;
+  }
+}
 
 export async function POST(request) {
   try {
@@ -51,8 +103,14 @@ export async function POST(request) {
       );
     }
 
-    // Step 4: Get user from Backend
-    const user = db.findUserByPhone(phone);
+    // Step 4: Get user from Firebase FIRST, fallback to Backend
+    let user = await fetchUserFromFirebase(phone);
+    
+    if (!user) {
+      // Fallback to backend database
+      user = db.findUserByPhone(phone);
+    }
+    
     if (!user) {
       return NextResponse.json(
         { message: 'User not found' },
@@ -63,19 +121,11 @@ export async function POST(request) {
     // Step 5: Delete used OTP from Backend
     db.deleteOtp(phone);
 
-    // Step 6: Sync to Firebase (delete used OTP) - ONLY if configured AND accessible
-    if (isFirebaseConfigured) {
+    // Step 6: Sync to Firebase (delete used OTP)
+    if (isFirebaseConfigured && firebaseDb) {
       try {
-        const { db: firebaseDb } = await import('@/lib/firebase');
-        
-        // Check if Firestore is actually accessible before trying to delete
-        const isAccessible = await checkFirestoreAccess();
-        
-        if (firebaseDb && isAccessible) {
-          const { doc, deleteDoc } = await import('firebase/firestore');
-          await deleteDoc(doc(firebaseDb, 'otps', phone));
-          console.log('OTP deleted from Firebase:', phone);
-        }
+        await deleteDoc(doc(firebaseDb, 'otps', phone));
+        console.log('OTP deleted from Firebase:', phone);
       } catch (firebaseError) {
         console.error('Firebase delete error (non-critical):', firebaseError.message);
       }
@@ -83,6 +133,9 @@ export async function POST(request) {
 
     // Step 7: Generate token
     const token = generateToken(user);
+    
+    // Normalize role to uppercase
+    const normalizedRole = (user.role || 'USER').toUpperCase();
 
     return NextResponse.json({
       success: true,
@@ -92,7 +145,7 @@ export async function POST(request) {
         id: user.id,
         name: user.name,
         phone: user.phone,
-        role: user.role || 'user',
+        role: normalizedRole,
       },
     });
 

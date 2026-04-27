@@ -2,6 +2,8 @@
 
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { isAdmin } from '@/lib/rbac';
 
 const fmtINR = n => n ? '₹ ' + new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(+n) : '—';
 const fmtDate = iso => { if (!iso) return '—'; const d = new Date(iso); return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }); };
@@ -496,8 +498,12 @@ function Hl({ text, query }) {
 
 export default function QuotationsPage() {
   const router = useRouter();
+  const { userRole } = useAuth();
+  const isAdminUser = isAdmin(userRole);
+  
   const [rows, setRows]       = useState([]);
   const [loading, setLoading] = useState(true);
+  const [navigatingId, setNavigatingId] = useState(null);
   const [open, setOpen] = useState(false);
 
   const [fName,  setFName]  = useState('');
@@ -707,9 +713,15 @@ export default function QuotationsPage() {
                     </div>
                   </td></tr>
                 ) : filtered.map(r => (
-                  <tr key={r.id} className="ql-row" onClick={() => router.push(`/dashboard/quotations/${r.id}`)} title="Open quotation">
+                  <tr key={r.id} className="ql-row" onClick={() => { setNavigatingId(r.id); router.push(`/dashboard/quotations/${r.id}`); }} title="Open quotation" style={{ position: 'relative' }}>
                     <td data-label="Quote ID" style={{ fontWeight: 600, color: '#1A37AA', fontSize: 13, fontFamily: "'JetBrains Mono',monospace" }}>
-                      <Hl text={r.quotNo || r.refNo} query={fNum} />
+                      {navigatingId === r.id ? (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1A37AA" strokeWidth="2.5" strokeLinecap="round" style={{ animation: 'ql-spin .8s linear infinite', display: 'block' }}>
+                          <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                        </svg>
+                      ) : (
+                        <Hl text={r.quotNo || r.refNo} query={fNum} />
+                      )}
                     </td>
                     <td data-label="Type">
                       {r.quotationType === 'detailed'

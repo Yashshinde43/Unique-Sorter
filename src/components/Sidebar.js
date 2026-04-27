@@ -3,12 +3,17 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import { useAuth } from '@/contexts/AuthContext';
+import { isAdmin } from '@/lib/rbac';
 
+// Navigation items with role-based access
 const NAV = [
   {
     href: '/dashboard',
     label: 'Dashboard',
     exact: true,
+    allowedRoles: ['ADMIN', 'USER'], // All roles can access
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3" y="3" width="7" height="7" rx="1.5" />
@@ -22,6 +27,7 @@ const NAV = [
     href: '/dashboard/enquiry',
     label: 'Enquiry',
     exact: false,
+    allowedRoles: ['ADMIN', 'USER'], // Both can view (USER = view only)
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
@@ -32,6 +38,7 @@ const NAV = [
     href: '/dashboard/quotations',
     label: 'Quotations',
     exact: false,
+    allowedRoles: ['ADMIN', 'USER'], // Both can view (USER = view only)
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -45,6 +52,7 @@ const NAV = [
     href: '/dashboard/settings',
     label: 'Settings',
     exact: false,
+    allowedRoles: ['ADMIN'], // Only Admin can access
     icon: (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="3" />
@@ -69,6 +77,7 @@ function useIsMobile() {
 export default function Sidebar() {
   const pathname = usePathname();
   const isMobile = useIsMobile();
+  const { userRole, isLoading } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -106,6 +115,48 @@ export default function Sidebar() {
     return () => window.removeEventListener('sidebar-open', handler);
   }, []);
 
+  // Filter navigation items based on user role
+  const filteredNav = NAV.filter(item => {
+    if (isLoading) return false;
+    if (!userRole) return false;
+    return item.allowedRoles.includes(userRole.toUpperCase());
+  });
+
+  // Show loading state or minimal sidebar while loading
+  if (isLoading) {
+    return (
+      <aside className="sidebar">
+        <div className="sidebar-logo" style={{ justifyContent: 'center' }}>
+          <div className="sidebar-logo-mark">
+            <Image
+              src="/logo.png"
+              alt="Unique Sorter Logo"
+              width={140}
+              height={60}
+              style={{ objectFit: 'contain', maxWidth: '100%', height: 'auto' }}
+              priority
+            />
+          </div>
+        </div>
+        <nav className="sidebar-nav">
+          <div className="sidebar-nav-items">
+            <div className="sidebar-item" style={{ opacity: 0.5 }}>
+              <span className="sidebar-item-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                  <rect x="3" y="3" width="7" height="7" rx="1.5" />
+                  <rect x="14" y="3" width="7" height="7" rx="1.5" />
+                  <rect x="3" y="14" width="7" height="7" rx="1.5" />
+                  <rect x="14" y="14" width="7" height="7" rx="1.5" />
+                </svg>
+              </span>
+              <span className="sidebar-item-label">Loading...</span>
+            </div>
+          </div>
+        </nav>
+      </aside>
+    );
+  }
+
   return (
     <>
       {/* Backdrop (mobile only) */}
@@ -120,18 +171,16 @@ export default function Sidebar() {
         className={`sidebar ${collapsed ? 'sidebar--collapsed' : ''} ${mobileOpen ? 'sidebar--mobile-open' : ''}`}
       >
         {/* Logo area */}
-        <div className="sidebar-logo">
+        <div className="sidebar-logo" style={{ justifyContent: 'center' }}>
           <div className="sidebar-logo-mark">
-            <svg width="30" height="30" viewBox="0 0 32 32" fill="none">
-              <rect width="32" height="32" rx="8" fill="#1A37AA" />
-              <path d="M8 22L16 10L24 22" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M11 18H21" stroke="#52ba4f" strokeWidth="2.5" strokeLinecap="round" />
-            </svg>
-          </div>
-
-          <div className="sidebar-logo-text">
-            <span className="sidebar-logo-name">UniqueSorter</span>
-            <span className="sidebar-logo-sub">CRM Platform</span>
+            <Image
+              src="/logo.png"
+              alt="Unique Sorter Logo"
+              width={140}
+              height={60}
+              style={{ objectFit: 'contain', maxWidth: '100%', height: 'auto' }}
+              priority
+            />
           </div>
 
           {/* Mobile close button */}
@@ -150,7 +199,7 @@ export default function Sidebar() {
         {/* Navigation */}
         <nav className="sidebar-nav">
           <div className="sidebar-nav-items">
-            {NAV.map((item) => {
+            {filteredNav.map((item) => {
               const active = isActive(item);
               return (
                 <Link

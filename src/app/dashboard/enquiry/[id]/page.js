@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
+import { isAdmin } from '@/lib/rbac';
 
 const MODELS  = ['Pinnacle','Nandak'];
 const SIZES   = ['5','6','7','8','10'];
@@ -594,6 +596,8 @@ function Val({ v, muted }) {
 export default function EnquiryDetailPage() {
   const { id } = useParams();
   const router  = useRouter();
+  const { userRole } = useAuth();
+  const isAdminUser = isAdmin(userRole);
 
   const [row,     setRow]     = useState(null);
   const [loading, setLoading] = useState(true);
@@ -779,33 +783,38 @@ export default function EnquiryDetailPage() {
                 Back
               </Link>
 
-              {confirmDel ? (
+              {/* Show Edit/Delete only for Admin */}
+              {isAdminUser && (
                 <>
-                  <button className="eqd-btn eqd-btn--danger-confirm" onClick={handleDelete} disabled={deleting}>
-                    {deleting ? 'Deleting…' : 'Confirm Delete'}
-                  </button>
-                  <button className="eqd-btn" onClick={() => setConfirmDel(false)}>Cancel</button>
-                </>
-              ) : (
-                <button className="eqd-btn eqd-btn--danger" onClick={() => { setConfirmDel(true); setEditing(false); }}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                    <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                    <path d="M10 11v6M14 11v6M9 6V4h6v2"/>
-                  </svg>
-                  Delete
-                </button>
-              )}
+                  {confirmDel ? (
+                    <>
+                      <button className="eqd-btn eqd-btn--danger-confirm" onClick={handleDelete} disabled={deleting}>
+                        {deleting ? 'Deleting…' : 'Confirm Delete'}
+                      </button>
+                      <button className="eqd-btn" onClick={() => setConfirmDel(false)}>Cancel</button>
+                    </>
+                  ) : (
+                    <button className="eqd-btn eqd-btn--danger" onClick={() => { setConfirmDel(true); setEditing(false); }}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                        <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                        <path d="M10 11v6M14 11v6M9 6V4h6v2"/>
+                      </svg>
+                      Delete
+                    </button>
+                  )}
 
-              {editing ? (
-                <button className="eqd-btn" onClick={cancelEdit}>Cancel</button>
-              ) : (
-                <button className="eqd-btn eqd-btn--edit-active" onClick={() => { setEditing(true); setConfirmDel(false); }}>
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                  </svg>
-                  Edit
-                </button>
+                  {editing ? (
+                    <button className="eqd-btn" onClick={cancelEdit}>Cancel</button>
+                  ) : (
+                    <button className="eqd-btn eqd-btn--edit-active" onClick={() => { setEditing(true); setConfirmDel(false); }}>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                      </svg>
+                      Edit
+                    </button>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -1004,29 +1013,32 @@ export default function EnquiryDetailPage() {
               {saveErr && <span className="eqd-err" style={{ marginLeft: 16 }}>⚠ {saveErr}</span>}
             </div>
             <div className="eqd-footer-actions">
-              {editing ? (
-                <button className="eqd-btn eqd-btn--primary" onClick={handleSave} disabled={saving}>
-                  {saving ? (
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{ animation: 'eqd-spin 0.8s linear infinite' }}>
-                      <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+              {/* Show action buttons only for Admin */}
+              {isAdminUser && (
+                editing ? (
+                  <button className="eqd-btn eqd-btn--primary" onClick={handleSave} disabled={saving}>
+                    {saving ? (
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" style={{ animation: 'eqd-spin 0.8s linear infinite' }}>
+                        <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                      </svg>
+                    ) : (
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                    )}
+                    {saving ? 'Saving…' : 'Save Changes'}
+                  </button>
+                ) : (
+                  <button className="eqd-btn eqd-btn--primary" onClick={openGenPopup}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                      <polyline points="14 2 14 8 20 8"/>
+                      <line x1="12" y1="18" x2="12" y2="12"/>
+                      <line x1="9" y1="15" x2="15" y2="15"/>
                     </svg>
-                  ) : (
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                      <polyline points="20 6 9 17 4 12"/>
-                    </svg>
-                  )}
-                  {saving ? 'Saving…' : 'Save Changes'}
-                </button>
-              ) : (
-                <button className="eqd-btn eqd-btn--primary" onClick={openGenPopup}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                    <polyline points="14 2 14 8 20 8"/>
-                    <line x1="12" y1="18" x2="12" y2="12"/>
-                    <line x1="9" y1="15" x2="15" y2="15"/>
-                  </svg>
-                  Generate Quotation
-                </button>
+                    Generate Quotation
+                  </button>
+                )
               )}
             </div>
           </div>

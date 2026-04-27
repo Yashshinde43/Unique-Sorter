@@ -9,9 +9,11 @@ export default function RegisterPage() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
+    name: '',
     phone: '',
     password: '',
     confirmPassword: '',
+    role: 'USER',
   });
 
   const handleChange = (e) => {
@@ -51,10 +53,10 @@ export default function RegisterPage() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: 'User ' + formData.phone.slice(-4),
+          name: formData.name || 'User ' + formData.phone.slice(-4),
           phone: formData.phone,
           password: formData.password,
-          role: 'user',
+          role: formData.role.toLowerCase(),
         }),
       });
 
@@ -177,6 +179,21 @@ export default function RegisterPage() {
 
         {/* Registration Form */}
         <form onSubmit={handleSubmit} style={styles.form}>
+          {/* Name */}
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Full Name *</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Enter your full name"
+              className="reg-input"
+              style={styles.input}
+              required
+            />
+          </div>
+
           {/* Phone */}
           <div style={styles.inputGroup}>
             <label style={styles.label}>Phone Number *</label>
@@ -194,6 +211,23 @@ export default function RegisterPage() {
               />
             </div>
             <p style={styles.hint}>Enter 10-digit mobile number</p>
+          </div>
+
+          {/* Role */}
+          <div style={styles.inputGroup}>
+            <label style={styles.label}>Role *</label>
+            <select
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              className="reg-input"
+              style={{...styles.input, cursor: 'pointer', appearance: 'none', backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%238898aa\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center', backgroundSize: '20px', paddingRight: '40px'}}
+              required
+            >
+              <option value="USER">User</option>
+              <option value="ADMIN">Admin</option>
+            </select>
+            <p style={styles.hint}>Select your role in the organization</p>
           </div>
 
           {/* Password */}

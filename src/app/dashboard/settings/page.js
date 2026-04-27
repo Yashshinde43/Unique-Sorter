@@ -1,6 +1,105 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { isAdmin, canAccessSettings } from '@/lib/rbac';
+import { db as firebaseDb } from '@/lib/firebase';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+
+/* ─── Loading State ─── */
+function LoadingState() {
+  return (
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '400px',
+    }}>
+      <div style={{
+        width: 48,
+        height: 48,
+        border: '4px solid rgba(26,55,170,0.1)',
+        borderTop: '4px solid #1A37AA',
+        borderRadius: '50%',
+        animation: 'spin 1s linear infinite',
+      }} />
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </div>
+  );
+}
+
+/* ─── Access Denied Component ─── */
+function AccessDenied() {
+  const router = useRouter();
+  
+  return (
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '400px',
+      padding: '40px 20px',
+      textAlign: 'center',
+    }}>
+      <div style={{
+        width: 80,
+        height: 80,
+        borderRadius: '50%',
+        background: '#fef2f2',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 24,
+      }}>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#dc2626" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="15" y1="9" x2="9" y2="15"/>
+          <line x1="9" y1="9" x2="15" y2="15"/>
+        </svg>
+      </div>
+      <h2 style={{
+        fontFamily: "var(--font-poppins), 'Poppins', sans-serif",
+        fontSize: 24,
+        fontWeight: 600,
+        color: '#0f1923',
+        marginBottom: 8,
+      }}>Access Denied</h2>
+      <p style={{
+        fontSize: 15,
+        color: '#5a6a7e',
+        maxWidth: 400,
+        lineHeight: 1.6,
+        marginBottom: 24,
+      }}>
+        You don't have permission to access the settings page. This area is restricted to administrators only.
+      </p>
+      <button
+        onClick={() => router.push('/dashboard')}
+        style={{
+          padding: '12px 24px',
+          background: '#1A37AA',
+          color: '#fff',
+          border: 'none',
+          borderRadius: 10,
+          fontSize: 14,
+          fontWeight: 600,
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+        }}
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        Go to Dashboard
+      </button>
+    </div>
+  );
+}
 
 /* ─── mock user list ─── */
 const INITIAL_USERS = [
@@ -122,7 +221,14 @@ function UserModal({ user, onSave, onClose }) {
     setTimeout(() => {
       setSaving(false);
       setSaved(true);
-      setTimeout(() => { onSave({ ...form, id: user?.id || Date.now(), avatar: initials(form.name) }); }, 700);
+      setTimeout(() => { 
+        // Pass all form data including password to parent
+        onSave({ 
+          ...form, 
+          id: user?.id || Date.now(), 
+          avatar: initials(form.name) 
+        }); 
+      }, 700);
     }, 800);
   };
 
@@ -272,12 +378,21 @@ function DeleteConfirm({ user, onConfirm, onClose }) {
 
 /* ─── Main Page ─── */
 export default function SettingsPage() {
+  const { userRole, isLoading } = useAuth();
   const [activeSection] = useState('users');
   const [users, setUsers]       = useState(INITIAL_USERS);
   const [modal, setModal]       = useState(null); // null | { type:'add'|'edit'|'delete', user? }
   const [search, setSearch]     = useState('');
   const [roleFilter, setRoleFilter] = useState('All');
   const [toast, setToast]       = useState(null);
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
+  // Check authorization on mount
+  useEffect(() => {
+    if (!isLoading && userRole) {
+      setIsAuthorized(canAccessSettings(userRole));
+    }
+  }, [userRole, isLoading]);
 
   const showToast = (msg, type = 'success') => {
     setToast({ msg, type });
@@ -291,13 +406,46 @@ export default function SettingsPage() {
     return matchQ && matchR;
   });
 
-  const handleSave = (data) => {
+  const handleSave = async (data) => {
+    // For existing users - just update local state
     if (data.id && users.find(u => u.id === data.id)) {
       setUsers(us => us.map(u => u.id === data.id ? { ...u, ...data } : u));
       showToast('User updated successfully');
-    } else {
-      setUsers(us => [...us, { ...data, active: true }]);
+      setModal(null);
+      return;
+    }
+
+    // For new users - create in Firebase first
+    try {
+      const newUser = {
+        ...data,
+        id: Date.now().toString(),
+        active: true,
+        avatar: data.name ? data.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) : 'U',
+      };
+
+      // Save to Firebase Firestore
+      if (firebaseDb) {
+        const userDocRef = doc(firebaseDb, 'userdata', newUser.phone);
+        await setDoc(userDocRef, {
+          id: newUser.id,
+          name: newUser.name,
+          phone: newUser.phone,
+          password: newUser.password,
+          role: newUser.role.toLowerCase(),
+          active: newUser.active,
+          createdAt: serverTimestamp(),
+          syncedAt: serverTimestamp(),
+        });
+        console.log('User saved to Firebase:', newUser.phone);
+      }
+
+      // Update local state
+      setUsers(us => [...us, newUser]);
       showToast('User created successfully');
+    } catch (error) {
+      console.error('Error saving user:', error);
+      showToast('Failed to create user: ' + error.message, 'error');
     }
     setModal(null);
   };
@@ -308,10 +456,19 @@ export default function SettingsPage() {
     showToast('User removed', 'info');
   };
 
+  // Show loading state
+  if (isLoading) {
+    return <LoadingState />;
+  }
+
+  // Show access denied for non-admin users
+  if (!isAuthorized) {
+    return <AccessDenied />;
+  }
+
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Barlow+Condensed:wght@600;700&display=swap');
         @keyframes spin { to { transform: rotate(360deg); } }
         @keyframes slideUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
         @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
@@ -481,8 +638,20 @@ export default function SettingsPage() {
 
       {/* Toast */}
       {toast && (
-        <div style={{ ...styles.toast, background: toast.type === 'info' ? '#1e3347' : '#0f1923' }}>
+        <div style={{ 
+          ...styles.toast, 
+          background: toast.type === 'error' ? '#dc2626' : toast.type === 'info' ? '#1e3347' : '#0f1923' 
+        }}>
           {toast.type === 'success' && <span style={{ color: '#22c55e' }}><IconCheck /></span>}
+          {toast.type === 'error' && (
+            <span style={{ color: '#fff' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="15" y1="9" x2="9" y2="15"/>
+                <line x1="9" y1="9" x2="15" y2="15"/>
+              </svg>
+            </span>
+          )}
           {toast.msg}
         </div>
       )}
@@ -496,7 +665,7 @@ const styles = {
     padding: '28px 24px 48px',
     maxWidth: 1100,
     margin: '0 auto',
-    fontFamily: "'DM Sans', sans-serif",
+    fontFamily: "var(--font-inter), 'Inter', sans-serif",
   },
   pageHeader: {
     display: 'flex',
@@ -514,9 +683,9 @@ const styles = {
     marginBottom: 4,
   },
   pageTitle: {
-    fontFamily: "'Syne', sans-serif",
+    fontFamily: "var(--font-poppins), 'Poppins', sans-serif",
     fontSize: 'clamp(22px, 4vw, 30px)',
-    fontWeight: 800,
+    fontWeight: 600,
     color: '#0f1923',
     letterSpacing: '-0.5px',
     lineHeight: 1.15,
@@ -581,9 +750,9 @@ const styles = {
     flexShrink: 0,
   },
   cardTitle: {
-    fontFamily: "'Syne', sans-serif",
+    fontFamily: "var(--font-poppins), 'Poppins', sans-serif",
     fontSize: 17,
-    fontWeight: 700,
+    fontWeight: 600,
     color: '#0f1923',
     letterSpacing: '-0.2px',
     lineHeight: 1.2,
@@ -794,9 +963,9 @@ const styles = {
     marginBottom: 3,
   },
   modalTitle: {
-    fontFamily: "'Syne', sans-serif",
+    fontFamily: "var(--font-poppins), 'Poppins', sans-serif",
     fontSize: 19,
-    fontWeight: 800,
+    fontWeight: 600,
     color: '#0f1923',
     letterSpacing: '-0.3px',
   },

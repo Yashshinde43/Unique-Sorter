@@ -1,156 +1,204 @@
-const STATS = [
-  {
-    label: 'Total Quotations',
-    value: '0',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-        <polyline points="14 2 14 8 20 8" />
-        <line x1="16" y1="13" x2="8" y2="13" />
-        <line x1="16" y1="17" x2="8" y2="17" />
-      </svg>
-    ),
-    color: '#1A37AA',
-  },
-  {
-    label: 'Active Leads',
-    value: '0',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-        <circle cx="9" cy="7" r="4" />
-        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-      </svg>
-    ),
-    color: '#52ba4f',
-  },
-  {
-    label: 'Orders This Month',
-    value: '0',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-        <line x1="3" y1="6" x2="21" y2="6" />
-        <path d="M16 10a4 4 0 0 1-8 0" />
-      </svg>
-    ),
-    color: '#E8A020',
-  },
-  {
-    label: 'Revenue (₹)',
-    value: '—',
-    icon: (
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="12" y1="1" x2="12" y2="23" />
-        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-      </svg>
-    ),
-    color: '#1A37AA',
-  },
-];
+'use client';
+
+import { useAuth } from '@/contexts/AuthContext';
+import { isAdmin } from '@/lib/rbac';
 
 export default function DashboardPage() {
+  const { user, userRole, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="page-wrapper">
+        <div className="page-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '70vh' }}>
+          <div className="card" style={{ padding: '48px 64px', textAlign: 'center' }}>
+            <div style={{
+              width: 48,
+              height: 48,
+              border: '4px solid rgba(26,55,170,0.1)',
+              borderTop: '4px solid #1A37AA',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite',
+              margin: '0 auto 16px',
+            }} />
+            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+            <p style={{ fontFamily: 'var(--font-inter), Inter, sans-serif', fontSize: '14px', color: 'var(--text-muted)' }}>
+              Loading...
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const isAdminUser = isAdmin(userRole);
+
   return (
     <div className="page-wrapper">
-      <div className="page-content">
-        {/* Stats Grid */}
-        <div className="stats-grid">
-          {STATS.map((stat) => (
-            <div key={stat.label} className="stat-card">
-              <div className="stat-card-top">
-                <div className="stat-icon" style={{ '--icon-color': stat.color }}>
-                  {stat.icon}
-                </div>
-              </div>
-              <div className="stat-value">{stat.value}</div>
-              <div className="stat-label">{stat.label}</div>
+      <div className="page-content" style={{ padding: '24px 0' }}>
+        {/* Welcome Section */}
+        <div className="card" style={{ padding: '32px', marginBottom: '24px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
+            <div style={{
+              width: 64,
+              height: 64,
+              borderRadius: '16px',
+              background: isAdminUser ? 'rgba(26,55,170,0.1)' : 'rgba(82,186,79,0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '28px',
+            }}>
+              {isAdminUser ? '👑' : '👤'}
             </div>
-          ))}
-        </div>
-
-        {/* Main Content Row */}
-        <div className="dashboard-grid">
-          {/* Recent Quotations */}
-          <div className="card card--wide">
-            <div className="card-header">
-              <div>
-                <h2 className="card-title">Recent Quotations</h2>
-                <p className="card-subtitle">Last 5 quotations created</p>
-              </div>
-              <a href="/dashboard/quotations" className="card-link">View all →</a>
-            </div>
-            <div className="table-wrapper">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Client</th>
-                    <th>Product</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {/* Example row - replace with actual data mapping */}
-                  <tr>
-                    <td data-label="ID">#Q-001</td>
-                    <td data-label="Client">ABC Enterprises</td>
-                    <td data-label="Product">USEPL-6V PINNACLE</td>
-                    <td data-label="Amount">₹24,15,254</td>
-                    <td data-label="Status">
-                      <span className="status-badge status-badge--pending">Pending</span>
-                    </td>
-                    <td data-label="Date">24 Jan 2025</td>
-                  </tr>
-                  <tr>
-                    <td colSpan={6} className="table-empty" style={{ textAlign: 'center', padding: '40px 0', color: '#aab4c4', fontSize: 13 }}>
-                      No quotations yet. <a href="/dashboard/quotations/new" style={{ color: '#1A37AA', textDecoration: 'none', fontWeight: 600 }}>Create one →</a>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Sales Pipeline */}
-          <div className="card">
-            <div className="card-header">
-              <div>
-                <h2 className="card-title">Sales Pipeline</h2>
-                <p className="card-subtitle">Current funnel status</p>
-              </div>
-            </div>
-            <div style={{ padding: '32px 16px', textAlign: 'center', color: '#aab4c4', fontSize: 13 }}>
-              No pipeline data yet.
+            <div>
+              <h1 style={{
+                fontFamily: 'var(--font-poppins), Poppins, sans-serif',
+                fontSize: '24px',
+                fontWeight: 600,
+                color: 'var(--text-primary)',
+                marginBottom: '4px',
+              }}>
+                Welcome back, {user?.name || 'User'}
+              </h1>
+              <p style={{
+                fontFamily: 'var(--font-inter), Inter, sans-serif',
+                fontSize: '14px',
+                color: 'var(--text-muted)',
+              }}>
+                You're logged in as <strong>{isAdminUser ? 'Administrator' : 'User'}</strong>
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="quick-actions">
-          <h3 className="quick-actions-title">Quick Actions</h3>
-          <div className="quick-actions-grid">
-            {[
-              { label: 'New Quotation', href: '/dashboard/quotations/new', icon: '📄', desc: 'Create a new client quotation' },
-              { label: 'Add Enquiry', href: '/enquiry', icon: '👤', desc: 'Register a new sales lead' },
-              { label: 'Add Product', href: '/dashboard/products', icon: '📦', desc: 'Add product to catalogue' },
-              { label: 'View Reports', href: '/dashboard/reports', icon: '📊', desc: 'Analyse sales performance' },
-            ].map((action) => (
-              <a key={action.label} href={action.href} className="quick-action-card">
-                <span className="quick-action-icon">{action.icon}</span>
-                <div>
-                  <span className="quick-action-label">{action.label}</span>
-                  <span className="quick-action-desc">{action.desc}</span>
-                </div>
-                <svg className="quick-action-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </a>
-            ))}
+        {/* Role-based Content */}
+        {isAdminUser ? (
+          /* Admin Dashboard */
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
+            <div className="card" style={{ padding: '24px' }}>
+              <div style={{ fontSize: '32px', marginBottom: '12px' }}>📊</div>
+              <h3 style={{
+                fontFamily: 'var(--font-poppins), Poppins, sans-serif',
+                fontSize: '18px',
+                fontWeight: 600,
+                color: 'var(--text-primary)',
+                marginBottom: '8px',
+              }}>
+                Analytics
+              </h3>
+              <p style={{
+                fontFamily: 'var(--font-inter), Inter, sans-serif',
+                fontSize: '14px',
+                color: 'var(--text-muted)',
+              }}>
+                View detailed reports and analytics about your business performance.
+              </p>
+            </div>
+
+            <div className="card" style={{ padding: '24px' }}>
+              <div style={{ fontSize: '32px', marginBottom: '12px' }}>👥</div>
+              <h3 style={{
+                fontFamily: 'var(--font-poppins), Poppins, sans-serif',
+                fontSize: '18px',
+                fontWeight: 600,
+                color: 'var(--text-primary)',
+                marginBottom: '8px',
+              }}>
+                User Management
+              </h3>
+              <p style={{
+                fontFamily: 'var(--font-inter), Inter, sans-serif',
+                fontSize: '14px',
+                color: 'var(--text-muted)',
+              }}>
+                Manage user accounts, roles, and permissions from the settings page.
+              </p>
+            </div>
+
+            <div className="card" style={{ padding: '24px' }}>
+              <div style={{ fontSize: '32px', marginBottom: '12px' }}>📋</div>
+              <h3 style={{
+                fontFamily: 'var(--font-poppins), Poppins, sans-serif',
+                fontSize: '18px',
+                fontWeight: 600,
+                color: 'var(--text-primary)',
+                marginBottom: '8px',
+              }}>
+                Enquiries & Quotations
+              </h3>
+              <p style={{
+                fontFamily: 'var(--font-inter), Inter, sans-serif',
+                fontSize: '14px',
+                color: 'var(--text-muted)',
+              }}>
+                Create, edit, and manage customer enquiries and quotations.
+              </p>
+            </div>
+
+            <div className="card" style={{ padding: '24px' }}>
+              <div style={{ fontSize: '32px', marginBottom: '12px' }}>⚙️</div>
+              <h3 style={{
+                fontFamily: 'var(--font-poppins), Poppins, sans-serif',
+                fontSize: '18px',
+                fontWeight: 600,
+                color: 'var(--text-primary)',
+                marginBottom: '8px',
+              }}>
+                Settings
+              </h3>
+              <p style={{
+                fontFamily: 'var(--font-inter), Inter, sans-serif',
+                fontSize: '14px',
+                color: 'var(--text-muted)',
+              }}>
+                Configure system settings and manage platform preferences.
+              </p>
+            </div>
           </div>
-        </div>
+        ) : (
+          /* User Dashboard - Limited Access */
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
+            <div className="card" style={{ padding: '24px', opacity: 0.7 }}>
+              <div style={{ fontSize: '32px', marginBottom: '12px' }}>🔒</div>
+              <h3 style={{
+                fontFamily: 'var(--font-poppins), Poppins, sans-serif',
+                fontSize: '18px',
+                fontWeight: 600,
+                color: 'var(--text-primary)',
+                marginBottom: '8px',
+              }}>
+                View Only Access
+              </h3>
+              <p style={{
+                fontFamily: 'var(--font-inter), Inter, sans-serif',
+                fontSize: '14px',
+                color: 'var(--text-muted)',
+              }}>
+                You have view-only access to the dashboard. Contact an administrator for additional permissions.
+              </p>
+            </div>
+
+            <div className="card" style={{ padding: '24px' }}>
+              <div style={{ fontSize: '32px', marginBottom: '12px' }}>📢</div>
+              <h3 style={{
+                fontFamily: 'var(--font-poppins), Poppins, sans-serif',
+                fontSize: '18px',
+                fontWeight: 600,
+                color: 'var(--text-primary)',
+                marginBottom: '8px',
+              }}>
+                Announcements
+              </h3>
+              <p style={{
+                fontFamily: 'var(--font-inter), Inter, sans-serif',
+                fontSize: '14px',
+                color: 'var(--text-muted)',
+              }}>
+                Stay updated with the latest announcements and notifications from the team.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -46,6 +46,8 @@
   --font-display: 'Syne', sans-serif;
   --font-number:  'Barlow Condensed', sans-serif;
   --font-body:    'DM Sans', sans-serif;
+  --font-inter:   var(--font-inter), 'Inter', sans-serif;
+  --font-poppins: var(--font-poppins), 'Poppins', sans-serif;
 
   /* Responsive spacing scale */
   --space-xs:  4px;
@@ -81,6 +83,70 @@ body {
   font-size: 14px;
   line-height: 1.6;
   min-height: 100vh;
+}
+
+/* Dashboard fonts: Inter for body + table, Poppins for headings */
+.dashboard-fonts {
+  font-family: var(--font-inter);
+}
+
+/* Company Logo styles */
+.sidebar-logo-mark img {
+  border-radius: 8px;
+  display: block;
+}
+
+.navbar-left img {
+  border-radius: 6px;
+  display: block;
+}
+
+.dashboard-fonts h1,
+.dashboard-fonts h2,
+.dashboard-fonts h3,
+.dashboard-fonts h4,
+.dashboard-fonts h5,
+.dashboard-fonts h6,
+.dashboard-fonts .card-title,
+.dashboard-fonts .navbar-title,
+.dashboard-fonts .quick-actions-title,
+.dashboard-fonts .stat-label,
+.dashboard-fonts .coming-soon-title,
+.dashboard-fonts .sidebar-logo-name,
+.dashboard-fonts .notif-header-title,
+.dashboard-fonts .empty-state-title,
+.dashboard-fonts .pipeline-summary-label,
+.dashboard-fonts .quick-action-label {
+  font-family: var(--font-poppins);
+}
+
+.dashboard-fonts .data-table,
+.dashboard-fonts .data-table th,
+.dashboard-fonts .data-table td,
+.dashboard-fonts .data-table tbody tr {
+  font-family: var(--font-inter);
+}
+
+.dashboard-fonts p,
+.dashboard-fonts span,
+.dashboard-fonts div,
+.dashboard-fonts a,
+.dashboard-fonts button,
+.dashboard-fonts input,
+.dashboard-fonts select,
+.dashboard-fonts textarea,
+.dashboard-fonts label {
+  font-family: var(--font-inter);
+}
+
+/* Keep Poppins for headings that were using var(--font-display) */
+.dashboard-fonts h1,
+.dashboard-fonts h2,
+.dashboard-fonts h3,
+.dashboard-fonts h4,
+.dashboard-fonts h5,
+.dashboard-fonts h6 {
+  font-weight: 600;
 }
 
 a { text-decoration: none; color: inherit; }
@@ -282,15 +348,23 @@ p, span, div {
 .sidebar-logo {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
-  padding: 18px 14px 16px;
+  padding: 24px 16px;
   border-bottom: 1px solid var(--sidebar-border);
-  min-height: 68px;
+  min-height: 90px;
   position: relative;
   flex-shrink: 0;
 }
 
-.sidebar-logo-mark { flex-shrink: 0; }
+.sidebar-logo-mark { 
+  flex-shrink: 0; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  width: 100%;
+  max-width: 180px;
+}
 
 .sidebar-logo-text {
   display: flex;
@@ -824,11 +898,15 @@ p, span, div {
 }
 
 .stat-value {
-  font-family: var(--font-number);
+  font-family: var(--font-inter);
   font-size: clamp(1.5rem, 4vw, 2rem);
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.5px;
+}
+
+.dashboard-fonts .stat-value {
+  font-family: var(--font-inter);
 }
 
 .stat-label {

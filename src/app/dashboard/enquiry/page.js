@@ -3,6 +3,8 @@
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
+import { isAdmin } from '@/lib/rbac';
 
 const fmtDate = iso => {
   if (!iso) return '—';
@@ -10,7 +12,7 @@ const fmtDate = iso => {
 };
 
 /* ── Drawer ────────────────────────────────────────────────────── */
-function EnquiryDrawer({ row, onClose, onUpdated, onDeleted }) {
+function EnquiryDrawer({ row, onClose, onUpdated, onDeleted, userRole }) {
   const [visible, setVisible] = useState(false);
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState({});
@@ -18,6 +20,9 @@ function EnquiryDrawer({ row, onClose, onUpdated, onDeleted }) {
   const [saveErr, setSaveErr] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  
+  // Check if user is admin
+  const isAdminUser = isAdmin(userRole);
 
   useEffect(() => {
     if (row) { requestAnimationFrame(() => setVisible(true)); setDraft({ ...row }); setEditing(false); }
@@ -497,28 +502,33 @@ function EnquiryDrawer({ row, onClose, onUpdated, onDeleted }) {
             </div>
           </div>
           <div className="eq-head-right">
-            {confirmDelete ? (
+            {/* Show Edit/Delete only for Admin */}
+            {isAdminUser && (
               <>
-                <button className="eq-del-btn confirm" onClick={handleDelete} disabled={deleting}>
-                  {deleting ? 'Deleting…' : 'Confirm Delete'}
+                {confirmDelete ? (
+                  <>
+                    <button className="eq-del-btn confirm" onClick={handleDelete} disabled={deleting}>
+                      {deleting ? 'Deleting…' : 'Confirm Delete'}
+                    </button>
+                    <button className="eq-edit-btn" onClick={() => setConfirmDelete(false)}>Cancel</button>
+                  </>
+                ) : (
+                  <button className="eq-del-btn" onClick={() => { setConfirmDelete(true); setEditing(false); }}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                      <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>
+                    </svg>
+                    Delete
+                  </button>
+                )}
+                <button className={`eq-edit-btn ${editing ? 'active' : ''}`} onClick={() => { setEditing(!editing); setSaveErr(''); setDraft({ ...row }); setConfirmDelete(false); }}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                  </svg>
+                  {editing ? 'Cancel' : 'Edit'}
                 </button>
-                <button className="eq-edit-btn" onClick={() => setConfirmDelete(false)}>Cancel</button>
               </>
-            ) : (
-              <button className="eq-del-btn" onClick={() => { setConfirmDelete(true); setEditing(false); }}>
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                  <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>
-                </svg>
-                Delete
-              </button>
             )}
-            <button className={`eq-edit-btn ${editing ? 'active' : ''}`} onClick={() => { setEditing(!editing); setSaveErr(''); setDraft({ ...row }); setConfirmDelete(false); }}>
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-              </svg>
-              {editing ? 'Cancel' : 'Edit'}
-            </button>
             <button className="eq-close" onClick={handleClose}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                 <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -783,8 +793,12 @@ function EnquiryDrawer({ row, onClose, onUpdated, onDeleted }) {
 /* ── Page ──────────────────────────────────────────────────────── */
 export default function EnquiryPage() {
   const router = useRouter();
+  const { userRole } = useAuth();
+  const isAdminUser = isAdmin(userRole);
+  
   const [rows, setRows]       = useState([]);
   const [loading, setLoading] = useState(true);
+  const [navigatingId, setNavigatingId] = useState(null);
   const [error, setError]     = useState('');
 
   /* filter state */
@@ -1128,12 +1142,15 @@ export default function EnquiryPage() {
                     {!open && hasAny && <span className="qf-count">{chips.length}</span>}
                   </button>
                 </div>
-                <Link href="/enquiry" className="btn btn-primary">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                  </svg>
-                  New
-                </Link>
+                {/* Show "New" button only for Admin */}
+                {isAdminUser && (
+                  <Link href="/enquiry" className="btn btn-primary">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    New
+                  </Link>
+                )}
               </div>
             </div>
           </div>
@@ -1227,7 +1244,8 @@ export default function EnquiryPage() {
                           </svg>
                           <div style={{ fontSize: 14, fontWeight: 600, color: '#8898aa' }}>{hasAny ? 'No results match your filters' : 'No enquiries yet'}</div>
                           <div style={{ fontSize: 12.5, color: '#aab4c4' }}>{hasAny ? 'Try adjusting or clearing the filters' : 'Add your first enquiry to get started'}</div>
-                          {!hasAny && (
+                          {/* Show "New Enquiry" button only for Admin */}
+                          {!hasAny && isAdminUser && (
                             <Link href="/enquiry" className="btn-primary" style={{ marginTop: 4 }}>
                               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                                 <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -1243,10 +1261,18 @@ export default function EnquiryPage() {
                       <tr
                         key={r.id}
                         className="table-row-clickable"
-                        onClick={() => router.push(`/dashboard/enquiry/${r.id}`)}
-                        style={{ cursor: 'pointer' }}
+                        onClick={() => { setNavigatingId(r.id); router.push(`/dashboard/enquiry/${r.id}`); }}
+                        style={{ cursor: 'pointer', position: 'relative' }}
                       >
-                        <td className="table-primary" data-label="Customer">{r.customerName || '—'}</td>
+                        <td className="table-primary" data-label="Customer">
+                          {navigatingId === r.id ? (
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1A37AA" strokeWidth="2.5" strokeLinecap="round" style={{ animation: 'spin 0.8s linear infinite', display: 'block' }}>
+                              <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+                            </svg>
+                          ) : (
+                            r.customerName || '—'
+                          )}
+                        </td>
                         <td data-label="Mill / Company">{r.millName || '—'}</td>
                         <td data-label="Mobile">{r.mobile || '—'}</td>
                         <td data-label="Requirement">

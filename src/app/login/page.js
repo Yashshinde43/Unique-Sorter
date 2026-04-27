@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
 
 /* ─────────────────────────────────────────────────────────
    KEYFRAMES & GLOBAL STYLES
@@ -75,7 +75,7 @@ const CSS = `
     align-items: center;
     justify-content: center;
     background: #f4f6fb;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Barlow Condensed', sans-serif;
     padding: 24px 16px;
   }
 
@@ -103,14 +103,16 @@ const CSS = `
     padding: 4px 12px; margin-bottom: 14px;
   }
   .lp-form-title {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(1.5rem, 2.5vw, 2rem);
-    font-weight: 800; color: #0f1923;
-    letter-spacing: -0.025em; line-height: 1.15;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    font-weight: 700; color: #0f1923;
+    letter-spacing: 0.02em; line-height: 1.1;
     margin-bottom: 8px;
+    text-transform: uppercase;
   }
   .lp-form-subtitle {
-    font-size: 0.9rem; color: #8898aa; font-weight: 400; line-height: 1.5;
+    font-size: 1rem; color: #8898aa; font-weight: 400; line-height: 1.5;
+    font-family: 'Barlow Condensed', sans-serif;
   }
 
   /* Progress bar */
@@ -141,14 +143,16 @@ const CSS = `
   /* Field */
   .lp-field { margin-bottom: 20px; }
   .lp-label {
-    display: block; font-size: 0.8rem; font-weight: 600;
-    color: #374151; margin-bottom: 7px; letter-spacing: 0.01em;
+    display: block; font-size: 0.9rem; font-weight: 600;
+    color: #374151; margin-bottom: 7px; letter-spacing: 0.02em;
+    font-family: 'Barlow Condensed', sans-serif;
+    text-transform: uppercase;
   }
   .lp-input-wrap { position: relative; }
   .lp-input {
     width: 100%;
     padding: 13px 42px 13px 44px;
-    font-size: 0.9375rem; font-family: 'DM Sans', sans-serif;
+    font-size: 1rem; font-family: 'Barlow Condensed', sans-serif;
     color: #0f1923; background: #f8f9fc;
     border: 1.5px solid #e8ecf4; border-radius: 10px;
     outline: none;
@@ -184,6 +188,35 @@ const CSS = `
   }
   .lp-eye-btn:hover { color: #1A37AA; }
 
+  /* Role dropdown styles */
+  .lp-role-select {
+    width: 100%;
+    padding: 13px 44px 13px 44px;
+    font-size: 1rem; font-family: 'Barlow Condensed', sans-serif;
+    color: #0f1923; background: #f8f9fc;
+    border: 1.5px solid #e8ecf4; border-radius: 10px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+  }
+  .lp-role-select:focus {
+    border-color: #1A37AA; background: #fff;
+    box-shadow: 0 0 0 3px rgba(26,55,170,0.08);
+  }
+  .lp-role-select option {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    padding: 10px;
+  }
+  .lp-dropdown-arrow {
+    position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
+    pointer-events: none; color: #8898aa;
+    display: flex; align-items: center;
+  }
+
   /* OTP input */
   .lp-otp-info {
     background: linear-gradient(135deg, rgba(26,55,170,0.05), rgba(82,186,79,0.04));
@@ -191,7 +224,7 @@ const CSS = `
     border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 24px;
     animation: otpPop 0.4s ease both;
   }
-  .lp-otp-phone-label { font-size: 0.82rem; color: #8898aa; margin-bottom: 4px; }
+  .lp-otp-phone-label { font-size: 0.9rem; color: #8898aa; margin-bottom: 4px; font-family: 'Barlow Condensed', sans-serif; }
   .lp-otp-phone {
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 1.15rem; font-weight: 700; color: #1A37AA; letter-spacing: 0.04em;
@@ -213,19 +246,20 @@ const CSS = `
     border-color: #1A37AA; background: #fff;
     box-shadow: 0 0 0 3px rgba(26,55,170,0.08);
   }
-  .lp-otp-hint { font-size: 0.78rem; color: #8898aa; text-align: center; margin-top: 8px; }
+  .lp-otp-hint { font-size: 0.85rem; color: #8898aa; text-align: center; margin-top: 8px; font-family: 'Barlow Condensed', sans-serif; }
 
   /* Submit button */
   .lp-btn {
     width: 100%; padding: 14px 24px;
     background: linear-gradient(135deg, #1A37AA 0%, #2a4fc4 100%);
     color: #fff; border: none; border-radius: 10px;
-    font-size: 0.9375rem; font-weight: 600; font-family: 'DM Sans', sans-serif;
+    font-size: 1rem; font-weight: 600; font-family: 'Barlow Condensed', sans-serif;
     cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
     box-shadow: 0 4px 16px rgba(26,55,170,0.32);
     transition: transform 0.18s, box-shadow 0.22s, background 0.22s;
-    margin-top: 8px; letter-spacing: 0.01em;
+    margin-top: 8px; letter-spacing: 0.03em;
     position: relative; overflow: hidden;
+    text-transform: uppercase;
   }
   .lp-btn::after {
     content: '';
@@ -255,32 +289,32 @@ const CSS = `
   .lp-back-btn {
     display: flex; align-items: center; gap: 5px;
     background: none; border: none;
-    font-size: 0.85rem; font-weight: 500; color: #8898aa;
-    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 500; color: #8898aa;
+    cursor: pointer; font-family: 'Barlow Condensed', sans-serif;
     padding: 7px 10px; border-radius: 7px;
     transition: color 0.2s, background 0.2s;
   }
   .lp-back-btn:hover { color: #0f1923; background: #f4f6fb; }
   .lp-resend-btn {
     background: none; border: none;
-    font-size: 0.85rem; font-weight: 600; color: #1A37AA;
-    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 600; color: #1A37AA;
+    cursor: pointer; font-family: 'Barlow Condensed', sans-serif;
     padding: 7px 10px; border-radius: 7px;
     transition: background 0.2s;
   }
   .lp-resend-btn:hover:not(:disabled) { background: rgba(26,55,170,0.07); }
   .lp-resend-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .lp-countdown { font-size: 0.85rem; color: #8898aa; font-weight: 500; }
+  .lp-countdown { font-size: 0.9rem; color: #8898aa; font-weight: 500; font-family: 'Barlow Condensed', sans-serif; }
 
   /* Footer links */
   .lp-form-footer {
     text-align: center; margin-top: 28px;
     padding-top: 22px; border-top: 1px solid #f0f2f8;
   }
-  .lp-form-footer-text { font-size: 0.78rem; color: #8898aa; }
+  .lp-form-footer-text { font-size: 0.85rem; color: #8898aa; font-family: 'Barlow Condensed', sans-serif; }
   .lp-form-footer-text a { color: #1A37AA; font-weight: 600; text-decoration: none; }
   .lp-form-footer-text a:hover { text-decoration: underline; }
-  .lp-copyright { font-size: 0.72rem; color: #c5cdd8; margin-top: 6px; }
+  .lp-copyright { font-size: 0.8rem; color: #c5cdd8; margin-top: 6px; font-family: 'Barlow Condensed', sans-serif; }
 
   /* Responsive */
   @media (max-width: 520px) {
@@ -331,17 +365,30 @@ const IcAlert = () => (
     <line x1="12" y1="16" x2="12.01" y2="16"/>
   </svg>
 );
+const IcUser = () => (
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+    <circle cx="12" cy="7" r="4"/>
+  </svg>
+);
+const IcChevronDown = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="6 9 12 15 18 9"/>
+  </svg>
+);
 
 /* ═══════════════════════════════════════════════════════════
    MAIN COMPONENT
 ═══════════════════════════════════════════════════════════ */
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuth();
 
   // Auth state
   const [step, setStep]         = useState(1);
   const [phone, setPhone]       = useState('');
   const [password, setPassword] = useState('');
+  const [selectedRole, setSelectedRole] = useState('');
   const [otp, setOtp]           = useState('');
   const [loading, setLoading]   = useState(false);
   const [error, setError]       = useState('');
@@ -349,9 +396,10 @@ export default function LoginPage() {
 
   // UI state
   const [showPassword, setShowPassword] = useState(false);
-  const [stepDir, setStepDir]           = useState('forward'); // 'forward' | 'back'
+  const [stepDir, setStepDir]           = useState('forward');
   const [phoneFocused, setPhoneFocused] = useState(false);
   const [passFocused,  setPassFocused]  = useState(false);
+  const [roleFocused,  setRoleFocused]  = useState(false);
   const [otpFocused,   setOtpFocused]   = useState(false);
   const otpRef = useRef(null);
 
@@ -382,10 +430,40 @@ export default function LoginPage() {
     }, 1000);
   };
 
-  /* ── STEP 1: Redirect directly to dashboard ── */
-  const handleSendOtp = (e) => {
+  /* ── STEP 1: Verify credentials and send OTP ── */
+  const handleSendOtp = async (e) => {
     e.preventDefault();
-    router.push('/dashboard');
+    setError('');
+    setLoading(true);
+
+    // Validate inputs
+    if (!phone || !password || !selectedRole) {
+      setError('Please fill in all fields');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/auth/verify-credentials', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, password, role: selectedRole }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setStepDir('forward');
+        setStep(2);
+        startCountdown();
+      } else {
+        setError(data.message || 'Invalid credentials');
+      }
+    } catch {
+      setError('Network error — please check your connection and try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   /* ── STEP 2: Verify OTP → login ── */
@@ -396,20 +474,21 @@ export default function LoginPage() {
 
     if (otp.length !== 6) {
       setError('Please enter the complete 6-digit verification code.');
-      setLoading(false); return;
+      setLoading(false);
+      return;
     }
 
     try {
-      const res  = await fetch('/api/auth/verify-otp', {
+      const res = await fetch('/api/auth/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ phone, otp }),
       });
       const data = await res.json();
       if (res.ok) {
-        if (data.token) {
-          localStorage.setItem('authToken', data.token);
-          localStorage.setItem('user', JSON.stringify(data.user));
+        if (data.token && data.user) {
+          // Store auth data via useAuth hook
+          login(data.token, data.user);
         }
         router.push('/dashboard');
       } else {
@@ -431,7 +510,7 @@ export default function LoginPage() {
       const res = await fetch('/api/auth/verify-credentials', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, password }),
+        body: JSON.stringify({ phone, password, role: selectedRole }),
       });
       if (res.ok) {
         startCountdown();
@@ -478,7 +557,7 @@ export default function LoginPage() {
             </h1>
             <p className="lp-form-subtitle">
               {step === 1
-                ? 'Enter your registered phone number and password to continue.'
+                ? 'Enter your registered phone number, password, and role to continue.'
                 : `A 6-digit code was sent to your phone. Enter it below.`}
             </p>
           </div>
@@ -491,7 +570,7 @@ export default function LoginPage() {
             </div>
           )}
 
-          {/* ── STEP 1: Phone + Password ── */}
+          {/* ── STEP 1: Phone + Password + Role ── */}
           {step === 1 && (
             <form onSubmit={handleSendOtp}>
               {/* Phone */}
@@ -546,6 +625,29 @@ export default function LoginPage() {
                 </div>
               </div>
 
+              {/* Role Dropdown */}
+              <div className="lp-field">
+                <label className="lp-label" htmlFor="role">Role</label>
+                <div className="lp-input-wrap">
+                  <span className="lp-input-icon"><IcUser /></span>
+                  <select
+                    id="role"
+                    value={selectedRole}
+                    onChange={e => setSelectedRole(e.target.value)}
+                    onFocus={() => setRoleFocused(true)}
+                    onBlur={() => setRoleFocused(false)}
+                    className="lp-role-select"
+                    style={{ ...inputStyle(roleFocused) }}
+                    required
+                  >
+                    <option value="" disabled>Select your role</option>
+                    <option value="ADMIN">Admin</option>
+                    <option value="USER">User</option>
+                  </select>
+                  <span className="lp-dropdown-arrow"><IcChevronDown /></span>
+                </div>
+              </div>
+
               <button type="submit" className="lp-btn" disabled={loading}>
                 {loading
                   ? <><span className="lp-spinner" /> Verifying credentials…</>
@@ -597,7 +699,7 @@ export default function LoginPage() {
               {/* Back / Resend */}
               <div className="lp-otp-actions">
                 <button type="button" className="lp-back-btn" onClick={handleBack}>
-                  <IcBack /> Change number
+                  <IcBack /> Change details
                 </button>
                 {countdown > 0
                   ? <span className="lp-countdown">Resend in {countdown}s</span>

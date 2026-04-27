@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation';
 
 const PAGE_LABELS = {
+  '/dashboard':            { name: 'Dashboard',  icon: '📊' },
   '/dashboard/enquiry':    { name: 'Enquiry',    icon: '💬' },
   '/dashboard/quotations': { name: 'Quotations', icon: '📄' },
   '/dashboard/settings':   { name: 'Settings',   icon: '⚙️' },
@@ -63,6 +64,11 @@ export default function WorkInProgress() {
 }
 
 const FEATURE_HINTS = {
+  '/dashboard': [
+    { icon: '📈', text: 'Real-time sales analytics' },
+    { icon: '💼', text: 'Quotation & order tracking' },
+    { icon: '👥', text: 'Team performance metrics' },
+  ],
   '/dashboard/enquiry': [
     { icon: '📥', text: 'Capture & manage inbound enquiries' },
     { icon: '🔄', text: 'Track status from new to converted' },

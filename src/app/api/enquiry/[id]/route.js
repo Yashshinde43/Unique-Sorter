@@ -33,7 +33,7 @@ function diffFields(oldData, newData) {
       changed.push(FIELD_LABELS[field]);
     }
   }
-  return changed; // array of human-readable field labels
+  return changed;
 }
 
 export async function GET(request, { params }) {
@@ -75,7 +75,7 @@ export async function PATCH(request, { params }) {
     if (changes.length > 0) {
       const logRef = docRef.collection('auditLog').doc();
       batch.set(logRef, {
-        fields:    changes,         // e.g. ["Mobile No.", "State"]
+        fields:    changes,
         timestamp: FieldValue.serverTimestamp(),
       });
     }

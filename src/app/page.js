@@ -326,7 +326,7 @@ function StatItem({ value, suffix, label, started }) {
       }}>
         {count}{suffix}
       </div>
-      <div style={{ color: "rgba(255,255,255,0.55)", fontSize: "0.875rem", fontWeight: 500 }}>
+      <div style={{ color: "rgba(255,255,255,0.55)", fontSize: "0.875rem", fontWeight: 500, fontFamily: "'Barlow Condensed', sans-serif" }}>
         {label}
       </div>
     </div>
@@ -371,7 +371,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div style={{ fontFamily: "'DM Sans', sans-serif", background: "#f4f6fb", minHeight: "100vh" }}>
+    <div style={{ fontFamily: "'Barlow Condensed', sans-serif", background: "#f4f6fb", minHeight: "100vh" }}>
 
       {/* ── MOBILE MENU ── */}
       <div className={`mobile-menu ${menuOpen ? "open" : ""}`}>
@@ -388,7 +388,7 @@ export default function HomePage() {
         ].map(({ label, href }) => (
           <a key={label} href={href} onClick={() => setMenuOpen(false)} style={{
             color: "#fff", textDecoration: "none", fontSize: "1.25rem",
-            fontWeight: 600, fontFamily: "'Syne', sans-serif",
+            fontWeight: 600, fontFamily: "'Barlow Condensed', sans-serif",
           }}>{label}</a>
         ))}
       </div>
@@ -407,36 +407,47 @@ export default function HomePage() {
         <div style={{
           maxWidth: 1320, margin: "0 auto",
           display: "flex", alignItems: "center", justifyContent: "space-between",
-          height: 68,
+          height: 75,
         }}>
           {/* Logo */}
-          <Link href="/" style={{ display: "flex", alignItems: "center", gap: 12, textDecoration: "none" }}>
+          <Link href="/" style={{ display: "flex", alignItems: "center", gap: 16, textDecoration: "none" }}>
             <div style={{
-              width: 38, height: 38, borderRadius: 8,
-              background: "linear-gradient(135deg, #1A37AA, #2a4fc4)",
+              width: 160, height: 55, borderRadius: 10,
               display: "flex", alignItems: "center", justifyContent: "center",
               flexShrink: 0,
-              boxShadow: "0 4px 12px rgba(26,55,170,0.4)",
+              overflow: "hidden",
+              background: "linear-gradient(135deg, rgba(26,55,170,0.3), rgba(42,79,196,0.2))",
+              border: "1px solid rgba(255,255,255,0.1)",
+              boxShadow: "0 6px 20px rgba(26,55,170,0.35), inset 0 1px 0 rgba(255,255,255,0.1)",
+              padding: "6px 12px",
             }}>
-              <span style={{ color: "#fff", fontWeight: 800, fontSize: "1rem", fontFamily: "'Syne', sans-serif" }}>U</span>
+              <Image
+                src="/logo.png"
+                alt="Unique Sorter Logo"
+                width={140}
+                height={45}
+                style={{ objectFit: "contain", width: "100%", height: "100%" }}
+                priority
+              />
             </div>
             <div className="hide-mobile">
               <div style={{
-                fontFamily: "'Syne', sans-serif", fontWeight: 700,
-                fontSize: "1rem", color: "#fff", lineHeight: 1.1,
-                letterSpacing: "-0.01em",
+                fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700,
+                fontSize: "1.5rem", color: "#fff", lineHeight: 1.1,
+                letterSpacing: "0.03em",
+                textTransform: "uppercase",
               }}>Unique Sorter</div>
-              <div style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.45)", letterSpacing: "0.06em" }}>
+              <div style={{ fontSize: "1rem", color: "rgba(255,255,255,0.55)", letterSpacing: "0.1em", fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 500 }}>
                 CRM PLATFORM
               </div>
             </div>
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hide-mobile" style={{ display: "flex", alignItems: "center", gap: 36 }}>
-            <a href="#features" className="nav-link">Features</a>
-            <a href="#how-it-works" className="nav-link">How It Works</a>
-            <a href="#stats" className="nav-link">About</a>
+          <div className="hide-mobile" style={{ display: "flex", alignItems: "center", gap: 48 }}>
+            <a href="#features" className="nav-link" style={{ fontSize: "1.1rem", fontWeight: 500 }}>Features</a>
+            <a href="#how-it-works" className="nav-link" style={{ fontSize: "1.1rem", fontWeight: 500 }}>How It Works</a>
+            <a href="#stats" className="nav-link" style={{ fontSize: "1.1rem", fontWeight: 500 }}>About</a>
           </div>
 
           {/* CTA */}
@@ -550,32 +561,26 @@ export default function HomePage() {
               boxShadow: "0 0 8px #52ba4f",
             }} />
             <span style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: "0.8rem", fontWeight: 600,
-              color: "rgba(255,255,255,0.8)", letterSpacing: "0.08em",
+              fontFamily: "'Barlow Condensed', sans-serif",
+              fontSize: "0.85rem", fontWeight: 600,
+              color: "rgba(255,255,255,0.8)", letterSpacing: "0.1em",
               textTransform: "uppercase",
             }}>Business CRM Platform</span>
           </div>
 
           <h1 className="hero-title" style={{
-            fontFamily: "'Syne', sans-serif",
-            fontSize: "clamp(2.6rem, 6vw, 4.2rem)",
-            fontWeight: 800,
+            fontFamily: "'Barlow Condensed', sans-serif",
+            fontSize: "clamp(2.8rem, 7vw, 4.8rem)",
+            fontWeight: 700,
             color: "#fff",
-            lineHeight: 1.1,
-            letterSpacing: "-0.025em",
-            maxWidth: 780,
+            lineHeight: 1.05,
+            letterSpacing: "-0.02em",
+            maxWidth: 820,
             marginBottom: 12,
             animation: "fadeUp 0.7s 0.1s ease both",
+            textTransform: "uppercase",
           }}>
-            Unique Sorter And
-            <br />
-            <span style={{
-              background: "linear-gradient(135deg, #4a72f5, #52ba4f 60%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}>Equipment Pvt. Ltd.</span>
+            Unique Sorter
           </h1>
 
           <p className="hero-sub" style={{
@@ -613,7 +618,7 @@ export default function HomePage() {
             ].map(item => (
               <div key={item} style={{ display: "flex", alignItems: "center", gap: 7 }}>
                 <IconCheck />
-                <span style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.55)", fontWeight: 500 }}>{item}</span>
+                <span style={{ fontSize: "0.85rem", color: "rgba(255,255,255,0.55)", fontWeight: 500, fontFamily: "'Barlow Condensed', sans-serif" }}>{item}</span>
               </div>
             ))}
           </div>
@@ -635,7 +640,7 @@ export default function HomePage() {
               position: "relative",
             }} />
           </div>
-          <span style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.3)", letterSpacing: "0.1em" }}>SCROLL</span>
+            <span style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.3)", letterSpacing: "0.1em", fontFamily: "'Barlow Condensed', sans-serif" }}>SCROLL</span>
         </div>
       </section>
 
@@ -677,24 +682,26 @@ export default function HomePage() {
               borderRadius: 100, padding: "5px 16px", marginBottom: 16,
             }}>
               <span style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: "0.75rem", fontWeight: 700,
-                color: "#1A37AA", letterSpacing: "0.1em", textTransform: "uppercase",
+                fontFamily: "'Barlow Condensed', sans-serif",
+                fontSize: "0.8rem", fontWeight: 600,
+                color: "#1A37AA", letterSpacing: "0.12em", textTransform: "uppercase",
               }}>Core Capabilities</span>
             </div>
             <h2 className="section-title" style={{
-              fontFamily: "'Syne', sans-serif",
-              fontSize: "clamp(1.8rem, 4vw, 2.8rem)",
-              fontWeight: 800, color: "#0f1923",
-              letterSpacing: "-0.02em",
+              fontFamily: "'Barlow Condensed', sans-serif",
+              fontSize: "clamp(2rem, 4.5vw, 3rem)",
+              fontWeight: 700, color: "#0f1923",
+              letterSpacing: "0.01em",
               marginBottom: 16,
+              textTransform: "uppercase",
             }}>
-              Everything your business needs,<br />
-              <span style={{ color: "#1A37AA" }}>in one platform</span>
+              Everything your business needs<br />
+              <span style={{ color: "#1A37AA" }}>In One Platform</span>
             </h2>
             <p style={{
               fontSize: "1.05rem", color: "#5a6a7e",
               maxWidth: 520, margin: "0 auto", lineHeight: 1.7,
+              fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 400,
             }}>
               Purpose-built for industrial equipment sales teams to manage the
               full customer lifecycle efficiently.
@@ -763,13 +770,14 @@ export default function HomePage() {
                 </div>
 
                 <h3 style={{
-                  fontFamily: "'Syne', sans-serif",
-                  fontSize: "1.1rem", fontWeight: 700,
+                  fontFamily: "'Barlow Condensed', sans-serif",
+                  fontSize: "1.2rem", fontWeight: 700,
                   color: "#0f1923", marginBottom: 10,
-                  letterSpacing: "-0.01em",
+                  letterSpacing: "0.02em",
+                  textTransform: "uppercase",
                 }}>{title}</h3>
 
-                <p style={{ fontSize: "0.9rem", color: "#5a6a7e", lineHeight: 1.65, marginBottom: 20 }}>
+                <p style={{ fontSize: "0.95rem", color: "#5a6a7e", lineHeight: 1.65, marginBottom: 20, fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 400 }}>
                   {desc}
                 </p>
 
@@ -777,16 +785,17 @@ export default function HomePage() {
                   {items.map(item => (
                     <li key={item} style={{ display: "flex", alignItems: "center", gap: 8 }}>
                       <IconCheck />
-                      <span style={{ fontSize: "0.82rem", color: "#5a6a7e", fontWeight: 500 }}>{item}</span>
+                      <span style={{ fontSize: "0.85rem", color: "#5a6a7e", fontWeight: 500, fontFamily: "'Barlow Condensed', sans-serif" }}>{item}</span>
                     </li>
                   ))}
                 </ul>
 
                 <Link href={link} style={{
                   display: "inline-flex", alignItems: "center", gap: 6,
-                  fontSize: "0.85rem", fontWeight: 600, color: color,
+                  fontSize: "0.9rem", fontWeight: 600, color: color,
                   textDecoration: "none",
                   transition: "gap 0.2s",
+                  fontFamily: "'Barlow Condensed', sans-serif",
                 }}
                   onMouseEnter={e => e.currentTarget.style.gap = "10px"}
                   onMouseLeave={e => e.currentTarget.style.gap = "6px"}
@@ -826,21 +835,24 @@ export default function HomePage() {
               borderRadius: 100, padding: "5px 16px", marginBottom: 16,
             }}>
               <span style={{
-                fontSize: "0.75rem", fontWeight: 700,
-                color: "#3d8f3b", letterSpacing: "0.1em", textTransform: "uppercase",
+                fontFamily: "'Barlow Condensed', sans-serif",
+                fontSize: "0.8rem", fontWeight: 600,
+                color: "#3d8f3b", letterSpacing: "0.12em", textTransform: "uppercase",
               }}>Simple Process</span>
             </div>
             <h2 className="section-title" style={{
-              fontFamily: "'Syne', sans-serif",
-              fontSize: "clamp(1.8rem, 4vw, 2.8rem)",
-              fontWeight: 800, color: "#0f1923",
-              letterSpacing: "-0.02em", marginBottom: 16,
+              fontFamily: "'Barlow Condensed', sans-serif",
+              fontSize: "clamp(2rem, 4.5vw, 3rem)",
+              fontWeight: 700, color: "#0f1923",
+              letterSpacing: "0.01em", marginBottom: 16,
+              textTransform: "uppercase",
             }}>
-              Three steps to a smarter workflow
+              Three Steps To A Smarter Workflow
             </h2>
             <p style={{
               fontSize: "1.05rem", color: "#5a6a7e",
               maxWidth: 480, margin: "0 auto", lineHeight: 1.7,
+              fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 400,
             }}>
               Get your team operational in minutes, not weeks.
             </p>
@@ -911,20 +923,22 @@ export default function HomePage() {
                 }}>{num}</div>
 
                 <h3 style={{
-                  fontFamily: "'Syne', sans-serif",
-                  fontSize: "1.15rem", fontWeight: 700,
+                  fontFamily: "'Barlow Condensed', sans-serif",
+                  fontSize: "1.2rem", fontWeight: 700,
                   color: "#0f1923", marginBottom: 12,
-                  letterSpacing: "-0.01em",
+                  letterSpacing: "0.02em",
+                  textTransform: "uppercase",
                 }}>{title}</h3>
 
-                <p style={{ fontSize: "0.9rem", color: "#5a6a7e", lineHeight: 1.65, marginBottom: 24 }}>
+                <p style={{ fontSize: "0.95rem", color: "#5a6a7e", lineHeight: 1.65, marginBottom: 24, fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 400 }}>
                   {desc}
                 </p>
 
                 <Link href={href} style={{
                   display: "inline-flex", alignItems: "center", gap: 6,
-                  fontSize: "0.85rem", fontWeight: 600, color: "#1A37AA",
+                  fontSize: "0.9rem", fontWeight: 600, color: "#1A37AA",
                   textDecoration: "none", transition: "gap 0.2s",
+                  fontFamily: "'Barlow Condensed', sans-serif",
                 }}
                   onMouseEnter={e => e.currentTarget.style.gap = "10px"}
                   onMouseLeave={e => e.currentTarget.style.gap = "6px"}
@@ -979,20 +993,22 @@ export default function HomePage() {
         </div>
 
         <h2 style={{
-          fontFamily: "'Syne', sans-serif",
-          fontSize: "clamp(1.8rem, 4vw, 2.8rem)",
-          fontWeight: 800, color: "#fff",
-          letterSpacing: "-0.025em",
+          fontFamily: "'Barlow Condensed', sans-serif",
+          fontSize: "clamp(2rem, 4.5vw, 3rem)",
+          fontWeight: 700, color: "#fff",
+          letterSpacing: "0.01em",
           marginBottom: 18,
           position: "relative", zIndex: 1,
+          textTransform: "uppercase",
         }}>
-          Ready to streamline<br />your sales operation?
+          Ready To Streamline<br />Your Sales Operation?
         </h2>
 
         <p style={{
           fontSize: "1.05rem", color: "rgba(255,255,255,0.55)",
           maxWidth: 440, margin: "0 auto 40px",
           lineHeight: 1.7, position: "relative", zIndex: 1,
+          fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 400,
         }}>
           Your team is one login away from a faster, smarter way to manage
           enquiries, quotations, and clients.
@@ -1031,21 +1047,23 @@ export default function HomePage() {
                   display: "flex", alignItems: "center", justifyContent: "center",
                   flexShrink: 0,
                 }}>
-                  <span style={{ color: "#fff", fontWeight: 800, fontFamily: "'Syne', sans-serif" }}>U</span>
+                  <span style={{ color: "#fff", fontWeight: 700, fontFamily: "'Barlow Condensed', sans-serif", fontSize: "1.1rem" }}>U</span>
                 </div>
                 <div>
                   <div style={{
-                    fontFamily: "'Syne', sans-serif", fontWeight: 700,
-                    color: "#fff", fontSize: "0.95rem",
+                    fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 700,
+                    color: "#fff", fontSize: "1rem",
+                    letterSpacing: "0.02em", textTransform: "uppercase",
                   }}>Unique Sorter</div>
-                  <div style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.35)", letterSpacing: "0.08em" }}>
+                  <div style={{ fontSize: "0.7rem", color: "rgba(255,255,255,0.35)", letterSpacing: "0.1em", fontFamily: "'Barlow Condensed', sans-serif" }}>
                     AND EQUIPMENT PVT. LTD.
                   </div>
                 </div>
               </div>
               <p style={{
-                fontSize: "0.875rem", color: "rgba(255,255,255,0.4)",
+                fontSize: "0.9rem", color: "rgba(255,255,255,0.4)",
                 lineHeight: 1.75, maxWidth: 280,
+                fontFamily: "'Barlow Condensed', sans-serif", fontWeight: 400,
               }}>
                 Industrial sorting equipment specialists. Our CRM platform powers
                 every step of the customer journey — from first enquiry to
