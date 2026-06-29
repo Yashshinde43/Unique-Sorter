@@ -124,7 +124,7 @@ function IconUsers() {
 }
 function IconPlus() {
   return (
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
       <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
     </svg>
   );
@@ -616,6 +616,11 @@ export default function SettingsPage() {
         /* ── Responsive table ── */
         @media (max-width: 700px) {
           .settings-header-row { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; }
+          /* keep the User Management header + Add User button on ONE row */
+          .settings-card-hdr { flex-direction: row !important; align-items: center !important; flex-wrap: nowrap !important; }
+          .settings-card-hdr > div:first-child { min-width: 0 !important; }
+          .settings-card-hdr > div:first-child > div { min-width: 0 !important; }
+          .settings-card-hdr h2, .settings-card-hdr p { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
           .settings-toolbar { flex-wrap: wrap !important; gap: 8px !important; }
           .settings-toolbar > div:first-child { flex: 1 1 100% !important; }
 
@@ -663,7 +668,7 @@ export default function SettingsPage() {
         {/* ── User Management ── */}
         <div style={styles.card}>
           {/* Card header */}
-          <div style={styles.cardHeader} className="settings-header-row">
+          <div style={styles.cardHeader} className="settings-card-hdr">
             <div style={styles.cardHeaderLeft}>
               <div style={styles.cardIconWrap}><IconUsers /></div>
               <div>
@@ -884,12 +889,13 @@ const styles = {
     padding: 'clamp(14px,3vw,20px) clamp(14px,3vw,24px)',
     borderBottom: '1px solid #f0f4fa',
     gap: 12,
-    flexWrap: 'wrap',
+    flexWrap: 'nowrap',
   },
   cardHeaderLeft: {
     display: 'flex',
     alignItems: 'center',
     gap: 14,
+    minWidth: 0,
   },
   cardIconWrap: {
     width: 42,
@@ -1292,18 +1298,18 @@ const styles = {
 
   /* ── Buttons ── */
   btnPrimary: {
-    height: 40,
-    padding: '0 20px',
-    borderRadius: 10,
+    height: 34,
+    padding: '0 14px',
+    borderRadius: 8,
     border: 'none',
     background: '#1A37AA',
     color: '#fff',
-    fontSize: 13,
+    fontSize: 12.5,
     fontWeight: 700,
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
-    gap: 7,
+    gap: 6,
     fontFamily: "'DM Sans', sans-serif",
     boxShadow: '0 4px 14px rgba(26,55,170,0.28)',
     transition: 'all 0.15s',

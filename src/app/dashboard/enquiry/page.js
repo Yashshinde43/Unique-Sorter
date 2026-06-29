@@ -1032,7 +1032,6 @@ export default function EnquiryPage() {
         @media (max-width: 480px) {
           .enq-bulk-bar { gap: 8px; padding: 8px 12px; font-size: 12px; bottom: 12px; max-width: calc(100% - 24px); }
           .enq-bulk-btn { height: 28px; padding: 0 10px; font-size: 11px; }
-          .enq-csv-btn { padding: 0 8px; font-size: 11px; }
         }
         .enq-bulk-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
@@ -1062,7 +1061,7 @@ export default function EnquiryPage() {
 
         /* CSV button */
         .enq-csv-btn {
-          display: inline-flex; align-items: center; gap: 5px;
+          display: inline-flex; align-items: center; gap: 6px;
           height: 34px; padding: 0 12px;
           border-radius: 7px;
           border: 1.5px solid #e2e8f2;
@@ -1077,7 +1076,7 @@ export default function EnquiryPage() {
         /* Filter button */
         .enq-filter-btn {
           display: inline-flex; align-items: center; gap: 6px;
-          height: 34px; padding: 0 13px; border-radius: 7px;
+          height: 34px; padding: 0 12px; border-radius: 7px;
           border: 1.5px solid #e2e8f2; background: #fff; color: #64748b;
           font-family: var(--font-inter), Inter, sans-serif;
           font-size: 12.5px; font-weight: 600;
@@ -1091,8 +1090,13 @@ export default function EnquiryPage() {
         /* New button */
         .btn.btn-primary {
           display: inline-flex; align-items: center; gap: 6px;
-          height: 34px; padding: 0 6px; border-radius: 7px;
-          border: none;
+          height: 34px; padding: 0 12px; border-radius: 7px;
+          /* override the global .btn { min-height/min-width: 44px } so this button
+             sizes exactly like the Filter/CSV buttons instead of being forced to 44px */
+          min-height: 0; min-width: 0;
+          /* transparent 1.5px border matches the Filter/CSV box model exactly
+             so all three buttons render at the same size */
+          border: 1.5px solid transparent;
           background: linear-gradient(135deg, #1A37AA 0%, #2549cc 100%);
           color: #fff;
           font-family: var(--font-inter), Inter, sans-serif;
@@ -1102,7 +1106,26 @@ export default function EnquiryPage() {
           transition: box-shadow .15s, transform .12s;
         }
         .btn.btn-primary:hover { box-shadow: 0 4px 14px rgba(26,55,170,0.45); transform: translateY(-1px); }
-        @media (min-width: 768px) { .btn.btn-primary { height: 36px; font-size: 13px; padding: 0 16px; border-radius: 8px; } }
+
+        /* mobile: compact all three topbar buttons uniformly so CSV + New Enquiry
+           + Filter fit cleanly on one row with the title/count (like the quotations bar) */
+        @media (max-width: 767px) {
+          /* keep everything on ONE row — compact the buttons hard so the title +
+             count + all three buttons fit without wrapping or hiding the count */
+          .enq-topbar { padding: 14px 8px 10px; gap: 6px; flex-wrap: nowrap; }
+          .enq-topbar-left { gap: 6px; flex-shrink: 0; }
+          .enq-title { font-size: 16px; }
+          .enq-count { font-size: 10.5px; }
+          .enq-topbar-right { gap: 5px; flex-shrink: 0; }
+          .enq-csv-btn,
+          .enq-filter-btn,
+          .btn.btn-primary {
+            height: 30px; padding: 0 7px; gap: 3px;
+            font-size: 11px; border-radius: 6px;
+          }
+          /* shrink the button icons a touch to claw back horizontal space */
+          .enq-topbar-right svg { width: 11px; height: 11px; }
+        }
 
         .enq-filter-badge {
           display: inline-flex; align-items: center; justify-content: center;
@@ -1288,7 +1311,6 @@ export default function EnquiryPage() {
         @media (min-width: 768px) {
           .enq-topbar { padding: 20px 24px 14px; gap: 10px; }
           .enq-title { font-size: 20px; }
-          .enq-filter-btn { height: 36px; font-size: 13px; padding: 0 16px; border-radius: 8px; }
           .enq-filter-panel { padding: 14px 24px 16px; }
           .enq-filter-grid { grid-template-columns: repeat(4, 1fr); }
           .enq-table thead { display: table-header-group; }
