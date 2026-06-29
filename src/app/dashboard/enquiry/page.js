@@ -1182,9 +1182,26 @@ export default function EnquiryPage() {
           display: none; padding: 14px 14px;
           font-size: 13px; color: var(--text-primary); vertical-align: middle;
         }
-        .enq-table td:first-child { display: block; }
+        /* mobile: only the name (data) cell shows; checkbox handled separately below */
+        .enq-table td.enq-td-name { display: block; }
         .enq-td-name { font-weight: 600; }
         .enq-td-muted { color: var(--text-secondary); }
+
+        /* mobile: each row is a flex container so the checkbox + data sit side by side
+           (fixes admin rows where the checkbox is the first cell) */
+        @media (max-width: 767px) {
+          .enq-table tbody tr {
+            display: flex; align-items: center; gap: 10px;
+            padding: 2px 14px;
+          }
+          .enq-table td { padding: 10px 0; }
+          .enq-table td.enq-td-name { flex: 1 1 auto; min-width: 0; }
+          .enq-table td.enq-chk {
+            display: flex; align-items: center;
+            width: auto; flex: 0 0 auto;
+          }
+          .enq-table tbody tr td[colspan] { flex: 1 1 100%; padding: 0; }
+        }
 
         /* badge */
         .enq-badge {
@@ -1277,6 +1294,7 @@ export default function EnquiryPage() {
           .enq-table thead { display: table-header-group; }
           .enq-table td { display: table-cell; }
           .enq-table td:first-child { display: table-cell; }
+          .enq-table td.enq-td-name { display: table-cell; }
           .enq-mob-row  { display: none; }
           .enq-desk-name { display: block; }
         }

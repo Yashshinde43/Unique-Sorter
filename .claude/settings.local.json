@@ -7,7 +7,10 @@
       "Bash(curl:*)",
       "Bash(npm install *)",
       "Bash(git add *)",
-      "PowerShell(npm install *)"
+      "PowerShell(npm install *)",
+      "PowerShell(node \"D:\\\\Unique-sorter_\\\\_check-firestore.mjs\")",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://localhost:3000/api/enquiry\" -Method GET -UseBasicParsing -TimeoutSec 8; \"STATUS: $\\($r.StatusCode\\)`nBODY: $\\($r.Content\\)\" } catch { $resp = $_.Exception.Response; if \\($resp\\) { $code = [int]$resp.StatusCode; $reader = New-Object System.IO.StreamReader\\($resp.GetResponseStream\\(\\)\\); $body = $reader.ReadToEnd\\(\\); \"STATUS: $code`nBODY: $body\" } else { \"NO RESPONSE / server not running: $\\($_.Exception.Message\\)\" } })",
+      "PowerShell(Remove-Item *)"
     ]
   }
 }

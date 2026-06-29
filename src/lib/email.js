@@ -1,11 +1,27 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const FROM = 'Unique Sorter CRM <onboarding@resend.dev>';
 const ADMIN_EMAIL = 'chiragsinghchauhan3949323@gmail.com';
 
+// Lazily create the Resend client. The constructor throws when no API key is
+// present, so we must NOT instantiate it at module load — otherwise every route
+// that imports this file (e.g. /api/enquiry) would 500 in any environment where
+// RESEND_API_KEY is unset (such as local dev).
+let _resend = null;
+function getResend() {
+  if (_resend) return _resend;
+  const key = process.env.RESEND_API_KEY;
+  if (!key) return null;
+  _resend = new Resend(key);
+  return _resend;
+}
+
 export async function sendEmail({ to, subject, html }) {
+  const resend = getResend();
+  if (!resend) {
+    console.warn('RESEND_API_KEY not set — skipping email:', subject);
+    return { success: false, error: 'Email not configured' };
+  }
   try {
     const { data, error } = await resend.emails.send({
       from: FROM,
