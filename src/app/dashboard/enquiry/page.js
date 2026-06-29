@@ -1091,7 +1091,7 @@ export default function EnquiryPage() {
         /* New button */
         .btn.btn-primary {
           display: inline-flex; align-items: center; gap: 6px;
-          height: 34px; padding: 0 14px; border-radius: 7px;
+          height: 34px; padding: 0 6px; border-radius: 7px;
           border: none;
           background: linear-gradient(135deg, #1A37AA 0%, #2549cc 100%);
           color: #fff;

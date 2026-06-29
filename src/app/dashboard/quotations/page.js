@@ -231,7 +231,24 @@ const CSS = `
     font-size: 13px; color: var(--text-primary);
     vertical-align: middle;
   }
-  .quot-table td:first-child { display: block; }
+  /* mobile: only the primary (data) cell shows; checkbox handled separately below */
+  .quot-table td.quot-primary { display: block; }
+
+  /* mobile: each row is a flex container so checkbox + data sit side by side
+     (fixes admin rows where the checkbox is the first cell) */
+  @media (max-width: 767px) {
+    .quot-table tbody tr {
+      display: flex; align-items: center; gap: 10px;
+      padding: 2px 14px;
+    }
+    .quot-table td { padding: 10px 0; }
+    .quot-table td.quot-primary { flex: 1 1 auto; min-width: 0; }
+    .quot-table td.quot-chk {
+      display: flex; align-items: center;
+      width: auto; flex: 0 0 auto;
+    }
+    .quot-table tbody tr td[colspan] { flex: 1 1 100%; padding: 0; }
+  }
 
   /* mobile row layout */
   .quot-mob-row {
@@ -333,6 +350,7 @@ const CSS = `
     .quot-table thead { display: table-header-group; }
     .quot-table td { display: table-cell; }
     .quot-table td:first-child { display: table-cell; }
+    .quot-table td.quot-primary { display: table-cell; }
     .quot-mob-row  { display: none; }
     .quot-desk-num { display: block; }
     .quot-table-wrap { padding: 0; }
@@ -581,7 +599,7 @@ export default function QuotationsPage() {
               {loading ? (
                 [0,1,2,3,4,5].map(i => (
                   <tr key={i} style={{ cursor: 'default' }}>
-                    <td>
+                    <td className="quot-primary">
                       {/* mobile skeleton */}
                       <div className="quot-skel-mob">
                         <div className="quot-skel-mob-top">
@@ -634,7 +652,7 @@ export default function QuotationsPage() {
                   >
                     {isAdminUser && <td className="quot-chk" onClick={e => e.stopPropagation()}><input type="checkbox" className="quot-chk-box" checked={selected.has(r.id)} onChange={() => toggleSelect(r.id)} /></td>}
                     {/* mobile: first td shows all data */}
-                    <td>
+                    <td className="quot-primary">
                       {/* mobile layout */}
                       <span className="quot-mob-row">
                         <span className="quot-mob-top">

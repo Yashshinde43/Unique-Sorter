@@ -6,7 +6,8 @@
       "Bash(curl -s http://localhost:3000/dashboard)",
       "Bash(curl:*)",
       "Bash(npm install *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "PowerShell(npm install *)"
     ]
   }
 }
