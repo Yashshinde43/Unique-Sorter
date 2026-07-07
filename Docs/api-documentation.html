@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unique Sorter CRM — API Documentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --navy: #0c1a3a;
+      --ink: #111827;
+      --body: #374151;
+      --muted: #6b7280;
+      --faint: #9ca3af;
+      --border: #e5e7eb;
+      --surface: #f9fafb;
+      --card: #ffffff;
+      --accent: #1A37AA;
+      --accent-light: #eef2ff;
+      --accent-glow: rgba(26, 55, 170, 0.08);
+      --green: #059669;
+      --green-bg: #ecfdf5;
+      --green-border: #a7f3d0;
+      --amber: #d97706;
+      --amber-bg: #fffbeb;
+      --amber-border: #fde68a;
+      --red: #dc2626;
+      --red-bg: #fef2f2;
+      --red-border: #fecaca;
+      --blue: #2563eb;
+      --blue-bg: #eff6ff;
+      --blue-border: #bfdbfe;
+      --purple: #7c3aed;
+      --purple-bg: #f5f3ff;
+      --purple-border: #ddd6fe;
+      --radius: 10px;
+      --code-bg: #1e293b;
+      --code-text: #e2e8f0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--body);
+      background: var(--surface);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      position: fixed; top: 0; left: 0; bottom: 0;
+      width: 290px; background: var(--card);
+      border-right: 1px solid var(--border);
+      overflow-y: auto; z-index: 100;
+      padding: 24px 0;
+      transition: transform 0.3s ease;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    .sb-brand {
+      padding: 0 20px 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+    .sb-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 17px; color: var(--navy);
+      letter-spacing: -0.3px;
+    }
+    .sb-logo span { color: var(--accent); }
+    .sb-tag {
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--faint); margin-top: 3px;
+    }
+
+    .nav-group { padding: 6px 14px; }
+    .nav-label {
+      font-size: 9.5px; font-weight: 700;
+      letter-spacing: 1.2px; text-transform: uppercase;
+      color: var(--faint); padding: 0 8px; margin-bottom: 5px;
+    }
+    .nav-link {
+      display: block; padding: 6px 12px; border-radius: 6px;
+      font-size: 13px; font-weight: 500;
+      color: var(--muted); text-decoration: none;
+      transition: all 0.15s;
+    }
+    .nav-link:hover { background: var(--accent-light); color: var(--accent); }
+    .nav-divider { height: 1px; background: var(--border); margin: 8px 20px; }
+
+    /* ── MAIN ── */
+    .main { margin-left: 290px; padding: 0 48px 80px; max-width: 1100px; }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 56px 0 40px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 48px;
+    }
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 38px; color: var(--navy);
+      letter-spacing: -0.5px; margin-bottom: 12px;
+    }
+    .hero p { font-size: 17px; color: var(--muted); max-width: 640px; line-height: 1.7; }
+
+    .base-url-box {
+      margin-top: 24px;
+      background: var(--code-bg); color: var(--code-text);
+      border-radius: 8px; padding: 16px 20px;
+      font-family: 'JetBrains Mono', monospace; font-size: 14px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .base-url-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--faint);
+      background: rgba(255,255,255,0.08); padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    .quick-cards {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+      margin-top: 28px;
+    }
+    .quick-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 16px 18px;
+      text-decoration: none; transition: all 0.2s;
+    }
+    .quick-card:hover { border-color: var(--accent); box-shadow: 0 2px 12px var(--accent-glow); }
+    .quick-card .qc-icon { font-size: 22px; margin-bottom: 6px; }
+    .quick-card .qc-title { font-size: 14px; font-weight: 600; color: var(--navy); }
+    .quick-card .qc-desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* ── SECTION HEADERS ── */
+    .section-header {
+      margin: 56px 0 32px;
+      padding: 20px 24px;
+      background: var(--navy);
+      border-radius: 10px;
+      color: #fff;
+    }
+    .section-header h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 24px; letter-spacing: -0.3px;
+    }
+    .section-header p { font-size: 14px; color: rgba(255,255,255,0.65); margin-top: 4px; }
+
+    /* ── ENDPOINT CARD ── */
+    .endpoint {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+    .endpoint:hover { box-shadow: 0 2px 16px rgba(0,0,0,0.04); }
+
+    .ep-header {
+      padding: 18px 22px;
+      display: flex; align-items: center; gap: 12px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      user-select: none;
+    }
+    .ep-header:hover { background: var(--surface); }
+
+    .method-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.5px;
+      padding: 4px 10px; border-radius: 5px;
+      min-width: 60px; text-align: center;
+    }
+    .method-GET { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+    .method-POST { background: var(--blue-bg); color: var(--blue); border: 1px solid var(--blue-border); }
+    .method-PATCH { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+    .method-PUT { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+    .method-DELETE { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+
+    .ep-path {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px; color: var(--ink); font-weight: 500;
+    }
+    .ep-path .param { color: var(--accent); }
+    .ep-desc {
+      font-size: 13px; color: var(--muted);
+      margin-left: auto;
+    }
+    .ep-auth {
+      font-size: 10px; font-weight: 600; letter-spacing: 0.5px;
+      padding: 3px 8px; border-radius: 4px;
+      white-space: nowrap;
+    }
+    .auth-required { background: var(--amber-bg); color: var(--amber); }
+    .auth-admin { background: var(--red-bg); color: var(--red); }
+    .auth-public { background: var(--green-bg); color: var(--green); }
+
+    .ep-toggle {
+      margin-left: 8px; color: var(--faint);
+      transition: transform 0.2s; font-size: 14px;
+    }
+    .endpoint.open .ep-toggle { transform: rotate(180deg); }
+
+    .ep-body { display: none; padding: 0 22px 22px; }
+    .endpoint.open .ep-body { display: block; }
+
+    .ep-section { margin-top: 18px; }
+    .ep-section-title {
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--faint); margin-bottom: 8px;
+    }
+
+    /* ── PARAM TABLE ── */
+    .param-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .param-table th {
+      text-align: left; padding: 8px 12px;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--faint); background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .param-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .param-table tr:last-child td { border-bottom: none; }
+    .param-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px; color: var(--ink); font-weight: 500;
+    }
+    .param-type {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; color: var(--accent);
+    }
+    .param-req {
+      font-size: 10px; font-weight: 700;
+      color: var(--red); letter-spacing: 0.5px;
+    }
+    .param-opt {
+      font-size: 10px; font-weight: 600;
+      color: var(--faint); letter-spacing: 0.5px;
+    }
+
+    /* ── CODE BLOCK ── */
+    .code-block {
+      background: var(--code-bg);
+      color: var(--code-text);
+      border-radius: 8px;
+      padding: 16px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      line-height: 1.7;
+      overflow-x: auto;
+      position: relative;
+    }
+    .code-block .code-label {
+      position: absolute; top: 8px; right: 12px;
+      font-size: 9px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--faint);
+    }
+    .code-key { color: #93c5fd; }
+    .code-str { color: #86efac; }
+    .code-num { color: #fde68a; }
+    .code-bool { color: #c4b5fd; }
+    .code-null { color: #9ca3af; }
+    .code-comment { color: #64748b; font-style: italic; }
+
+    /* ── STATUS CODES ── */
+    .status-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .status-chip {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px; font-weight: 600;
+      padding: 4px 10px; border-radius: 5px;
+    }
+    .status-2xx { background: var(--green-bg); color: var(--green); }
+    .status-4xx { background: var(--amber-bg); color: var(--amber); }
+    .status-5xx { background: var(--red-bg); color: var(--red); }
+
+    /* ── NOTES / CALLOUTS ── */
+    .callout {
+      padding: 14px 18px; border-radius: 8px;
+      font-size: 13px; margin-top: 14px;
+      border-left: 3px solid;
+    }
+    .callout-info { background: var(--blue-bg); border-color: var(--blue); color: #1e40af; }
+    .callout-warn { background: var(--amber-bg); border-color: var(--amber); color: #92400e; }
+    .callout-tip { background: var(--green-bg); border-color: var(--green); color: #065f46; }
+
+    /* ── INFO GRID ── */
+    .info-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+      margin-top: 16px;
+    }
+    .info-card {
+      background: var(--surface); border-radius: 8px;
+      padding: 16px 18px; border: 1px solid var(--border);
+    }
+    .info-card h4 {
+      font-size: 13px; font-weight: 700; color: var(--navy);
+      margin-bottom: 6px;
+    }
+    .info-card p, .info-card li {
+      font-size: 13px; color: var(--muted);
+    }
+    .info-card ul { list-style: none; padding: 0; }
+    .info-card li { padding: 2px 0; }
+    .info-card li::before { content: "→ "; color: var(--accent); font-weight: 600; }
+
+    /* ── FLOW DIAGRAM ── */
+    .flow-box {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px;
+      margin-top: 16px;
+    }
+    .flow-steps { display: flex; align-items: center; gap: 0; flex-wrap: wrap; }
+    .flow-step {
+      background: var(--accent-light); border: 1px solid rgba(26,55,170,0.15);
+      border-radius: 8px; padding: 10px 16px;
+      font-size: 12px; font-weight: 600; color: var(--accent);
+      text-align: center; min-width: 120px;
+    }
+    .flow-arrow {
+      font-size: 18px; color: var(--faint); padding: 0 8px;
+    }
+    .flow-step.alt { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
+    .flow-step.warn { background: var(--amber-bg); color: var(--amber); border-color: var(--amber-border); }
+
+    /* ── SECTION CONTENT ── */
+    .content-section { margin-bottom: 48px; }
+    .content-section h3 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px; color: var(--navy);
+      margin-bottom: 14px; letter-spacing: -0.3px;
+    }
+    .content-section h4 {
+      font-size: 15px; font-weight: 700; color: var(--ink);
+      margin: 20px 0 10px;
+    }
+    .content-section p { font-size: 14px; margin-bottom: 12px; }
+    .content-section ul { padding-left: 20px; margin-bottom: 12px; }
+    .content-section li { font-size: 14px; margin-bottom: 4px; }
+
+    .inline-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px; background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 2px 6px; border-radius: 4px;
+      color: var(--accent);
+    }
+
+    /* ── HAMBURGER ── */
+    .hamburger {
+      display: none; position: fixed; top: 16px; left: 16px;
+      z-index: 200; background: var(--card);
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 8px 10px; cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .hamburger span {
+      display: block; width: 20px; height: 2px;
+      background: var(--navy); margin: 4px 0;
+      border-radius: 2px; transition: all 0.2s;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      margin-top: 60px; padding: 32px 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    .footer p { font-size: 13px; color: var(--faint); }
+    .footer a { color: var(--accent); text-decoration: none; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 900px) {
+      .sidebar { transform: translateX(-100%); width: 280px; }
+      .sidebar.open { transform: translateX(0); box-shadow: 4px 0 20px rgba(0,0,0,0.1); }
+      .hamburger { display: block; }
+      .main { margin-left: 0; padding: 0 20px 60px; }
+      .hero h1 { font-size: 28px; }
+      .quick-cards { grid-template-columns: 1fr; }
+      .info-grid { grid-template-columns: 1fr; }
+      .ep-desc { display: none; }
+      .flow-steps { flex-direction: column; }
+      .flow-arrow { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Hamburger -->
+<div class="hamburger" onclick="document.querySelector('.sidebar').classList.toggle('open')">
+  <span></span><span></span><span></span>
+</div>
+
+<!-- Sidebar -->
+<nav class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo">Unique <span>Sorter</span></div>
+    <div class="sb-tag">API v1 Documentation</div>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-label">Getting Started</div>
+    <a class="nav-link" href="#overview">Overview</a>
+    <a class="nav-link" href="#base-url">Base URL</a>
+    <a class="nav-link" href="#authentication">Authentication</a>
+    <a class="nav-link" href="#auth-flow">Auth Flow (Web &amp; Mobile)</a>
+    <a class="nav-link" href="#error-handling">Error Handling</a>
+    <a class="nav-link" href="#rate-limiting">Rate Limiting</a>
+  </div>
+
+  <div class="nav-divider"></div>
+
+  <div class="nav-group">
+    <div class="nav-label">Auth Endpoints</div>
+    <a class="nav-link" href="#ep-register">Register</a>
+    <a class="nav-link" href="#ep-verify-credentials">Verify Credentials</a>
+    <a class="nav-link" href="#ep-send-otp">Send OTP</a>
+    <a class="nav-link" href="#ep-verify-otp">Verify OTP</a>
+    <a class="nav-link" href="#ep-verify-token">Verify Token</a>
+    <a class="nav-link" href="#ep-login">Login (Password)</a>
+    <a class="nav-link" href="#ep-refresh">Refresh Token</a>
+    <a class="nav-link" href="#ep-reset-password">Reset Password</a>
+    <a class="nav-link" href="#ep-notify-approved">Notify Approved</a>
+  </div>
+
+  <div class="nav-divider"></div>
+
+  <div class="nav-group">
+    <div class="nav-label">Enquiry Endpoints</div>
+    <a class="nav-link" href="#ep-list-enquiries">List Enquiries</a>
+    <a class="nav-link" href="#ep-create-enquiry">Create Enquiry</a>
+    <a class="nav-link" href="#ep-get-enquiry">Get Enquiry</a>
+    <a class="nav-link" href="#ep-update-enquiry">Update Enquiry</a>
+    <a class="nav-link" href="#ep-delete-enquiry">Delete Enquiry</a>
+    <a class="nav-link" href="#ep-audit-log">Audit Log</a>
+  </div>
+
+  <div class="nav-divider"></div>
+
+  <div class="nav-group">
+    <div class="nav-label">Quotation Endpoints</div>
+    <a class="nav-link" href="#ep-list-quotations">List Quotations</a>
+    <a class="nav-link" href="#ep-create-quotation">Create Quotation</a>
+    <a class="nav-link" href="#ep-get-quotation">Get Quotation</a>
+    <a class="nav-link" href="#ep-delete-quotation">Delete Quotation</a>
+  </div>
+
+  <div class="nav-divider"></div>
+
+  <div class="nav-group">
+    <div class="nav-label">User &amp; Misc</div>
+    <a class="nav-link" href="#ep-get-profile">Get Profile</a>
+    <a class="nav-link" href="#ep-update-profile">Update Profile</a>
+    <a class="nav-link" href="#ep-health">Health Check</a>
+  </div>
+
+  <div class="nav-divider"></div>
+
+  <div class="nav-group">
+    <div class="nav-label">Reference</div>
+    <a class="nav-link" href="#data-models">Data Models</a>
+    <a class="nav-link" href="#project-structure">Project Structure</a>
+    <a class="nav-link" href="#flutter-notes">Flutter Integration Notes</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+  <!-- HERO -->
+  <div class="hero" id="overview">
+    <h1>API Documentation</h1>
+    <p>Complete backend API reference for the Unique Sorter CRM. This API serves both the Next.js web application and the Flutter mobile app using Firebase Authentication and Firestore.</p>
+
+    <div class="base-url-box" id="base-url">
+      <span class="base-url-label">Base URL</span>
+      <span>https://unique-backend-dun.vercel.app</span>
+    </div>
+
+    <div class="quick-cards">
+      <a class="quick-card" href="#auth-flow">
+        <div class="qc-icon">🔐</div>
+        <div class="qc-title">Authentication</div>
+        <div class="qc-desc">OTP + Password login, Firebase tokens</div>
+      </a>
+      <a class="quick-card" href="#ep-list-enquiries">
+        <div class="qc-icon">📋</div>
+        <div class="qc-title">Enquiries</div>
+        <div class="qc-desc">CRUD operations with audit trail</div>
+      </a>
+      <a class="quick-card" href="#ep-list-quotations">
+        <div class="qc-icon">📄</div>
+        <div class="qc-title">Quotations</div>
+        <div class="qc-desc">Create, list, manage quotations</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- AUTHENTICATION SECTION -->
+  <!-- ═══════════════════════════════════════ -->
+
+  <div class="content-section" id="authentication">
+    <h3>Authentication</h3>
+    <p>All protected endpoints require a Firebase ID token passed in the <span class="inline-code">Authorization</span> header:</p>
+
+    <div class="code-block">
+      <span class="code-label">Header</span>
+Authorization: Bearer &lt;firebase_id_token&gt;
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <h4>Token Source</h4>
+        <p>Firebase ID tokens are obtained through:</p>
+        <ul>
+          <li>OTP verification flow</li>
+          <li>Password login (returns customToken → exchange for idToken)</li>
+          <li>Token refresh endpoint</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h4>Token Lifecycle</h4>
+        <ul>
+          <li>ID tokens expire in ~1 hour</li>
+          <li>Use refresh token to get new ID token</li>
+          <li>Refresh proactively (5 min before expiry)</li>
+          <li>Custom claims: role, userId</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTH FLOW -->
+  <div class="content-section" id="auth-flow">
+    <h3>Auth Flow — Web &amp; Mobile</h3>
+
+    <h4>OTP Login Flow</h4>
+    <div class="flow-box">
+      <div class="flow-steps">
+        <div class="flow-step">1. Verify Credentials<br><small>/api/v1/auth/verify-credentials</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step alt">2. Send OTP<br><small>Web: /api/v1/auth/send-otp<br>Flutter: Firebase SDK</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">3. Verify OTP<br><small>Web: /api/v1/auth/verify-otp<br>Flutter: /api/v1/auth/verify-token</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step alt">4. Authenticated ✓<br><small>idToken + refreshToken</small></div>
+      </div>
+    </div>
+
+    <div class="callout callout-info" style="margin-top:16px">
+      <strong>Flutter difference:</strong> The Flutter app uses Firebase Flutter SDK to handle OTP natively (step 2). After OTP verification, Flutter gets a Firebase ID token directly from the SDK. Send this token to <span class="inline-code">/api/v1/auth/verify-token</span> to complete login and get the user profile.
+    </div>
+
+    <h4>Password Login Flow</h4>
+    <div class="flow-box">
+      <div class="flow-steps">
+        <div class="flow-step">1. Login<br><small>POST /api/v1/auth/login</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step warn">2. Receive customToken<br><small>From API response</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step alt">3. Exchange Token<br><small>signInWithCustomToken()<br>via Firebase SDK</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step alt">4. Authenticated ✓<br><small>idToken + refreshToken</small></div>
+      </div>
+    </div>
+
+    <div class="callout callout-tip" style="margin-top:16px">
+      <strong>Password login works the same for web &amp; Flutter.</strong> Call the API, get the customToken, then use Firebase SDK's <span class="inline-code">signInWithCustomToken()</span> to get the idToken for subsequent authenticated API calls.
+    </div>
+  </div>
+
+  <!-- ERROR HANDLING -->
+  <div class="content-section" id="error-handling">
+    <h3>Error Handling</h3>
+    <p>All endpoints return consistent JSON error responses:</p>
+
+    <div class="code-block">
+      <span class="code-label">Error Response</span>
+{
+  <span class="code-key">"success"</span>: <span class="code-bool">false</span>,
+  <span class="code-key">"error"</span>: <span class="code-str">"Human-readable error message"</span>
+}
+    </div>
+
+    <h4>Common HTTP Status Codes</h4>
+    <div style="margin-top:12px">
+      <table class="param-table">
+        <tr><th>Code</th><th>Meaning</th><th>When</th></tr>
+        <tr><td><span class="status-chip status-2xx">200</span></td><td>Success</td><td>Request completed successfully</td></tr>
+        <tr><td><span class="status-chip status-2xx">201</span></td><td>Created</td><td>Resource created (register, create enquiry/quotation)</td></tr>
+        <tr><td><span class="status-chip status-4xx">400</span></td><td>Bad Request</td><td>Missing/invalid fields</td></tr>
+        <tr><td><span class="status-chip status-4xx">401</span></td><td>Unauthorized</td><td>Missing/expired token, invalid credentials</td></tr>
+        <tr><td><span class="status-chip status-4xx">403</span></td><td>Forbidden</td><td>Pending approval, not admin</td></tr>
+        <tr><td><span class="status-chip status-4xx">404</span></td><td>Not Found</td><td>Resource doesn't exist</td></tr>
+        <tr><td><span class="status-chip status-4xx">409</span></td><td>Conflict</td><td>Phone already registered</td></tr>
+        <tr><td><span class="status-chip status-4xx">429</span></td><td>Rate Limited</td><td>Too many requests</td></tr>
+        <tr><td><span class="status-chip status-5xx">500</span></td><td>Server Error</td><td>Internal error</td></tr>
+        <tr><td><span class="status-chip status-5xx">503</span></td><td>Unavailable</td><td>Database connection issue</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- RATE LIMITING -->
+  <div class="content-section" id="rate-limiting">
+    <h3>Rate Limiting</h3>
+    <p>Rate limits are enforced per-phone or per-identifier. Exceeding limits returns <span class="inline-code">429</span>.</p>
+
+    <table class="param-table" style="margin-top:12px">
+      <tr><th>Endpoint</th><th>Limit</th><th>Window</th></tr>
+      <tr><td>Register</td><td>3 attempts</td><td>1 hour</td></tr>
+      <tr><td>Login (Password)</td><td>5 attempts</td><td>1 minute</td></tr>
+      <tr><td>Verify Credentials</td><td>10 attempts</td><td>1 minute</td></tr>
+      <tr><td>Send OTP</td><td>5 attempts</td><td>1 hour</td></tr>
+      <tr><td>Verify OTP</td><td>5 attempts</td><td>1 hour</td></tr>
+      <tr><td>Verify Token</td><td>10 attempts</td><td>1 minute</td></tr>
+      <tr><td>Refresh Token</td><td>10 attempts</td><td>1 minute</td></tr>
+      <tr><td>Reset Password</td><td>3 attempts</td><td>1 hour</td></tr>
+    </table>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- AUTH ENDPOINTS -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="section-header" id="auth-endpoints">
+    <h2>Auth Endpoints</h2>
+    <p>Registration, login, OTP verification, and token management</p>
+  </div>
+
+  <!-- REGISTER -->
+  <div class="endpoint" id="ep-register">
+    <div class="ep-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="method-badge method-POST">POST</span>
+      <span class="ep-path">/api/v1/auth/register</span>
+      <span class="ep-desc">Register new user</span>
+      <span class="ep-auth auth-public">PUBLIC</span>
+      <span class="ep-toggle">▾</span>
+    </div>
+    <div class="ep-body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Creates a new user account with <span class="inline-code">status: "pending"</span>. User cannot login until an admin approves their account.</p>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Request Body</div>
+        <table class="param-table">
+          <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+          <tr><td><span class="param-name">name</span></td><td><span class="param-type">string</span></td><td><span class="param-req">REQUIRED</span></td><td>Full name</td></tr>
+          <tr><td><span class="param-name">phone</span></td><td><span class="param-type">string</span></td><td><span class="param-req">REQUIRED</span></td><td>10-digit Indian phone (starts with 6-9)</td></tr>
+          <tr><td><span class="param-name">role</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td>Defaults to "user". Cannot be "admin".</td></tr>
+        </table>
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Success Response — 201</div>
+        <div class="code-block">
+{
+  <span class="code-key">"success"</span>: <span class="code-bool">true</span>,
+  <span class="code-key">"message"</span>: <span class="code-str">"Registration request submitted..."</span>,
+  <span class="code-key">"user"</span>: {
+    <span class="code-key">"id"</span>: <span class="code-str">"7999952226"</span>,
+    <span class="code-key">"name"</span>: <span class="code-str">"John"</span>,
+    <span class="code-key">"phone"</span>: <span class="code-str">"7999952226"</span>,
+    <span class="code-key">"role"</span>: <span class="code-str">"USER"</span>,
+    <span class="code-key">"status"</span>: <span class="code-str">"pending"</span>
+  }
+}
+        </div>
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Error Codes</div>
+        <div class="status-list">
+          <span class="status-chip status-4xx" title="Missing required fields">400</span>
+          <span class="status-chip status-4xx" title="Invalid phone format">400</span>
+          <span class="status-chip status-4xx" title="Cannot register as admin">403</span>
+          <span class="status-chip status-4xx" title="Phone already registered">409</span>
+          <span class="status-chip status-4xx" title="Rate limited">429</span>
+          <span class="status-chip status-5xx" title="Service unavailable">503</span>
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <strong>Side effect:</strong> Sends admin notification email about the new registration.
+      </div>
+    </div>
+  </div>
+
+  <!-- VERIFY CREDENTIALS -->
+  <div class="endpoint" id="ep-verify-credentials">
+    <div class="ep-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="method-badge method-POST">POST</span>
+      <span class="ep-path">/api/v1/auth/verify-credentials</span>
+      <span class="ep-desc">Check if phone is registered</span>
+      <span class="ep-auth auth-public">PUBLIC</span>
+      <span class="ep-toggle">▾</span>
+    </div>
+    <div class="ep-body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Quick check if a phone number is registered before initiating OTP. Call this first in the login flow.</p>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Request Body</div>
+        <table class="param-table">
+          <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+          <tr><td><span class="param-name">phone</span></td><td><span class="param-type">string</span></td><td><span class="param-req">REQUIRED</span></td><td>10-digit phone number</td></tr>
+        </table>
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Success Response — 200</div>
+        <div class="code-block">
+{
+  <span class="code-key">"success"</span>: <span class="code-bool">true</span>,
+  <span class="code-key">"verified"</span>: <span class="code-bool">true</span>,
+  <span class="code-key">"user"</span>: {
+    <span class="code-key">"name"</span>: <span class="code-str">"John"</span>,
+    <span class="code-key">"phone"</span>: <span class="code-str">"7999952226"</span>,
+    <span class="code-key">"role"</span>: <span class="code-str">"USER"</span>
+  }
+}
+        </div>
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Error Codes</div>
+        <div class="status-list">
+          <span class="status-chip status-4xx" title="Missing/invalid phone">400</span>
+          <span class="status-chip status-4xx" title="Phone not registered">404</span>
+          <span class="status-chip status-4xx" title="Rate limited">429</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEND OTP -->
+  <div class="endpoint" id="ep-send-otp">
+    <div class="ep-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="method-badge method-POST">POST</span>
+      <span class="ep-path">/api/v1/auth/send-otp</span>
+      <span class="ep-desc">Send OTP via SMS</span>
+      <span class="ep-auth auth-public">PUBLIC</span>
+      <span class="ep-toggle">▾</span>
+    </div>
+    <div class="ep-body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Verifies the user exists and sends OTP via Firebase. For Flutter, set <span class="inline-code">checkOnly: true</span> since Firebase Flutter SDK handles OTP natively.</p>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Request Body</div>
+        <table class="param-table">
+          <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+          <tr><td><span class="param-name">phone</span></td><td><span class="param-type">string</span></td><td><span class="param-req">REQUIRED</span></td><td>10-digit phone number</td></tr>
+          <tr><td><span class="param-name">checkOnly</span></td><td><span class="param-type">boolean</span></td><td><span class="param-opt">optional</span></td><td>If true, only verifies user exists (use for Flutter)</td></tr>
+        </table>
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Success Response — 200</div>
+        <div class="code-block">
+{
+  <span class="code-key">"success"</span>: <span class="code-bool">true</span>,
+  <span class="code-key">"message"</span>: <span class="code-str">"OTP sent to +917999952226"</span>,
+  <span class="code-key">"userName"</span>: <span class="code-str">"John"</span>
+}
+        </div>
+      </div>
+
+      <div class="callout callout-warn">
+        <strong>Flutter developers:</strong> Use <span class="inline-code">checkOnly: true</span> to just verify the user exists. Then use Firebase Flutter SDK's <span class="inline-code">verifyPhoneNumber()</span> to handle OTP natively. Do NOT rely on the server to send OTP — the Flutter SDK manages this.
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Error Codes</div>
+        <div class="status-list">
+          <span class="status-chip status-4xx">400</span>
+          <span class="status-chip status-4xx">404</span>
+          <span class="status-chip status-4xx">429</span>
+          <span class="status-chip status-5xx">500</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VERIFY OTP -->
+  <div class="endpoint" id="ep-verify-otp">
+    <div class="ep-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="method-badge method-POST">POST</span>
+      <span class="ep-path">/api/v1/auth/verify-otp</span>
+      <span class="ep-desc">Verify OTP code (Web only)</span>
+      <span class="ep-auth auth-public">PUBLIC</span>
+      <span class="ep-toggle">▾</span>
+    </div>
+    <div class="ep-body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Verifies OTP and returns Firebase tokens. <strong>Web only</strong> — Flutter should use <span class="inline-code">/api/v1/auth/verify-token</span> instead.</p>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Request Body</div>
+        <table class="param-table">
+          <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+          <tr><td><span class="param-name">phone</span></td><td><span class="param-type">string</span></td><td><span class="param-req">REQUIRED</span></td><td>10-digit phone number</td></tr>
+          <tr><td><span class="param-name">otp</span></td><td><span class="param-type">string</span></td><td><span class="param-req">REQUIRED</span></td><td>6-digit OTP code</td></tr>
+        </table>
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Success Response — 200</div>
+        <div class="code-block">
+{
+  <span class="code-key">"success"</span>: <span class="code-bool">true</span>,
+  <span class="code-key">"idToken"</span>: <span class="code-str">"eyJhbGciOi..."</span>,
+  <span class="code-key">"refreshToken"</span>: <span class="code-str">"AMf-vBx..."</span>,
+  <span class="code-key">"user"</span>: {
+    <span class="code-key">"id"</span>: <span class="code-str">"7999952226"</span>,
+    <span class="code-key">"name"</span>: <span class="code-str">"John"</span>,
+    <span class="code-key">"phone"</span>: <span class="code-str">"7999952226"</span>,
+    <span class="code-key">"role"</span>: <span class="code-str">"USER"</span>
+  }
+}
+        </div>
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Error Codes</div>
+        <div class="status-list">
+          <span class="status-chip status-4xx">400</span>
+          <span class="status-chip status-4xx">401</span>
+          <span class="status-chip status-4xx">404</span>
+          <span class="status-chip status-4xx">429</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VERIFY FIREBASE TOKEN -->
+  <div class="endpoint" id="ep-verify-token">
+    <div class="ep-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="method-badge method-POST">POST</span>
+      <span class="ep-path">/api/v1/auth/verify-token</span>
+      <span class="ep-desc">Verify Firebase token (Flutter primary)</span>
+      <span class="ep-auth auth-public">PUBLIC</span>
+      <span class="ep-toggle">▾</span>
+    </div>
+    <div class="ep-body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Verifies a Firebase ID token and returns the user profile. <strong>This is the primary login endpoint for Flutter</strong> after OTP verification via Firebase SDK.</p>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Request Body</div>
+        <table class="param-table">
+          <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+          <tr><td><span class="param-name">idToken</span></td><td><span class="param-type">string</span></td><td><span class="param-req">REQUIRED</span></td><td>Firebase ID token from SDK</td></tr>
+        </table>
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Success Response — 200</div>
+        <div class="code-block">
+{
+  <span class="code-key">"success"</span>: <span class="code-bool">true</span>,
+  <span class="code-key">"user"</span>: {
+    <span class="code-key">"id"</span>: <span class="code-str">"7999952226"</span>,
+    <span class="code-key">"name"</span>: <span class="code-str">"John"</span>,
+    <span class="code-key">"phone"</span>: <span class="code-str">"7999952226"</span>,
+    <span class="code-key">"role"</span>: <span class="code-str">"USER"</span>,
+    <span class="code-key">"allowedScreens"</span>: <span class="code-null">null</span>
+  }
+}
+        </div>
+      </div>
+
+      <div class="callout callout-tip">
+        <strong>Flutter OTP flow:</strong> Use Firebase Flutter SDK → <span class="inline-code">verifyPhoneNumber()</span> → get idToken → POST it here → receive user profile + role. Store the idToken for all subsequent API calls.
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Error Codes</div>
+        <div class="status-list">
+          <span class="status-chip status-4xx">400</span>
+          <span class="status-chip status-4xx">401</span>
+          <span class="status-chip status-4xx">404</span>
+          <span class="status-chip status-4xx">429</span>
+          <span class="status-chip status-5xx">503</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGIN PASSWORD -->
+  <div class="endpoint" id="ep-login">
+    <div class="ep-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="method-badge method-POST">POST</span>
+      <span class="ep-path">/api/v1/auth/login</span>
+      <span class="ep-desc">Login with phone/email + password</span>
+      <span class="ep-auth auth-public">PUBLIC</span>
+      <span class="ep-toggle">▾</span>
+    </div>
+    <div class="ep-body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Authenticate with phone number or email and password. Returns a Firebase custom token that must be exchanged for an ID token using <span class="inline-code">signInWithCustomToken()</span>.</p>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Request Body</div>
+        <table class="param-table">
+          <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+          <tr><td><span class="param-name">identifier</span></td><td><span class="param-type">string</span></td><td><span class="param-req">REQUIRED</span></td><td>Phone number or email address</td></tr>
+          <tr><td><span class="param-name">password</span></td><td><span class="param-type">string</span></td><td><span class="param-req">REQUIRED</span></td><td>Account password</td></tr>
+        </table>
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Success Response — 200</div>
+        <div class="code-block">
+{
+  <span class="code-key">"success"</span>: <span class="code-bool">true</span>,
+  <span class="code-key">"customToken"</span>: <span class="code-str">"eyJhbGciOi..."</span>,
+  <span class="code-key">"user"</span>: {
+    <span class="code-key">"id"</span>: <span class="code-str">"7999952226"</span>,
+    <span class="code-key">"name"</span>: <span class="code-str">"John"</span>,
+    <span class="code-key">"phone"</span>: <span class="code-str">"7999952226"</span>,
+    <span class="code-key">"role"</span>: <span class="code-str">"USER"</span>,
+    <span class="code-key">"allowedScreens"</span>: <span class="code-null">null</span>
+  }
+}
+        </div>
+      </div>
+
+      <div class="callout callout-warn">
+        <strong>Important:</strong> The response contains a <span class="inline-code">customToken</span>, NOT an idToken. You must exchange it:<br>
+        <span class="inline-code">await FirebaseAuth.instance.signInWithCustomToken(customToken)</span><br>
+        Then get the idToken from the resulting UserCredential for subsequent API calls.
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Error Codes</div>
+        <div class="status-list">
+          <span class="status-chip status-4xx">400</span>
+          <span class="status-chip status-4xx">401</span>
+          <span class="status-chip status-4xx">403</span>
+          <span class="status-chip status-4xx">429</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REFRESH TOKEN -->
+  <div class="endpoint" id="ep-refresh">
+    <div class="ep-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="method-badge method-POST">POST</span>
+      <span class="ep-path">/api/v1/auth/refresh</span>
+      <span class="ep-desc">Refresh expired token</span>
+      <span class="ep-auth auth-public">PUBLIC</span>
+      <span class="ep-toggle">▾</span>
+    </div>
+    <div class="ep-body">
+      <div class="ep-section">
+        <div class="ep-section-title">Request Body</div>
+        <table class="param-table">
+          <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+          <tr><td><span class="param-name">refreshToken</span></td><td><span class="param-type">string</span></td><td><span class="param-req">REQUIRED</span></td><td>Firebase refresh token from login</td></tr>
+        </table>
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Success Response — 200</div>
+        <div class="code-block">
+{
+  <span class="code-key">"idToken"</span>: <span class="code-str">"eyJhbGciOi..."</span>,
+  <span class="code-key">"refreshToken"</span>: <span class="code-str">"AMf-vBx..."</span>
+}
+        </div>
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Error Codes</div>
+        <div class="status-list">
+          <span class="status-chip status-4xx">400</span>
+          <span class="status-chip status-4xx">401</span>
+          <span class="status-chip status-4xx">429</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESET PASSWORD -->
+  <div class="endpoint" id="ep-reset-password">
+    <div class="ep-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="method-badge method-POST">POST</span>
+      <span class="ep-path">/api/v1/auth/reset-password</span>
+      <span class="ep-desc">Reset user password</span>
+      <span class="ep-auth auth-public">PUBLIC</span>
+      <span class="ep-toggle">▾</span>
+    </div>
+    <div class="ep-body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Resets the password for a user. Should be called after OTP verification to ensure identity.</p>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Request Body</div>
+        <table class="param-table">
+          <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+          <tr><td><span class="param-name">phone</span></td><td><span class="param-type">string</span></td><td><span class="param-req">REQUIRED</span></td><td>10-digit phone number</td></tr>
+          <tr><td><span class="param-name">newPassword</span></td><td><span class="param-type">string</span></td><td><span class="param-req">REQUIRED</span></td><td>New password (min 6 characters)</td></tr>
+        </table>
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Success Response — 200</div>
+        <div class="code-block">
+{
+  <span class="code-key">"success"</span>: <span class="code-bool">true</span>,
+  <span class="code-key">"message"</span>: <span class="code-str">"Password updated successfully"</span>
+}
+        </div>
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Error Codes</div>
+        <div class="status-list">
+          <span class="status-chip status-4xx">400</span>
+          <span class="status-chip status-4xx">404</span>
+          <span class="status-chip status-4xx">429</span>
+          <span class="status-chip status-5xx">503</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTIFY APPROVED -->
+  <div class="endpoint" id="ep-notify-approved">
+    <div class="ep-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="method-badge method-POST">POST</span>
+      <span class="ep-path">/api/v1/auth/notify-approved</span>
+      <span class="ep-desc">Send approval notification</span>
+      <span class="ep-auth auth-required">AUTH REQUIRED</span>
+      <span class="ep-toggle">▾</span>
+    </div>
+    <div class="ep-body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Sends an email notification to a user that their account has been approved. Called by admin after approving a pending user.</p>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Request Body</div>
+        <table class="param-table">
+          <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+          <tr><td><span class="param-name">name</span></td><td><span class="param-type">string</span></td><td><span class="param-req">REQUIRED</span></td><td>User's name</td></tr>
+          <tr><td><span class="param-name">phone</span></td><td><span class="param-type">string</span></td><td><span class="param-req">REQUIRED</span></td><td>User's phone</td></tr>
+          <tr><td><span class="param-name">email</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td>User's email for notification</td></tr>
+        </table>
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Success Response — 200</div>
+        <div class="code-block">
+{
+  <span class="code-key">"success"</span>: <span class="code-bool">true</span>,
+  <span class="code-key">"message"</span>: <span class="code-str">"Notification sent"</span>
+}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- ENQUIRY ENDPOINTS -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="section-header" id="enquiry-endpoints">
+    <h2>Enquiry Endpoints</h2>
+    <p>Manage customer enquiries with full CRUD and audit trail</p>
+  </div>
+
+  <!-- LIST ENQUIRIES -->
+  <div class="endpoint" id="ep-list-enquiries">
+    <div class="ep-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="method-badge method-GET">GET</span>
+      <span class="ep-path">/api/v1/enquiry</span>
+      <span class="ep-desc">List all enquiries</span>
+      <span class="ep-auth auth-required">AUTH REQUIRED</span>
+      <span class="ep-toggle">▾</span>
+    </div>
+    <div class="ep-body">
+      <div class="ep-section">
+        <div class="ep-section-title">Query Parameters</div>
+        <table class="param-table">
+          <tr><th>Field</th><th>Type</th><th>Default</th><th>Description</th></tr>
+          <tr><td><span class="param-name">page</span></td><td><span class="param-type">int</span></td><td>1</td><td>Page number</td></tr>
+          <tr><td><span class="param-name">limit</span></td><td><span class="param-type">int</span></td><td>50</td><td>Items per page</td></tr>
+        </table>
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Success Response — 200</div>
+        <div class="code-block">
+{
+  <span class="code-key">"success"</span>: <span class="code-bool">true</span>,
+  <span class="code-key">"data"</span>: [
+    {
+      <span class="code-key">"id"</span>: <span class="code-str">"abc123"</span>,
+      <span class="code-key">"customerName"</span>: <span class="code-str">"Rajesh Kumar"</span>,
+      <span class="code-key">"millName"</span>: <span class="code-str">"Kumar Industries"</span>,
+      <span class="code-key">"mobile"</span>: <span class="code-str">"9876543210"</span>,
+      <span class="code-key">"email"</span>: <span class="code-str">"rajesh@example.com"</span>,
+      <span class="code-key">"gst"</span>: <span class="code-str">"22AAAAA0000A1Z5"</span>,
+      <span class="code-key">"source"</span>: <span class="code-str">"Website"</span>,
+      <span class="code-key">"location"</span>: <span class="code-str">"Mumbai"</span>,
+      <span class="code-key">"state"</span>: <span class="code-str">"Maharashtra"</span>,
+      <span class="code-key">"address"</span>: <span class="code-str">"123 Industrial Area"</span>,
+      <span class="code-key">"hasRequirement"</span>: <span class="code-bool">true</span>,
+      <span class="code-key">"orderChances"</span>: <span class="code-str">"50%"</span>,
+      <span class="code-key">"items"</span>: [ <span class="code-comment">// array of item objects</span> ],
+      <span class="code-key">"createdAt"</span>: <span class="code-str">"2026-06-29T10:00:00Z"</span>
+    }
+  ],
+  <span class="code-key">"page"</span>: <span class="code-num">1</span>,
+  <span class="code-key">"limit"</span>: <span class="code-num">50</span>
+}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CREATE ENQUIRY -->
+  <div class="endpoint" id="ep-create-enquiry">
+    <div class="ep-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="method-badge method-POST">POST</span>
+      <span class="ep-path">/api/v1/enquiry</span>
+      <span class="ep-desc">Create enquiry</span>
+      <span class="ep-auth auth-required">AUTH REQUIRED</span>
+      <span class="ep-toggle">▾</span>
+    </div>
+    <div class="ep-body">
+      <div class="ep-section">
+        <div class="ep-section-title">Request Body Fields</div>
+        <table class="param-table">
+          <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+          <tr><td><span class="param-name">customerName</span></td><td><span class="param-type">string</span></td><td><span class="param-req">REQUIRED</span></td><td>Customer full name</td></tr>
+          <tr><td><span class="param-name">millName</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td>Company / mill name</td></tr>
+          <tr><td><span class="param-name">mobile</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td>Mobile number</td></tr>
+          <tr><td><span class="param-name">email</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td>Email address</td></tr>
+          <tr><td><span class="param-name">gst</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td>GST number</td></tr>
+          <tr><td><span class="param-name">source</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td>Lead source (Website, Referral, etc.)</td></tr>
+          <tr><td><span class="param-name">location</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td>City</td></tr>
+          <tr><td><span class="param-name">state</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td>State</td></tr>
+          <tr><td><span class="param-name">address</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td>Full address</td></tr>
+          <tr><td><span class="param-name">hasRequirement</span></td><td><span class="param-type">boolean</span></td><td><span class="param-opt">optional</span></td><td>Immediate requirement?</td></tr>
+          <tr><td><span class="param-name">futureNote</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td>Future requirement notes</td></tr>
+          <tr><td><span class="param-name">followUpDate</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td>Next follow-up date</td></tr>
+          <tr><td><span class="param-name">probableMonth</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td>Expected purchase month</td></tr>
+          <tr><td><span class="param-name">orderChances</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td>Pipeline stage: 0%, 10%, 20%...100%</td></tr>
+          <tr><td><span class="param-name">items</span></td><td><span class="param-type">array</span></td><td><span class="param-opt">optional</span></td><td>Array of item objects (see Data Models)</td></tr>
+          <tr><td><span class="param-name">remarks</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td>Additional remarks</td></tr>
+        </table>
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Success Response — 201</div>
+        <div class="code-block">
+{
+  <span class="code-key">"success"</span>: <span class="code-bool">true</span>,
+  <span class="code-key">"id"</span>: <span class="code-str">"firestore-doc-id"</span>
+}
+        </div>
+      </div>
+
+      <div class="callout callout-info">
+        <strong>Side effect:</strong> Sends admin email notification about the new enquiry.
+      </div>
+    </div>
+  </div>
+
+  <!-- GET ENQUIRY -->
+  <div class="endpoint" id="ep-get-enquiry">
+    <div class="ep-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="method-badge method-GET">GET</span>
+      <span class="ep-path">/api/v1/enquiry/<span class="param">{id}</span></span>
+      <span class="ep-desc">Get single enquiry</span>
+      <span class="ep-auth auth-required">AUTH REQUIRED</span>
+      <span class="ep-toggle">▾</span>
+    </div>
+    <div class="ep-body">
+      <div class="ep-section">
+        <div class="ep-section-title">URL Parameters</div>
+        <table class="param-table">
+          <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+          <tr><td><span class="param-name">id</span></td><td><span class="param-type">string</span></td><td>Firestore document ID</td></tr>
+        </table>
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Success Response — 200</div>
+        <div class="code-block">
+{
+  <span class="code-key">"success"</span>: <span class="code-bool">true</span>,
+  <span class="code-key">"data"</span>: {
+    <span class="code-key">"id"</span>: <span class="code-str">"abc123"</span>,
+    <span class="code-key">"customerName"</span>: <span class="code-str">"Rajesh Kumar"</span>,
+    <span class="code-comment">// ...all enquiry fields</span>
+  }
+}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPDATE ENQUIRY -->
+  <div class="endpoint" id="ep-update-enquiry">
+    <div class="ep-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="method-badge method-PATCH">PATCH</span>
+      <span class="ep-path">/api/v1/enquiry/<span class="param">{id}</span></span>
+      <span class="ep-desc">Update enquiry</span>
+      <span class="ep-auth auth-required">AUTH REQUIRED</span>
+      <span class="ep-toggle">▾</span>
+    </div>
+    <div class="ep-body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Updates an enquiry and creates an audit log entry tracking which fields changed.</p>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Request Body</div>
+        <p style="font-size:13px;color:var(--muted)">Send only the fields you want to update. Same fields as Create Enquiry.</p>
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Success Response — 200</div>
+        <div class="code-block">
+{
+  <span class="code-key">"success"</span>: <span class="code-bool">true</span>,
+  <span class="code-key">"changesCount"</span>: <span class="code-num">3</span>
+}
+        </div>
+      </div>
+
+      <div class="callout callout-tip">
+        <strong>Audit trail:</strong> Every update automatically creates an audit log entry listing changed field names with timestamp. Retrieve with the Audit Log endpoint.
+      </div>
+    </div>
+  </div>
+
+  <!-- DELETE ENQUIRY -->
+  <div class="endpoint" id="ep-delete-enquiry">
+    <div class="ep-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="method-badge method-DELETE">DELETE</span>
+      <span class="ep-path">/api/v1/enquiry/<span class="param">{id}</span></span>
+      <span class="ep-desc">Delete enquiry</span>
+      <span class="ep-auth auth-admin">ADMIN ONLY</span>
+      <span class="ep-toggle">▾</span>
+    </div>
+    <div class="ep-body">
+      <div class="ep-section">
+        <div class="ep-section-title">Success Response — 200</div>
+        <div class="code-block">
+{
+  <span class="code-key">"success"</span>: <span class="code-bool">true</span>
+}
+        </div>
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Error Codes</div>
+        <div class="status-list">
+          <span class="status-chip status-4xx">401</span>
+          <span class="status-chip status-4xx">403</span>
+          <span class="status-chip status-5xx">503</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUDIT LOG -->
+  <div class="endpoint" id="ep-audit-log">
+    <div class="ep-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="method-badge method-GET">GET</span>
+      <span class="ep-path">/api/v1/enquiry/<span class="param">{id}</span>/audit-log</span>
+      <span class="ep-desc">Get edit history</span>
+      <span class="ep-auth auth-required">AUTH REQUIRED</span>
+      <span class="ep-toggle">▾</span>
+    </div>
+    <div class="ep-body">
+      <div class="ep-section">
+        <div class="ep-section-title">Success Response — 200</div>
+        <div class="code-block">
+{
+  <span class="code-key">"success"</span>: <span class="code-bool">true</span>,
+  <span class="code-key">"data"</span>: [
+    {
+      <span class="code-key">"id"</span>: <span class="code-str">"log-id"</span>,
+      <span class="code-key">"fields"</span>: [<span class="code-str">"Customer Name"</span>, <span class="code-str">"Mobile No."</span>],
+      <span class="code-key">"timestamp"</span>: <span class="code-str">"2026-06-29T10:00:00Z"</span>
+    }
+  ]
+}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- QUOTATION ENDPOINTS -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="section-header" id="quotation-endpoints">
+    <h2>Quotation Endpoints</h2>
+    <p>Create and manage quotations linked to enquiries</p>
+  </div>
+
+  <!-- LIST QUOTATIONS -->
+  <div class="endpoint" id="ep-list-quotations">
+    <div class="ep-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="method-badge method-GET">GET</span>
+      <span class="ep-path">/api/v1/quotations</span>
+      <span class="ep-desc">List all quotations</span>
+      <span class="ep-auth auth-required">AUTH REQUIRED</span>
+      <span class="ep-toggle">▾</span>
+    </div>
+    <div class="ep-body">
+      <div class="ep-section">
+        <div class="ep-section-title">Query Parameters</div>
+        <table class="param-table">
+          <tr><th>Field</th><th>Type</th><th>Default</th><th>Description</th></tr>
+          <tr><td><span class="param-name">limit</span></td><td><span class="param-type">int</span></td><td>50</td><td>Max items (capped at 100)</td></tr>
+        </table>
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Success Response — 200</div>
+        <div class="code-block">
+{
+  <span class="code-key">"success"</span>: <span class="code-bool">true</span>,
+  <span class="code-key">"data"</span>: [
+    {
+      <span class="code-key">"id"</span>: <span class="code-str">"enquiryId_1page"</span>,
+      <span class="code-key">"enquiryId"</span>: <span class="code-str">"abc123"</span>,
+      <span class="code-key">"quotationType"</span>: <span class="code-str">"1page"</span>,
+      <span class="code-key">"customerName"</span>: <span class="code-str">"Rajesh Kumar"</span>,
+      <span class="code-key">"companyName"</span>: <span class="code-str">"Kumar Industries"</span>,
+      <span class="code-key">"items"</span>: [...],
+      <span class="code-key">"grandTotal"</span>: <span class="code-num">150000</span>,
+      <span class="code-key">"status"</span>: <span class="code-str">"draft"</span>,
+      <span class="code-key">"createdAt"</span>: <span class="code-str">"2026-06-29T10:00:00Z"</span>
+    }
+  ],
+  <span class="code-key">"limit"</span>: <span class="code-num">50</span>
+}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CREATE QUOTATION -->
+  <div class="endpoint" id="ep-create-quotation">
+    <div class="ep-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="method-badge method-POST">POST</span>
+      <span class="ep-path">/api/v1/quotations</span>
+      <span class="ep-desc">Create quotation</span>
+      <span class="ep-auth auth-required">AUTH REQUIRED</span>
+      <span class="ep-toggle">▾</span>
+    </div>
+    <div class="ep-body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Creates a quotation. If both <span class="inline-code">enquiryId</span> and <span class="inline-code">quotationType</span> are provided, uses a deterministic ID to prevent duplicates.</p>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Key Request Body Fields</div>
+        <table class="param-table">
+          <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+          <tr><td><span class="param-name">enquiryId</span></td><td><span class="param-type">string</span></td><td>Linked enquiry ID</td></tr>
+          <tr><td><span class="param-name">quotationType</span></td><td><span class="param-type">string</span></td><td>"1page" or "6page"</td></tr>
+          <tr><td><span class="param-name">customerName</span></td><td><span class="param-type">string</span></td><td>Customer name</td></tr>
+          <tr><td><span class="param-name">companyName</span></td><td><span class="param-type">string</span></td><td>Company name</td></tr>
+          <tr><td><span class="param-name">phone</span></td><td><span class="param-type">string</span></td><td>Phone number</td></tr>
+          <tr><td><span class="param-name">email</span></td><td><span class="param-type">string</span></td><td>Email</td></tr>
+          <tr><td><span class="param-name">items</span></td><td><span class="param-type">array</span></td><td>Quote line items</td></tr>
+          <tr><td><span class="param-name">total</span></td><td><span class="param-type">number</span></td><td>Subtotal</td></tr>
+          <tr><td><span class="param-name">gstRate</span></td><td><span class="param-type">number</span></td><td>GST percentage</td></tr>
+          <tr><td><span class="param-name">gstAmt</span></td><td><span class="param-type">number</span></td><td>GST amount</td></tr>
+          <tr><td><span class="param-name">grandTotal</span></td><td><span class="param-type">number</span></td><td>Total with GST</td></tr>
+          <tr><td><span class="param-name">terms</span></td><td><span class="param-type">string</span></td><td>Terms and conditions</td></tr>
+          <tr><td><span class="param-name">status</span></td><td><span class="param-type">string</span></td><td>"draft", "sent", etc.</td></tr>
+        </table>
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Success Response — 201</div>
+        <div class="code-block">
+{
+  <span class="code-key">"success"</span>: <span class="code-bool">true</span>,
+  <span class="code-key">"id"</span>: <span class="code-str">"enquiryId_1page"</span>,
+  <span class="code-key">"duplicate"</span>: <span class="code-bool">false</span>
+}
+        </div>
+      </div>
+
+      <div class="callout callout-warn">
+        <strong>Deduplication:</strong> If a quotation with the same <span class="inline-code">enquiryId_quotationType</span> already exists, it returns the existing ID with <span class="inline-code">"duplicate": true</span> instead of creating a new one.
+      </div>
+    </div>
+  </div>
+
+  <!-- GET QUOTATION -->
+  <div class="endpoint" id="ep-get-quotation">
+    <div class="ep-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="method-badge method-GET">GET</span>
+      <span class="ep-path">/api/v1/quotations/<span class="param">{id}</span></span>
+      <span class="ep-desc">Get single quotation</span>
+      <span class="ep-auth auth-required">AUTH REQUIRED</span>
+      <span class="ep-toggle">▾</span>
+    </div>
+    <div class="ep-body">
+      <div class="ep-section">
+        <div class="ep-section-title">Success Response — 200</div>
+        <div class="code-block">
+{
+  <span class="code-key">"success"</span>: <span class="code-bool">true</span>,
+  <span class="code-key">"data"</span>: {
+    <span class="code-key">"id"</span>: <span class="code-str">"enquiryId_1page"</span>,
+    <span class="code-comment">// ...all quotation fields</span>
+  }
+}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DELETE QUOTATION -->
+  <div class="endpoint" id="ep-delete-quotation">
+    <div class="ep-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="method-badge method-DELETE">DELETE</span>
+      <span class="ep-path">/api/v1/quotations/<span class="param">{id}</span></span>
+      <span class="ep-desc">Delete quotation</span>
+      <span class="ep-auth auth-admin">ADMIN ONLY</span>
+      <span class="ep-toggle">▾</span>
+    </div>
+    <div class="ep-body">
+      <div class="ep-section">
+        <div class="ep-section-title">Success Response — 200</div>
+        <div class="code-block">
+{
+  <span class="code-key">"success"</span>: <span class="code-bool">true</span>
+}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- USER & MISC ENDPOINTS -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="section-header" id="user-endpoints">
+    <h2>User &amp; Misc Endpoints</h2>
+    <p>User profile management and system health</p>
+  </div>
+
+  <!-- GET PROFILE -->
+  <div class="endpoint" id="ep-get-profile">
+    <div class="ep-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="method-badge method-GET">GET</span>
+      <span class="ep-path">/api/v1/profile/<span class="param">{phone}</span></span>
+      <span class="ep-desc">Get user profile</span>
+      <span class="ep-auth auth-required">AUTH REQUIRED</span>
+      <span class="ep-toggle">▾</span>
+    </div>
+    <div class="ep-body">
+      <div class="ep-section">
+        <div class="ep-section-title">URL Parameters</div>
+        <table class="param-table">
+          <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+          <tr><td><span class="param-name">phone</span></td><td><span class="param-type">string</span></td><td>10-digit phone number</td></tr>
+        </table>
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Success Response — 200</div>
+        <div class="code-block">
+{
+  <span class="code-key">"success"</span>: <span class="code-bool">true</span>,
+  <span class="code-key">"data"</span>: {
+    <span class="code-key">"id"</span>: <span class="code-str">"7999952226"</span>,
+    <span class="code-key">"name"</span>: <span class="code-str">"John"</span>,
+    <span class="code-key">"phone"</span>: <span class="code-str">"7999952226"</span>,
+    <span class="code-key">"role"</span>: <span class="code-str">"USER"</span>,
+    <span class="code-key">"status"</span>: <span class="code-str">"active"</span>
+  }
+}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPDATE PROFILE -->
+  <div class="endpoint" id="ep-update-profile">
+    <div class="ep-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="method-badge method-PATCH">PATCH</span>
+      <span class="ep-path">/api/v1/profile/<span class="param">{phone}</span></span>
+      <span class="ep-desc">Update own profile</span>
+      <span class="ep-auth auth-required">AUTH REQUIRED</span>
+      <span class="ep-toggle">▾</span>
+    </div>
+    <div class="ep-body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Users can only update their own profile. The phone in the URL must match the authenticated user's phone.</p>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Request Body</div>
+        <table class="param-table">
+          <tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr>
+          <tr><td><span class="param-name">name</span></td><td><span class="param-type">string</span></td><td><span class="param-opt">optional</span></td><td>New display name (1-100 chars)</td></tr>
+        </table>
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Success Response — 200</div>
+        <div class="code-block">
+{
+  <span class="code-key">"success"</span>: <span class="code-bool">true</span>
+}
+        </div>
+      </div>
+
+      <div class="ep-section">
+        <div class="ep-section-title">Error Codes</div>
+        <div class="status-list">
+          <span class="status-chip status-4xx" title="Not authenticated">401</span>
+          <span class="status-chip status-4xx" title="Cannot edit other user's profile">403</span>
+          <span class="status-chip status-4xx" title="No valid fields">400</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEALTH -->
+  <div class="endpoint" id="ep-health">
+    <div class="ep-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="method-badge method-GET">GET</span>
+      <span class="ep-path">/api/v1/health</span>
+      <span class="ep-desc">Health check</span>
+      <span class="ep-auth auth-public">PUBLIC</span>
+      <span class="ep-toggle">▾</span>
+    </div>
+    <div class="ep-body">
+      <div class="ep-section">
+        <div class="ep-section-title">Success Response — 200</div>
+        <div class="code-block">
+{
+  <span class="code-key">"success"</span>: <span class="code-bool">true</span>,
+  <span class="code-key">"status"</span>: <span class="code-str">"ok"</span>,
+  <span class="code-key">"timestamp"</span>: <span class="code-str">"2026-07-07T10:00:00Z"</span>,
+  <span class="code-key">"version"</span>: <span class="code-str">"1.0.0"</span>,
+  <span class="code-key">"firebase"</span>: <span class="code-bool">true</span>
+}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- DATA MODELS -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="section-header" id="data-models">
+    <h2>Data Models</h2>
+    <p>Firestore collection schemas and object shapes</p>
+  </div>
+
+  <div class="content-section">
+    <h3>User Object (userdata collection)</h3>
+    <div class="code-block">
+{
+  <span class="code-key">"id"</span>: <span class="code-str">"7999952226"</span>,         <span class="code-comment">// phone number = doc ID</span>
+  <span class="code-key">"name"</span>: <span class="code-str">"John"</span>,
+  <span class="code-key">"phone"</span>: <span class="code-str">"7999952226"</span>,
+  <span class="code-key">"email"</span>: <span class="code-str">"john@example.com"</span>,
+  <span class="code-key">"role"</span>: <span class="code-str">"USER"</span>,              <span class="code-comment">// "USER" | "ADMIN"</span>
+  <span class="code-key">"status"</span>: <span class="code-str">"active"</span>,           <span class="code-comment">// "pending" | "active"</span>
+  <span class="code-key">"password"</span>: <span class="code-str">"$2b$12..."</span>,      <span class="code-comment">// bcrypt hash</span>
+  <span class="code-key">"allowedScreens"</span>: <span class="code-null">null</span>,       <span class="code-comment">// array or null (null = all screens)</span>
+  <span class="code-key">"createdAt"</span>: <span class="code-str">"2026-06-29T10:00:00Z"</span>
+}
+    </div>
+
+    <h3 style="margin-top:32px">Enquiry Item Object</h3>
+    <div class="code-block">
+{
+  <span class="code-key">"model"</span>: <span class="code-str">"Pinnacle"</span>,          <span class="code-comment">// "Pinnacle" | "Nandak" | "Paramount"</span>
+  <span class="code-key">"size"</span>: <span class="code-str">"48\""</span>,
+  <span class="code-key">"commodity"</span>: <span class="code-str">"Wheat"</span>,
+  <span class="code-key">"quantity"</span>: <span class="code-num">2</span>,
+  <span class="code-key">"price"</span>: <span class="code-num">75000</span>,              <span class="code-comment">// auto-filled for Pinnacle based on state/size</span>
+  <span class="code-key">"totalPrice"</span>: <span class="code-num">150000</span>
+}
+    </div>
+
+    <h3 style="margin-top:32px">Quotation Object (quotations collection)</h3>
+    <div class="code-block">
+{
+  <span class="code-key">"id"</span>: <span class="code-str">"enquiryId_1page"</span>,     <span class="code-comment">// deterministic doc ID</span>
+  <span class="code-key">"enquiryId"</span>: <span class="code-str">"abc123"</span>,
+  <span class="code-key">"quotationType"</span>: <span class="code-str">"1page"</span>,     <span class="code-comment">// "1page" | "6page"</span>
+  <span class="code-key">"customerName"</span>: <span class="code-str">"Rajesh Kumar"</span>,
+  <span class="code-key">"companyName"</span>: <span class="code-str">"Kumar Industries"</span>,
+  <span class="code-key">"phone"</span>: <span class="code-str">"9876543210"</span>,
+  <span class="code-key">"email"</span>: <span class="code-str">"rajesh@example.com"</span>,
+  <span class="code-key">"address"</span>: <span class="code-str">"123 Industrial Area"</span>,
+  <span class="code-key">"gst"</span>: <span class="code-str">"22AAAAA0000A1Z5"</span>,
+  <span class="code-key">"items"</span>: [...],
+  <span class="code-key">"total"</span>: <span class="code-num">150000</span>,
+  <span class="code-key">"gstRate"</span>: <span class="code-num">18</span>,
+  <span class="code-key">"gstAmt"</span>: <span class="code-num">27000</span>,
+  <span class="code-key">"grandTotal"</span>: <span class="code-num">177000</span>,
+  <span class="code-key">"status"</span>: <span class="code-str">"draft"</span>,
+  <span class="code-key">"quotNo"</span>: <span class="code-str">"USQ-001"</span>,
+  <span class="code-key">"createdAt"</span>: <span class="code-str">"2026-06-29T10:00:00Z"</span>
+}
+    </div>
+
+    <h3 style="margin-top:32px">Audit Log Entry</h3>
+    <div class="code-block">
+<span class="code-comment">// Subcollection: enquiry/{id}/audit-log</span>
+{
+  <span class="code-key">"id"</span>: <span class="code-str">"log-doc-id"</span>,
+  <span class="code-key">"fields"</span>: [<span class="code-str">"Customer Name"</span>, <span class="code-str">"Mobile No."</span>, <span class="code-str">"State"</span>],
+  <span class="code-key">"timestamp"</span>: <span class="code-str">"2026-06-29T10:30:00Z"</span>
+}
+    </div>
+
+    <h3 style="margin-top:32px">% Chances Pipeline Stages</h3>
+    <p>The <span class="inline-code">orderChances</span> field uses these predefined stages:</p>
+    <div style="margin-top:8px">
+      <table class="param-table">
+        <tr><th>Value</th><th>Stage Name</th></tr>
+        <tr><td><span class="inline-code">0%</span></td><td>Lost / Not Interested</td></tr>
+        <tr><td><span class="inline-code">10%</span></td><td>Initial Contact</td></tr>
+        <tr><td><span class="inline-code">20%</span></td><td>Information Shared</td></tr>
+        <tr><td><span class="inline-code">30%</span></td><td>Follow-up Scheduled</td></tr>
+        <tr><td><span class="inline-code">40%</span></td><td>Site Visit / Demo Done</td></tr>
+        <tr><td><span class="inline-code">50%</span></td><td>Quotation Sent</td></tr>
+        <tr><td><span class="inline-code">60%</span></td><td>Negotiation</td></tr>
+        <tr><td><span class="inline-code">70%</span></td><td>Verbal Confirmation</td></tr>
+        <tr><td><span class="inline-code">80%</span></td><td>Purchase Order Received</td></tr>
+        <tr><td><span class="inline-code">90%</span></td><td>Advance Payment Received</td></tr>
+        <tr><td><span class="inline-code">100%</span></td><td>Order Confirmed / Closed Won</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- PROJECT STRUCTURE -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="section-header" id="project-structure">
+    <h2>Project Structure</h2>
+    <p>Backend codebase layout and file organization</p>
+  </div>
+
+  <div class="content-section">
+    <h3>Directory Layout</h3>
+    <div class="code-block">
+<span class="code-comment">unique-backend/</span>
+├── .env.example              <span class="code-comment">// env var documentation</span>
+├── jsconfig.json             <span class="code-comment">// @/* path alias</span>
+├── next.config.mjs           <span class="code-comment">// Next.js config</span>
+├── package.json
+├── vercel.json               <span class="code-comment">// CORS headers</span>
+│
+└── <span class="code-key">src/</span>
+    ├── <span class="code-key">app/</span>
+    │   ├── layout.js             <span class="code-comment">// minimal root layout</span>
+    │   ├── page.js               <span class="code-comment">// landing page</span>
+    │   │
+    │   └── <span class="code-key">api/v1/</span>
+    │       ├── <span class="code-str">health/</span>route.js
+    │       │
+    │       ├── <span class="code-str">auth/</span>
+    │       │   ├── login/route.js
+    │       │   ├── register/route.js
+    │       │   ├── verify-credentials/route.js
+    │       │   ├── verify-token/route.js
+    │       │   ├── verify-otp/route.js
+    │       │   ├── send-otp/route.js
+    │       │   ├── refresh/route.js
+    │       │   ├── reset-password/route.js
+    │       │   └── notify-approved/route.js
+    │       │
+    │       ├── <span class="code-str">enquiry/</span>
+    │       │   ├── route.js              <span class="code-comment">// GET list, POST create</span>
+    │       │   └── [id]/
+    │       │       ├── route.js          <span class="code-comment">// GET, PATCH, DELETE</span>
+    │       │       └── audit-log/route.js
+    │       │
+    │       ├── <span class="code-str">quotations/</span>
+    │       │   ├── route.js              <span class="code-comment">// GET list, POST create</span>
+    │       │   └── [id]/route.js         <span class="code-comment">// GET, DELETE</span>
+    │       │
+    │       └── <span class="code-str">profile/</span>
+    │           └── [phone]/route.js      <span class="code-comment">// GET, PATCH</span>
+    │
+    └── <span class="code-key">lib/</span>
+        ├── firebase-admin.js   <span class="code-comment">// Firebase Admin init</span>
+        ├── auth.js             <span class="code-comment">// verifyAuth, verifyAdmin</span>
+        ├── email.js            <span class="code-comment">// Resend email notifications</span>
+        ├── rate-limit.js       <span class="code-comment">// in-memory rate limiter</span>
+        ├── response.js         <span class="code-comment">// success(), error(), json()</span>
+        └── validate.js         <span class="code-comment">// input validation helpers</span>
+    </div>
+
+    <h3 style="margin-top:32px">Shared Libraries (src/lib/)</h3>
+    <div class="info-grid">
+      <div class="info-card">
+        <h4>firebase-admin.js</h4>
+        <p>Initializes Firebase Admin SDK. Exports <span class="inline-code">adminDb</span> (Firestore) and <span class="inline-code">adminAuth</span> (Auth). Strips BOM/CRLF from env vars.</p>
+      </div>
+      <div class="info-card">
+        <h4>auth.js</h4>
+        <p><span class="inline-code">verifyAuth(request)</span> — validates Bearer token, returns user object. <span class="inline-code">verifyAdmin(request)</span> — same + checks role is ADMIN.</p>
+      </div>
+      <div class="info-card">
+        <h4>response.js</h4>
+        <p>Consistent JSON responses with CORS headers. <span class="inline-code">success(data)</span>, <span class="inline-code">error(msg, status)</span>, <span class="inline-code">json(data, status)</span>.</p>
+      </div>
+      <div class="info-card">
+        <h4>email.js</h4>
+        <p>Resend integration for 3 email types: new registration (admin), user approved, new enquiry (admin). Lazy-initializes Resend client.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:32px">Environment Variables</h3>
+    <table class="param-table" style="margin-top:8px">
+      <tr><th>Variable</th><th>Required</th><th>Description</th></tr>
+      <tr><td><span class="param-name">FIREBASE_ADMIN_PROJECT_ID</span></td><td><span class="param-req">REQUIRED</span></td><td>Firebase project ID</td></tr>
+      <tr><td><span class="param-name">FIREBASE_ADMIN_CLIENT_EMAIL</span></td><td><span class="param-req">REQUIRED</span></td><td>Service account email</td></tr>
+      <tr><td><span class="param-name">FIREBASE_ADMIN_PRIVATE_KEY</span></td><td><span class="param-req">REQUIRED</span></td><td>Service account private key (with \n literals)</td></tr>
+      <tr><td><span class="param-name">FIREBASE_API_KEY</span></td><td><span class="param-req">REQUIRED</span></td><td>Firebase Web API key (for token refresh)</td></tr>
+      <tr><td><span class="param-name">RESEND_API_KEY</span></td><td><span class="param-req">REQUIRED</span></td><td>Resend API key for email notifications</td></tr>
+      <tr><td><span class="param-name">APP_URL</span></td><td><span class="param-opt">optional</span></td><td>Frontend app URL (for email links)</td></tr>
+      <tr><td><span class="param-name">ADMIN_EMAIL</span></td><td><span class="param-opt">optional</span></td><td>Admin email for notifications</td></tr>
+    </table>
+  </div>
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- FLUTTER INTEGRATION NOTES -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="section-header" id="flutter-notes">
+    <h2>Flutter Integration Notes</h2>
+    <p>Key details for the Flutter mobile app developer</p>
+  </div>
+
+  <div class="content-section">
+    <h3>Auth Integration Summary</h3>
+    <div class="info-grid">
+      <div class="info-card">
+        <h4>OTP Login (Flutter)</h4>
+        <ul>
+          <li>Call <span class="inline-code">/api/v1/auth/verify-credentials</span> with phone</li>
+          <li>Use Firebase Flutter SDK <span class="inline-code">verifyPhoneNumber()</span></li>
+          <li>After OTP verified, get idToken from SDK</li>
+          <li>POST idToken to <span class="inline-code">/api/v1/auth/verify-token</span></li>
+          <li>Store idToken + refreshToken securely</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h4>Password Login (Flutter)</h4>
+        <ul>
+          <li>POST phone + password to <span class="inline-code">/api/v1/auth/login</span></li>
+          <li>Receive customToken in response</li>
+          <li>Call <span class="inline-code">signInWithCustomToken()</span></li>
+          <li>Get idToken from UserCredential</li>
+          <li>Use idToken for all API calls</li>
+        </ul>
+      </div>
+    </div>
+
+    <h4>Token Management</h4>
+    <div class="callout callout-info">
+      <strong>Auto-refresh:</strong> Firebase ID tokens expire after ~1 hour. Implement a token refresh interceptor in your HTTP client. When you get a <span class="inline-code">401</span> response, call <span class="inline-code">/api/v1/auth/refresh</span> with the stored refreshToken, save the new tokens, and retry the failed request.
+    </div>
+
+    <h4 style="margin-top:20px">All API Calls Pattern</h4>
+    <div class="code-block">
+      <span class="code-label">Dart / Flutter</span>
+<span class="code-comment">// Every authenticated API call follows this pattern:</span>
+
+final response = await http.get(
+  Uri.parse(<span class="code-str">'https://unique-backend-dun.vercel.app/api/v1/enquiry'</span>),
+  headers: {
+    <span class="code-str">'Authorization'</span>: <span class="code-str">'Bearer $idToken'</span>,
+    <span class="code-str">'Content-Type'</span>: <span class="code-str">'application/json'</span>,
+  },
+);
+
+final data = jsonDecode(response.body);
+if (data[<span class="code-str">'success'</span>] == <span class="code-bool">true</span>) {
+  <span class="code-comment">// Handle data['data'] or data['user']</span>
+} else {
+  <span class="code-comment">// Handle data['error']</span>
+}
+    </div>
+
+    <h4 style="margin-top:24px">Role-Based Access</h4>
+    <p>The user object contains a <span class="inline-code">role</span> field (<span class="inline-code">"USER"</span> or <span class="inline-code">"ADMIN"</span>) and an <span class="inline-code">allowedScreens</span> array. Use these to control what screens the user can access in the Flutter app:</p>
+    <ul>
+      <li><span class="inline-code">allowedScreens: null</span> → user has access to all screens</li>
+      <li><span class="inline-code">allowedScreens: ["enquiry", "quotation"]</span> → user can only access those screens</li>
+      <li>Admin users always have full access</li>
+    </ul>
+
+    <h4 style="margin-top:24px">Phone Number Format</h4>
+    <div class="callout callout-warn">
+      All phone numbers in this API are <strong>10-digit Indian format</strong> (e.g., <span class="inline-code">7999952226</span>). Do NOT include country code (+91) when sending to the API. The API validates with regex <span class="inline-code">/^[6-9]\d{9}$/</span>.
+    </div>
+
+    <h4 style="margin-top:24px">Firebase Configuration</h4>
+    <p>The Flutter app needs to use the <strong>same Firebase project</strong> as the web app. Get the Firebase config from the project admin. Required Firebase products:</p>
+    <ul>
+      <li><strong>Authentication</strong> — Phone auth provider must be enabled</li>
+      <li><strong>Firestore</strong> — Used for data storage (but accessed via API, not directly)</li>
+    </ul>
+
+    <div class="callout callout-tip" style="margin-top:16px">
+      <strong>Important:</strong> The Flutter app should NOT read/write Firestore directly. All data operations go through the API endpoints. Firebase SDK in Flutter is only used for authentication (OTP verification + signInWithCustomToken).
+    </div>
+
+    <h4 style="margin-top:24px">Endpoints Summary Table</h4>
+    <table class="param-table" style="margin-top:8px">
+      <tr><th>Method</th><th>Endpoint</th><th>Auth</th><th>Purpose</th></tr>
+      <tr><td><span class="method-badge method-POST" style="font-size:10px;padding:2px 6px">POST</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:12px">/api/v1/auth/register</td><td>No</td><td>Register new user</td></tr>
+      <tr><td><span class="method-badge method-POST" style="font-size:10px;padding:2px 6px">POST</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:12px">/api/v1/auth/verify-credentials</td><td>No</td><td>Check phone exists</td></tr>
+      <tr><td><span class="method-badge method-POST" style="font-size:10px;padding:2px 6px">POST</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:12px">/api/v1/auth/send-otp</td><td>No</td><td>Send OTP (use checkOnly for Flutter)</td></tr>
+      <tr><td><span class="method-badge method-POST" style="font-size:10px;padding:2px 6px">POST</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:12px">/api/v1/auth/verify-token</td><td>No</td><td>Verify Firebase token (Flutter primary)</td></tr>
+      <tr><td><span class="method-badge method-POST" style="font-size:10px;padding:2px 6px">POST</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:12px">/api/v1/auth/login</td><td>No</td><td>Password login</td></tr>
+      <tr><td><span class="method-badge method-POST" style="font-size:10px;padding:2px 6px">POST</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:12px">/api/v1/auth/refresh</td><td>No</td><td>Refresh token</td></tr>
+      <tr><td><span class="method-badge method-POST" style="font-size:10px;padding:2px 6px">POST</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:12px">/api/v1/auth/reset-password</td><td>No</td><td>Reset password</td></tr>
+      <tr><td><span class="method-badge method-POST" style="font-size:10px;padding:2px 6px">POST</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:12px">/api/v1/auth/notify-approved</td><td>Yes</td><td>Send approval email</td></tr>
+      <tr style="background:var(--surface)"><td colspan="4" style="padding:4px;border:none"></td></tr>
+      <tr><td><span class="method-badge method-GET" style="font-size:10px;padding:2px 6px">GET</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:12px">/api/v1/enquiry</td><td>Yes</td><td>List enquiries</td></tr>
+      <tr><td><span class="method-badge method-POST" style="font-size:10px;padding:2px 6px">POST</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:12px">/api/v1/enquiry</td><td>Yes</td><td>Create enquiry</td></tr>
+      <tr><td><span class="method-badge method-GET" style="font-size:10px;padding:2px 6px">GET</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:12px">/api/v1/enquiry/{id}</td><td>Yes</td><td>Get enquiry</td></tr>
+      <tr><td><span class="method-badge method-PATCH" style="font-size:10px;padding:2px 6px">PATCH</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:12px">/api/v1/enquiry/{id}</td><td>Yes</td><td>Update enquiry</td></tr>
+      <tr><td><span class="method-badge method-DELETE" style="font-size:10px;padding:2px 6px">DELETE</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:12px">/api/v1/enquiry/{id}</td><td>Admin</td><td>Delete enquiry</td></tr>
+      <tr><td><span class="method-badge method-GET" style="font-size:10px;padding:2px 6px">GET</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:12px">/api/v1/enquiry/{id}/audit-log</td><td>Yes</td><td>Get audit trail</td></tr>
+      <tr style="background:var(--surface)"><td colspan="4" style="padding:4px;border:none"></td></tr>
+      <tr><td><span class="method-badge method-GET" style="font-size:10px;padding:2px 6px">GET</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:12px">/api/v1/quotations</td><td>Yes</td><td>List quotations</td></tr>
+      <tr><td><span class="method-badge method-POST" style="font-size:10px;padding:2px 6px">POST</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:12px">/api/v1/quotations</td><td>Yes</td><td>Create quotation</td></tr>
+      <tr><td><span class="method-badge method-GET" style="font-size:10px;padding:2px 6px">GET</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:12px">/api/v1/quotations/{id}</td><td>Yes</td><td>Get quotation</td></tr>
+      <tr><td><span class="method-badge method-DELETE" style="font-size:10px;padding:2px 6px">DELETE</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:12px">/api/v1/quotations/{id}</td><td>Admin</td><td>Delete quotation</td></tr>
+      <tr style="background:var(--surface)"><td colspan="4" style="padding:4px;border:none"></td></tr>
+      <tr><td><span class="method-badge method-GET" style="font-size:10px;padding:2px 6px">GET</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:12px">/api/v1/profile/{phone}</td><td>Yes</td><td>Get user profile</td></tr>
+      <tr><td><span class="method-badge method-PATCH" style="font-size:10px;padding:2px 6px">PATCH</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:12px">/api/v1/profile/{phone}</td><td>Yes</td><td>Update own profile</td></tr>
+      <tr><td><span class="method-badge method-GET" style="font-size:10px;padding:2px 6px">GET</span></td><td style="font-family:'JetBrains Mono',monospace;font-size:12px">/api/v1/health</td><td>No</td><td>Health check</td></tr>
+    </table>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>Unique Sorter &amp; Equipment Pvt. Ltd. — API v1 Documentation — July 2026</p>
+    <p style="margin-top:6px"><a href="https://unique-backend-dun.vercel.app/api/v1/health">API Health Check</a> · <a href="https://unique-sorter-one.vercel.app">Live App</a></p>
+  </div>
+
+</div>
+
+<script>
+  // Close sidebar on mobile when a link is clicked
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+      if (window.innerWidth <= 900) {
+        document.querySelector('.sidebar').classList.remove('open');
+      }
+    });
+  });
+
+  // Highlight active nav link on scroll
+  const sections = document.querySelectorAll('[id]');
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(section => {
+      const top = section.offsetTop - 100;
+      if (window.scrollY >= top) current = section.id;
+    });
+    navLinks.forEach(link => {
+      link.style.background = '';
+      link.style.color = '';
+      if (link.getAttribute('href') === '#' + current) {
+        link.style.background = 'var(--accent-light)';
+        link.style.color = 'var(--accent)';
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
