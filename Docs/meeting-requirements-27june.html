@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unique Sorter CRM — Meeting Requirements (27 June 2026)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --ink: #1a1a2e;
+      --body: #3d3d5c;
+      --muted: #7a7a9e;
+      --faint: #b0b0c8;
+      --border: #e2e2ef;
+      --surface: #f5f5fa;
+      --card: #ffffff;
+      --brand: #1A37AA;
+      --brand-light: #e8ecfa;
+      --brand-glow: rgba(26, 55, 170, 0.06);
+      --green: #16a34a;
+      --green-bg: #f0fdf4;
+      --amber: #ca8a04;
+      --amber-bg: #fefce8;
+      --red: #dc2626;
+      --red-bg: #fef2f2;
+      --blue-bg: #eff6ff;
+      --purple: #7c3aed;
+      --purple-bg: #f5f3ff;
+      --teal: #0d9488;
+      --teal-bg: #f0fdfa;
+      --orange: #ea580c;
+      --orange-bg: #fff7ed;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      color: var(--body);
+      background: var(--surface);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page-header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 40px 32px 32px;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-mark {
+      width: 44px;
+      height: 44px;
+      background: var(--brand);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .logo-text {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 20px;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .logo-sub {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-top: 1px;
+    }
+
+    .doc-date {
+      text-align: right;
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .doc-date strong { color: var(--body); font-weight: 600; }
+
+    .header-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 30px;
+      color: var(--ink);
+      font-weight: 700;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .header-desc {
+      font-size: 17px;
+      color: var(--muted);
+      max-width: 750px;
+      line-height: 1.6;
+    }
+
+    .meeting-meta {
+      margin-top: 16px;
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      font-size: 15px;
+      color: var(--muted);
+    }
+
+    .meeting-meta span { display: flex; align-items: center; gap: 6px; }
+    .meeting-meta strong { color: var(--body); font-weight: 600; }
+
+    /* NAV */
+    .nav-bar {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 20px 32px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .nav-chip {
+      padding: 8px 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--body);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .nav-chip:hover {
+      background: var(--brand-light);
+      border-color: var(--brand);
+      color: var(--brand);
+    }
+
+    .nav-chip .chip-count {
+      display: inline-block;
+      background: var(--surface);
+      padding: 1px 7px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-left: 4px;
+      color: var(--muted);
+    }
+
+    /* CONTENT */
+    .content {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 32px 80px;
+    }
+
+    /* PHASE */
+    .phase {
+      margin-bottom: 48px;
+    }
+
+    .phase-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 8px;
+    }
+
+    .phase-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .p1 .phase-badge, .phase-badge.p1 { background: var(--red); }
+    .p2 .phase-badge, .phase-badge.p2 { background: var(--amber); }
+    .p3 .phase-badge, .phase-badge.p3 { background: var(--brand); }
+    .p4 .phase-badge, .phase-badge.p4 { background: var(--green); }
+    .p5 .phase-badge, .phase-badge.p5 { background: var(--teal); }
+    .p6 .phase-badge, .phase-badge.p6 { background: var(--purple); }
+    .p7 .phase-badge, .phase-badge.p7 { background: var(--orange); }
+
+    .phase-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 23px;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .phase-why {
+      margin-left: 52px;
+      font-size: 16px;
+      color: var(--muted);
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+      line-height: 1.6;
+    }
+
+    /* CARDS */
+    .step-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 12px;
+      margin-left: 52px;
+      position: relative;
+      transition: box-shadow 0.2s;
+    }
+
+    .step-card:hover {
+      box-shadow: 0 2px 12px rgba(26, 55, 170, 0.06);
+    }
+
+    .step-card::before {
+      content: '';
+      position: absolute;
+      left: -27px;
+      top: 0;
+      bottom: -12px;
+      width: 2px;
+      background: var(--border);
+    }
+
+    .step-card:last-child::before { bottom: 50%; }
+
+    .step-card::after {
+      content: '';
+      position: absolute;
+      left: -32px;
+      top: 24px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 2px solid var(--border);
+    }
+
+    .step-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .step-number {
+      background: var(--surface);
+      color: var(--ink);
+      font-weight: 700;
+      font-size: 14px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      white-space: nowrap;
+    }
+
+    .step-body { flex: 1; }
+
+    .step-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 4px;
+      line-height: 1.4;
+    }
+
+    .step-desc {
+      font-size: 16px;
+      color: var(--body);
+      line-height: 1.65;
+    }
+
+    .step-desc strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    /* WHAT BOX */
+    .what-box {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .what-item {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .what-item.current {
+      background: var(--red-bg);
+      border: 1px solid #fecaca;
+    }
+
+    .what-item.current .what-label {
+      color: var(--red);
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 3px;
+    }
+
+    .what-item.expected {
+      background: var(--green-bg);
+      border: 1px solid #bbf7d0;
+    }
+
+    .what-item.expected .what-label {
+      color: var(--green);
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 3px;
+    }
+
+    /* NOTE */
+    .note-box {
+      background: var(--brand-glow);
+      border: 1px solid var(--brand-light);
+      border-left: 3px solid var(--brand);
+      border-radius: 0 8px 8px 0;
+      padding: 12px 16px;
+      margin-top: 10px;
+      font-size: 15px;
+      color: var(--body);
+      line-height: 1.6;
+    }
+
+    .note-box strong { color: var(--brand); }
+
+    .note-box.client-quote {
+      border-left-color: var(--amber);
+      background: var(--amber-bg);
+    }
+
+    .note-box.client-quote strong { color: var(--amber); }
+
+    /* CONNECTOR */
+    .phase-connector {
+      text-align: center;
+      margin: -24px 0 24px 52px;
+      color: var(--faint);
+      font-size: 20px;
+      letter-spacing: 4px;
+    }
+
+    /* DISCUSSION BOX */
+    .discussion-box {
+      background: var(--amber-bg);
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 12px;
+      margin-left: 52px;
+    }
+
+    .discussion-box .disc-title {
+      font-weight: 700;
+      color: var(--amber);
+      font-size: 16px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .discussion-box p {
+      font-size: 16px;
+      color: var(--body);
+      line-height: 1.6;
+    }
+
+    /* FOOTER */
+    .page-footer {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 32px;
+      border-top: 1px solid var(--border);
+      font-size: 15px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media print {
+      body { background: white; }
+      .nav-bar { display: none; }
+      .step-card { break-inside: avoid; }
+    }
+
+    @media (max-width: 640px) {
+      .header-inner { padding: 24px 16px 20px; }
+      .header-top { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .doc-date { text-align: left; }
+      .header-title { font-size: 22px; }
+      .content { padding: 0 16px 60px; }
+      .nav-bar { padding: 12px 16px; }
+      .step-card { margin-left: 24px; padding: 16px; }
+      .phase-why { margin-left: 24px; }
+      .step-card::before { left: -15px; }
+      .step-card::after { left: -20px; }
+      .discussion-box { margin-left: 24px; }
+      .phase-connector { margin-left: 24px; }
+      .what-box { grid-template-columns: 1fr; }
+      .meeting-meta { flex-direction: column; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="page-header">
+    <div class="header-inner">
+      <div class="header-top">
+        <div class="logo-area">
+          <div class="logo-mark">US</div>
+          <div>
+            <div class="logo-text">Unique Sorter</div>
+            <div class="logo-sub">CRM Application</div>
+          </div>
+        </div>
+        <div class="doc-date">
+          <strong>Meeting Date:</strong> 27 June 2026<br>
+          Location: Raipur, Chhattisgarh
+        </div>
+      </div>
+      <h1 class="header-title">Client Meeting &mdash; All Requirements Discussed</h1>
+      <p class="header-desc">Complete list of requirements, changes, and decisions extracted from the 80-minute client discussion call. Arranged in logical development order with the client's exact expectations noted.</p>
+      <div class="meeting-meta">
+        <span><strong>Participants:</strong> Chirag (Dev), Jna Ji, Subhash, Kuki, Sharad Ji</span>
+        <span><strong>Total Items:</strong> 28 requirements across 7 areas</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- NAV -->
+  <nav class="nav-bar">
+    <a href="#admin" class="nav-chip">Admin &amp; Permissions <span class="chip-count">6</span></a>
+    <a href="#enquiry" class="nav-chip">Enquiry Form <span class="chip-count">7</span></a>
+    <a href="#quotation-terms" class="nav-chip">Quotation Terms <span class="chip-count">5</span></a>
+    <a href="#quotation-format" class="nav-chip">Quotation Formatting <span class="chip-count">3</span></a>
+    <a href="#technical" class="nav-chip">Technical Specs <span class="chip-count">3</span></a>
+    <a href="#sharing" class="nav-chip">Sharing &amp; Communication <span class="chip-count">4</span></a>
+    <a href="#other" class="nav-chip">Dashboard &amp; Other <span class="chip-count">5</span></a>
+  </nav>
+
+  <div class="content">
+
+    <!-- ═══ PHASE 1: Admin & Permissions ═══ -->
+    <div class="phase" id="admin">
+      <div class="phase-header">
+        <div class="phase-badge p1">1</div>
+        <h2 class="phase-title">Admin &amp; Permissions</h2>
+      </div>
+      <div class="phase-why">
+        <strong>Why do this first?</strong> &mdash; The client repeatedly asked for Admin-level control over settings, fields, and data. All other features depend on who has access to what.
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 1</span>
+          <div class="step-body">
+            <div class="step-title">Give Admin Full Access to All Enquiry Forms</div>
+            <div class="step-desc">Admin should be able to <strong>view, edit, add, and change any field</strong> in every enquiry form — including enquiries created by other users.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 2</span>
+          <div class="step-body">
+            <div class="step-title">Only Admin Can Delete Enquiry Forms</div>
+            <div class="step-desc">Remove the delete option from normal users. <strong>Only Admin</strong> should be able to delete enquiries. The client said: "He may confirm that this order has been lost to competition or the requirement has been dropped — only then the boss will delete it."</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 3</span>
+          <div class="step-body">
+            <div class="step-title">Bank Details — Admin Only</div>
+            <div class="step-desc">Bank details in the quotation should be <strong>editable only by Admin</strong>. If bank details change, Admin updates it — no need to contact developer.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 4</span>
+          <div class="step-body">
+            <div class="step-title">Admin Access to Add/Edit States, Lead Sources &amp; Dropdown Values</div>
+            <div class="step-desc">Client explicitly asked: <strong>"This access we need."</strong> Admin should be able to add/edit states, lead sources, and other dropdown values. Currently only developer can change these.</div>
+            <div class="note-box client-quote">
+              <strong>Client said:</strong> "Aaj hum do state mein kar rahe hain, kal hum teen state mein karenge — ye sab kahan set kar payenge? Ye access humko chahiye."
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 5</span>
+          <div class="step-body">
+            <div class="step-title">Admin Access to Add/Edit Models, Sizes &amp; Pricing</div>
+            <div class="step-desc">Admin should be able to <strong>add new machine models, new sizes, and set/update pricing</strong> from a settings panel. Currently developer has to do this manually.</div>
+            <div class="note-box client-quote">
+              <strong>Client said:</strong> "Future ke liye agar humko add karna hai toh uska access hum mein rahe toh zyada better hai taki hum kabhi bhi edit kar sakein."
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 6</span>
+          <div class="step-body">
+            <div class="step-title">Admin Access to Mandatory/Optional Field Settings</div>
+            <div class="step-desc">Admin should decide <strong>which fields are mandatory and which are optional</strong> in the enquiry form.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-connector">&#8595; &#8595; &#8595;</div>
+
+    <!-- ═══ PHASE 2: Enquiry Form ═══ -->
+    <div class="phase" id="enquiry">
+      <div class="phase-header">
+        <div class="phase-badge p2">2</div>
+        <h2 class="phase-title">Enquiry Form Changes</h2>
+      </div>
+      <div class="phase-why">
+        <strong>Why do this second?</strong> &mdash; The enquiry form is the foundation of the CRM. All data flows from here to quotations, reports, and sharing. Fix the form structure before building features on top.
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 7</span>
+          <div class="step-body">
+            <div class="step-title">Add "Existing Customer" in Lead Source Dropdown</div>
+            <div class="step-desc">Add <strong>"Existing Customer"</strong> as a new option in the Lead Source / Type of Leads dropdown. Current options: Cold Call, Reference, Referral, Online Website, Social Media, Others.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 8</span>
+          <div class="step-body">
+            <div class="step-title">Follow-up &amp; % Chances Fields — Show in BOTH Immediate and Future</div>
+            <div class="step-desc">The <strong>follow-up date field</strong> and <strong>percentage chances of order field</strong> should appear in <strong>both</strong> "Yes Immediately" and "No Future" enquiries — not just in Future.</div>
+            <div class="note-box client-quote">
+              <strong>Client said:</strong> "Customer bolega immediate hai but woh kai baar immediate nahi hota. Today it could be immediate but after a week we realize it got postponed to future."
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 9</span>
+          <div class="step-body">
+            <div class="step-title">Remark Field — Mandatory with Log History</div>
+            <div class="step-desc">The Remark field must be <strong>mandatory</strong>. When a user adds a new remark, <strong>previous remarks must NOT be deleted</strong>. All entries should form a timeline log with dates.</div>
+            <div class="note-box client-quote">
+              <strong>Client said:</strong> "The second entry should not overwrite the first one. What was the first discussion that should be there, second discussion should be there, and a list should form. So that we will know the history of the discussion."
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 10</span>
+          <div class="step-body">
+            <div class="step-title">Complete Edit Log History (Admin Only)</div>
+            <div class="step-desc">Every change to an enquiry should be <strong>automatically logged</strong> — what field was changed, old value, new value, who changed it, and when. This log is <strong>visible only to Admin</strong>.</div>
+            <div class="what-box">
+              <div class="what-item current">
+                <div class="what-label">Currently</div>
+                No record of who changed what. Only "last edited" timestamp.
+              </div>
+              <div class="what-item expected">
+                <div class="what-label">After Update</div>
+                Admin sees: "Raj changed Model from Pinnacle 6 to Nandak 5 on 25 June at 3:30 PM"
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 11</span>
+          <div class="step-body">
+            <div class="step-title">Add Negotiated Price Field</div>
+            <div class="step-desc">Add a field for the <strong>negotiated price</strong> alongside the standard area-specific price. As discussions happen, the quoted price may change — this field tracks what price was actually offered to the customer and at what stage.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 12</span>
+          <div class="step-body">
+            <div class="step-title">Commodities List — Make Flexible / Editable</div>
+            <div class="step-desc">The commodities dropdown (Rice, Pulses, etc.) should be <strong>editable by Admin</strong>. They may need to add more commodities like Maize, etc. Keep it as dropdown to maintain uniform naming.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 13</span>
+          <div class="step-body">
+            <div class="step-title">Download Options — Add CSV &amp; Excel Both</div>
+            <div class="step-desc">Enquiry data download should support <strong>both CSV and Excel</strong> formats. Add a PDF download option as well.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-connector">&#8595; &#8595; &#8595;</div>
+
+    <!-- ═══ PHASE 3: Quotation Terms & Conditions ═══ -->
+    <div class="phase" id="quotation-terms">
+      <div class="phase-header">
+        <div class="phase-badge p3">3</div>
+        <h2 class="phase-title">Quotation — Terms &amp; Conditions</h2>
+      </div>
+      <div class="phase-why">
+        <strong>Why do this third?</strong> &mdash; The quotation pulls data from the enquiry form. Now that the form is correct, we can fix what appears in the quotation terms.
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 14</span>
+          <div class="step-body">
+            <div class="step-title">Freight — Two Options: Inclusive &amp; Extra at Actuals</div>
+            <div class="step-desc">Give user <strong>two options</strong> for freight:<br>
+              <strong>Option A:</strong> Freight Inclusive — user types the delivery location manually<br>
+              <strong>Option B:</strong> Freight Extra at Actuals — Point of Delivery auto-fills as <strong>"Raipur, Chhattisgarh"</strong> by default</div>
+            <div class="note-box client-quote">
+              <strong>Client said:</strong> "When the user selects Freight Extra at Actuals, by default Point of Delivery should read as Raipur, Chhattisgarh. And if he says Freight Inclusive, then Point of Delivery is editable."
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 15</span>
+          <div class="step-body">
+            <div class="step-title">Remove "Electricity Supply" from Terms &amp; Conditions</div>
+            <div class="step-desc"><strong>Delete</strong> the "Electricity Supply: 220 Volts, Frequency 50 Hz" line from the terms &amp; conditions section. Instead, add <strong>"220V Single Phase Supply"</strong> as a note line in the machine description area (below the item table), along with "Any other thing not mentioned above is not included in the supply."</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 16</span>
+          <div class="step-body">
+            <div class="step-title">Warranty — Editable by Both User &amp; Admin</div>
+            <div class="step-desc">The warranty field should be <strong>editable at both user and admin level</strong>. Default is 2 years. The client confirmed warranty should stay editable for negotiation purposes.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 17</span>
+          <div class="step-body">
+            <div class="step-title">Payment Terms — Editable by User</div>
+            <div class="step-desc">Payment terms (currently "50% Advance on PO, Balance before dispatch") should remain <strong>editable</strong>. User can change this based on customer negotiation.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 18</span>
+          <div class="step-body">
+            <div class="step-title">All Terms &amp; Conditions — Make Flexible</div>
+            <div class="step-desc">Overall, the terms &amp; conditions section should be <strong>flexible/editable</strong>. Users should be able to modify values per quotation based on customer discussion. Only Bank Details remain Admin-only.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-connector">&#8595; &#8595; &#8595;</div>
+
+    <!-- ═══ PHASE 4: Quotation Formatting ═══ -->
+    <div class="phase" id="quotation-format">
+      <div class="phase-header">
+        <div class="phase-badge p4">4</div>
+        <h2 class="phase-title">Quotation — Formatting Fixes</h2>
+      </div>
+      <div class="phase-why">
+        <strong>Why do this fourth?</strong> &mdash; Visual fixes that make the quotation look professional. These are quick fixes that improve first impression with customers.
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 19</span>
+          <div class="step-body">
+            <div class="step-title">Logo Must Match on Both Quotation Types</div>
+            <div class="step-desc">The single-page quotation and multi-page (detailed) quotation currently show <strong>different logos</strong>. Both must use the <strong>same logo</strong> — matching the company letterhead.</div>
+            <div class="note-box client-quote">
+              <strong>Client said:</strong> "Uniform rehna chahiye, letterhead hai uniform rehna chahiye. It should match with the letter."
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 20</span>
+          <div class="step-body">
+            <div class="step-title">Fix Left Margin — Content Closer to Left</div>
+            <div class="step-desc">The quotation PDF has <strong>too much space on the left</strong>. Content should start closer to the left side, like Microsoft Word formatting. Right margin can have some space.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 21</span>
+          <div class="step-body">
+            <div class="step-title">Fix Rupee Symbol &amp; Table Formatting</div>
+            <div class="step-desc">In the detailed quotation, the <strong>&#8377; (Rupee) symbol is taking too much space</strong> in the table, causing content to overflow to the next page. Fix the column width and number formatting.</div>
+            <div class="note-box client-quote">
+              <strong>Client said:</strong> "Yahan pe Rupees ka symbol ke wajah se zyada jagah le raha hai, uski wajah se wo neeche aa gaya hai." (The Rupee symbol is taking too much space, pushing content to the next page.)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-connector">&#8595; &#8595; &#8595;</div>
+
+    <!-- ═══ PHASE 5: Technical Specs ═══ -->
+    <div class="phase" id="technical">
+      <div class="phase-header">
+        <div class="phase-badge p5">5</div>
+        <h2 class="phase-title">Technical Specification Auto-Fill</h2>
+      </div>
+      <div class="phase-why">
+        <strong>Why do this fifth?</strong> &mdash; The multi-page quotation has a technical sheet. Currently fields like "Number of Cameras" and "Number of Channels" are blank. They should auto-fill based on model + size selection.
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 22</span>
+          <div class="step-body">
+            <div class="step-title">Auto-Fill Technical Specs Based on Model + Size</div>
+            <div class="step-desc">When user selects a model (e.g., Nandak) and size (e.g., 5 chute), the technical fields should <strong>auto-populate</strong>:<br>
+              &bull; Number of Modules &amp; Channels<br>
+              &bull; Number of Cameras + Camera Specification<br>
+              &bull; Sorting Modes, Light System, Air Filter System, etc.</div>
+            <div class="note-box client-quote">
+              <strong>Client said:</strong> "Do hi select karte apan — model aur chute size. Uske saath number of cameras calculate karke likh dena, channels bhi. Taaki cross-fill karna na pade aur wrong entry na ho."
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 23</span>
+          <div class="step-body">
+            <div class="step-title">Admin Can Set/Update Technical Specs Per Model</div>
+            <div class="step-desc">Admin should be able to <strong>configure the technical specification values</strong> for each model+size combination. When a new model launches, Admin adds it without contacting the developer.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 24</span>
+          <div class="step-body">
+            <div class="step-title">Client to Provide Tabular Data for Models</div>
+            <div class="step-desc">Client (Jna Ji) will share a <strong>tabular sheet</strong> with all model+size combinations for Nandak and Pinnacle — listing channels, cameras, and specs for each size. This data is needed to set up the auto-fill.</div>
+            <div class="note-box">
+              <strong>Action Item (Client):</strong> Jna Ji to share tabular data: Model &rarr; Size &rarr; Channels &rarr; Cameras &rarr; Specs for both Nandak and Pinnacle.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-connector">&#8595; &#8595; &#8595;</div>
+
+    <!-- ═══ PHASE 6: Sharing & Communication ═══ -->
+    <div class="phase" id="sharing">
+      <div class="phase-header">
+        <div class="phase-badge p6">6</div>
+        <h2 class="phase-title">Sharing &amp; Communication</h2>
+      </div>
+      <div class="phase-why">
+        <strong>Why do this sixth?</strong> &mdash; Sharing features work best once the quotation content and formatting are finalized. This includes email, WhatsApp, and notification features.
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 25</span>
+          <div class="step-body">
+            <div class="step-title">Email &amp; WhatsApp — Both Options + "Send Both at Once"</div>
+            <div class="step-desc">Keep <strong>Email, WhatsApp, and Download</strong> options. Add a 4th option: <strong>"Send Both"</strong> — sends via Email and WhatsApp in one click.</div>
+            <div class="note-box client-quote">
+              <strong>Client said:</strong> "Koi customer kehta hai WhatsApp nahi, mujhe email karo. We should have that option also. And both at once bhi chahiye."
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 26</span>
+          <div class="step-body">
+            <div class="step-title">Send Quotation from App Directly (Not via Gmail Redirect)</div>
+            <div class="step-desc">Currently email sharing <strong>redirects to Gmail app</strong>. Instead, send email <strong>directly from the app</strong> with email address input field. PDF attachment should work properly (currently broken).</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 27</span>
+          <div class="step-body">
+            <div class="step-title">Notify Superior When Quotation is Sent</div>
+            <div class="step-desc">When any user sends a quotation, their <strong>superior (Admin/Boss) should automatically receive a copy</strong> on their WhatsApp — so they know a quotation has gone out.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 28</span>
+          <div class="step-body">
+            <div class="step-title">Track Sharing History — Who Received, When</div>
+            <div class="step-desc">Admin should be able to see <strong>when a quotation was shared and to whom</strong> — for monitoring purposes. Currently no tracking since sharing goes through personal Gmail/WhatsApp.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-connector">&#8595; &#8595; &#8595;</div>
+
+    <!-- ═══ PHASE 7: Dashboard & Other ═══ -->
+    <div class="phase" id="other">
+      <div class="phase-header">
+        <div class="phase-badge p7">7</div>
+        <h2 class="phase-title">Dashboard, Reporting &amp; Other Decisions</h2>
+      </div>
+      <div class="phase-why">
+        <strong>Why do this last?</strong> &mdash; Dashboard and reporting features need data from all the above features to be meaningful. Other items need separate discussions.
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Snapshot</span>
+          <div class="step-body">
+            <div class="step-title">Dashboard Snapshot — Intuitive Overview for Admin</div>
+            <div class="step-desc">Admin dashboard should show an <strong>intuitive snapshot</strong>: daily quotations generated, monthly quotation count, year-to-date total, graphs or tabular format. Filter by region, user, commodity, and machine size.</div>
+            <div class="note-box client-quote">
+              <strong>Client said:</strong> "Ek baar laptop mein khol liya toh intuitive aa jaana chahiye ki haan ye ab tak mera monthly ya is saal ka itna quotation generate hua hai."
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Report</span>
+          <div class="step-body">
+            <div class="step-title">MIS Reports — Daily &amp; Monthly (Admin Only)</div>
+            <div class="step-desc">Daily report of quotations and monthly averages. Also show <strong>which commodity + which machine size</strong> has the most demand — helps with stock forecasting.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Login</span>
+          <div class="step-body">
+            <div class="step-title">Persistent Login — Stay Logged In for a Day</div>
+            <div class="step-desc">Users should <strong>not have to login every time</strong> they open the app. Once logged in, stay logged in for at least one full day.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Decided</span>
+          <div class="step-body">
+            <div class="step-title">Authorized Signatory &amp; Quotation Reference Number</div>
+            <div class="step-desc">Quotation will show <strong>"Authorized Signatory: Subhash"</strong> as-is. Reference number will be <strong>auto-generated by the system</strong>. No further discussion needed on these items.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="discussion-box">
+        <div class="disc-title">Needs Separate Discussion</div>
+        <p><strong>Android App vs Web App:</strong> The client strongly prefers a native Android app for ease of use by sales/service persons. PWA was demonstrated as an alternative but client raised concerns about internet connectivity for remote users who need offline access. A separate meeting with Purushottam Sir is needed to discuss scope, cost, and timeline for app development.</p>
+      </div>
+
+      <div class="discussion-box">
+        <div class="disc-title">Needs Separate Discussion</div>
+        <p><strong>Phase 1 vs Phase 2 Division:</strong> Client asked for clear definition of what's in Phase 1 and Phase 2. Need a separate meeting to divide all modules across phases with timeline. Client said: "Ek clear communication ho jaaye dono end pe — kab aur kya hoga."</p>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="page-footer">
+    Unique Sorter CRM &mdash; Client Meeting Requirements &middot; 27 June 2026 &middot; Raipur, Chhattisgarh &middot; 28 items across 7 phases
+  </footer>
+
+</body>
+</html>

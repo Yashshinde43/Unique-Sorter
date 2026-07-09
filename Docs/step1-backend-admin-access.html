@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Step 1 — Give Admin Full Access to All Enquiry Forms (Backend Implementation)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --ink: #1a1a2e;
+      --body: #3d3d5c;
+      --muted: #7a7a9e;
+      --faint: #b0b0c8;
+      --border: #e2e2ef;
+      --surface: #f5f5fa;
+      --card: #ffffff;
+      --brand: #1A37AA;
+      --brand-light: #e8ecfa;
+      --brand-glow: rgba(26, 55, 170, 0.06);
+      --green: #16a34a;
+      --green-bg: #f0fdf4;
+      --green-border: #bbf7d0;
+      --amber: #ca8a04;
+      --amber-bg: #fefce8;
+      --amber-border: #fde68a;
+      --red: #dc2626;
+      --red-bg: #fef2f2;
+      --red-border: #fecaca;
+      --code-bg: #1e1e2e;
+      --code-text: #cdd6f4;
+      --code-comment: #6c7086;
+      --code-keyword: #cba6f7;
+      --code-string: #a6e3a1;
+      --code-fn: #89b4fa;
+      --code-added: #a6e3a1;
+      --code-removed: #f38ba8;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      color: var(--body);
+      background: var(--surface);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── HEADER ── */
+    .page-header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 36px 32px 28px;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .logo-area { display: flex; align-items: center; gap: 14px; }
+
+    .logo-mark {
+      width: 44px; height: 44px;
+      background: var(--brand); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 700; font-size: 18px;
+    }
+
+    .logo-text {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 20px; color: var(--ink); font-weight: 700;
+    }
+
+    .logo-sub {
+      font-size: 12px; color: var(--muted); font-weight: 500;
+      letter-spacing: 0.5px; text-transform: uppercase; margin-top: 1px;
+    }
+
+    .breadcrumb {
+      font-size: 14px; color: var(--muted); line-height: 1.5; text-align: right;
+    }
+
+    .breadcrumb a { color: var(--brand); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb strong { color: var(--body); font-weight: 600; }
+
+    .header-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 26px; color: var(--ink); font-weight: 700;
+      margin-bottom: 6px; line-height: 1.3;
+    }
+
+    .header-desc {
+      font-size: 16px; color: var(--muted); max-width: 700px; line-height: 1.6;
+    }
+
+    .header-badges {
+      margin-top: 16px; display: flex; gap: 8px; flex-wrap: wrap;
+    }
+
+    .badge {
+      padding: 4px 12px; border-radius: 14px; font-size: 12px; font-weight: 600;
+      letter-spacing: 0.3px; display: inline-flex; align-items: center; gap: 6px;
+    }
+
+    .badge.be { background: #f0fdf4; border: 1px solid var(--green-border); color: #166534; }
+    .badge.phase { background: var(--brand-light); border: 1px solid var(--brand); color: var(--brand); }
+    .badge.shared { background: var(--amber-bg); border: 1px solid var(--amber-border); color: var(--amber); }
+
+    /* ── PROGRESS BAR ── */
+    .progress-section {
+      max-width: 860px; margin: 0 auto; padding: 20px 32px 0;
+    }
+
+    .progress-track {
+      width: 100%; height: 10px; background: var(--border); border-radius: 6px; overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%; background: linear-gradient(90deg, var(--green), #22c55e);
+      border-radius: 6px; width: 0%; transition: width 0.4s ease;
+    }
+
+    .progress-label {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 8px; font-size: 14px; color: var(--muted);
+    }
+
+    .progress-label strong { color: var(--green); font-weight: 700; }
+
+    /* ── CONTENT ── */
+    .content {
+      max-width: 860px; margin: 0 auto; padding: 28px 32px 80px;
+    }
+
+    /* ── STATUS BOX ── */
+    .status-box {
+      background: var(--red-bg); border: 1px solid var(--red-border);
+      border-left: 4px solid var(--red); border-radius: 0 10px 10px 0;
+      padding: 16px 20px; margin-bottom: 28px;
+    }
+
+    .status-box h3 {
+      font-size: 15px; font-weight: 700; color: var(--red);
+      margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+
+    .status-box ul { list-style: none; padding: 0; }
+
+    .status-box li {
+      padding: 6px 0; font-size: 15px; color: var(--body); line-height: 1.6;
+      display: flex; align-items: flex-start; gap: 8px;
+    }
+
+    .status-box li::before {
+      content: '\2717'; color: var(--red); font-weight: 700; flex-shrink: 0; margin-top: 1px;
+    }
+
+    .status-box li.done::before { content: '\2713'; color: var(--green); }
+    .status-box li.done { color: var(--muted); text-decoration: line-through; }
+
+    /* ── IMPL STEP ── */
+    .impl-step {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      margin-bottom: 14px; overflow: hidden; transition: border-color 0.2s;
+    }
+
+    .impl-step.completed { border-color: var(--green-border); background: var(--green-bg); }
+
+    .impl-step-header {
+      display: flex; align-items: flex-start; gap: 14px; padding: 18px 22px; cursor: pointer;
+    }
+
+    .impl-checkbox {
+      margin-top: 3px; flex-shrink: 0; width: 20px; height: 20px;
+      accent-color: var(--green); cursor: pointer;
+    }
+
+    .impl-step-body { flex: 1; }
+
+    .impl-step-num {
+      display: inline-block; background: var(--brand-light); color: var(--brand);
+      font-weight: 700; font-size: 12px; padding: 2px 10px; border-radius: 12px;
+      margin-bottom: 6px; letter-spacing: 0.3px;
+    }
+
+    .impl-step.completed .impl-step-num { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+
+    .impl-step-title {
+      font-size: 17px; font-weight: 600; color: var(--ink); margin-bottom: 4px; line-height: 1.4;
+    }
+
+    .impl-step.completed .impl-step-title { text-decoration: line-through; color: var(--muted); }
+
+    .impl-step-desc {
+      font-size: 15px; color: var(--body); line-height: 1.6;
+    }
+
+    .impl-step.completed .impl-step-desc { color: var(--faint); }
+
+    .impl-step-meta {
+      margin-top: 8px; font-size: 13px; color: var(--muted);
+      display: flex; gap: 14px; flex-wrap: wrap;
+    }
+
+    .impl-step-meta span { display: flex; align-items: center; gap: 4px; }
+    .impl-step-meta code { font-family: 'JetBrains Mono', monospace; font-size: 12px; background: var(--surface); padding: 2px 6px; border-radius: 4px; color: var(--ink); }
+
+    /* ── CODE BLOCK ── */
+    .code-block {
+      margin: 0; padding: 16px 20px; background: var(--code-bg);
+      font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--code-text);
+      line-height: 1.6; overflow-x: auto; border-top: 1px solid #313244;
+    }
+
+    .code-block .c { color: var(--code-comment); }
+    .code-block .k { color: var(--code-keyword); }
+    .code-block .s { color: var(--code-string); }
+    .code-block .f { color: var(--code-fn); }
+    .code-block .add { color: var(--code-added); }
+    .code-block .del { color: var(--code-removed); text-decoration: line-through; }
+    .code-block .line { display: block; min-height: 1.6em; }
+
+    /* ── BEFORE / AFTER ── */
+    .diff-section { padding: 0 22px 18px; }
+
+    .diff-label {
+      font-size: 12px; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;
+    }
+
+    .diff-label.before { color: var(--red); }
+    .diff-label.after { color: var(--green); }
+
+    /* ── FOOTER ── */
+    .page-footer {
+      max-width: 860px; margin: 0 auto; padding: 20px 32px;
+      border-top: 1px solid var(--border); font-size: 14px;
+      color: var(--muted); text-align: center; line-height: 1.6;
+    }
+
+    .page-footer a { color: var(--brand); text-decoration: none; }
+
+    @media print {
+      body { background: white; }
+      .impl-step { break-inside: avoid; }
+      .code-block { font-size: 11px; }
+    }
+
+    @media (max-width: 640px) {
+      .header-inner { padding: 24px 16px 20px; }
+      .header-top { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .breadcrumb { text-align: left; }
+      .header-title { font-size: 20px; }
+      .content, .progress-section { padding-left: 16px; padding-right: 16px; }
+      .impl-step-header { padding: 14px 16px; }
+      .code-block { font-size: 12px; padding: 12px 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="page-header">
+    <div class="header-inner">
+      <div class="header-top">
+        <div class="logo-area">
+          <div class="logo-mark">US</div>
+          <div>
+            <div class="logo-text">Unique Sorter</div>
+            <div class="logo-sub">CRM Application</div>
+          </div>
+        </div>
+        <div class="breadcrumb">
+          <a href="meeting-requirements-27june-split.html">Meeting Requirements</a> &rsaquo;
+          Backend &rsaquo; <strong>Step 1 — Admin Full Access</strong>
+        </div>
+      </div>
+      <h1 class="header-title">Step 1 — Give Admin Full Access to All Enquiry Forms</h1>
+      <p class="header-desc">Backend implementation tracker. Admin role bypasses ownership checks; non-admin users only see and edit enquiries they created. 7 steps to implement, each with exact file, line number, and code diff.</p>
+      <div class="header-badges">
+        <span class="badge be">&#9679; Backend only</span>
+        <span class="badge phase">Phase 1 · Delivered (refinement)</span>
+        <span class="badge shared">Shared with Frontend</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="progress-section">
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-label">
+      <span>Implementation progress</span>
+      <strong><span id="progressCount">0</span> / 7 steps complete</strong>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ── CURRENT STATUS ── -->
+    <div class="status-box">
+      <h3>Current Status — What's Broken Today</h3>
+      <ul>
+        <li><strong>GET /api/v1/enquiry</strong> (list) — returns ALL enquiries to ANY authenticated user. No ownership filter. Any user sees every enquiry in the system.</li>
+        <li><strong>POST /api/v1/enquiry</strong> (create) — does not store <code>createdBy</code>. There is no way to know who created an enquiry.</li>
+        <li><strong>GET /api/v1/enquiry/[id]</strong> — any user can read any enquiry by ID. No ownership check.</li>
+        <li><strong>PATCH /api/v1/enquiry/[id]</strong> — any user can edit any enquiry. No ownership check.</li>
+        <li class="done"><strong>DELETE /api/v1/enquiry/[id]</strong> — already uses <code>verifyAdmin()</code>. Correct. No change needed.</li>
+      </ul>
+    </div>
+
+    <!-- ═══ STEP 1.1 ═══ -->
+    <div class="impl-step" id="step-1-1">
+      <div class="impl-step-header">
+        <input type="checkbox" class="impl-checkbox" data-step="1">
+        <div class="impl-step-body">
+          <span class="impl-step-num">1.1</span>
+          <div class="impl-step-title">Set <code>createdBy</code> on enquiry create</div>
+          <div class="impl-step-desc">Every new enquiry must record who created it. Add <code>createdBy</code> (UID) and <code>createdByName</code> (phone) to the <code>.add()</code> payload in POST.</div>
+          <div class="impl-step-meta">
+            <span>File: <code>unique-backend/src/app/api/v1/enquiry/route.js</code></span>
+            <span>Line: 45</span>
+          </div>
+        </div>
+      </div>
+      <div class="diff-section">
+        <div class="diff-label before">Before (line 45)</div>
+<pre class="code-block"><span class="line"><span class="del">    const docRef = await adminDb.collection('enquiry').add({</span></span><span class="line"><span class="del">      ...cleanBody,</span></span><span class="line"><span class="del">      createdAt: FieldValue.serverTimestamp(),</span></span><span class="line"><span class="del">    });</span></span></pre>
+        <div class="diff-label after" style="margin-top:12px;">After</div>
+<pre class="code-block"><span class="line">    const docRef = await adminDb.collection('enquiry').add({</span><span class="line">      ...cleanBody,</span><span class="line"><span class="add">      createdBy: auth.user.uid,</span></span><span class="line"><span class="add">      createdByName: auth.user.phone,</span></span><span class="line">      createdAt: FieldValue.serverTimestamp(),</span><span class="line">    });</span></span></pre>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 1.2 ═══ -->
+    <div class="impl-step" id="step-1-2">
+      <div class="impl-step-header">
+        <input type="checkbox" class="impl-checkbox" data-step="2">
+        <div class="impl-step-body">
+          <span class="impl-step-num">1.2</span>
+          <div class="impl-step-title">Filter enquiry list by role</div>
+          <div class="impl-step-desc">Admin sees all enquiries. Non-admin users see only enquiries where <code>createdBy === their uid</code>. Add a <code>.where()</code> clause conditionally.</div>
+          <div class="impl-step-meta">
+            <span>File: <code>unique-backend/src/app/api/v1/enquiry/route.js</code></span>
+            <span>Line: 18</span>
+          </div>
+        </div>
+      </div>
+      <div class="diff-section">
+        <div class="diff-label before">Before (line 18)</div>
+<pre class="code-block"><span class="line"><span class="del">    const snapshot = await adminDb</span></span><span class="line"><span class="del">      .collection('enquiry')</span></span><span class="line"><span class="del">      .orderBy('createdAt', 'desc')</span></span><span class="line"><span class="del">      .limit(limit)</span></span><span class="line"><span class="del">      .get();</span></span></pre>
+        <div class="diff-label after" style="margin-top:12px;">After</div>
+<pre class="code-block"><span class="line">    <span class="k">let</span> query = adminDb.collection(<span class="s">'enquiry'</span>);</span><span class="line"></span><span class="line">    <span class="c">// Non-admin users: only see their own enquiries</span></span><span class="line">    <span class="k">if</span> (auth.user.role !== <span class="s">'ADMIN'</span>) {</span><span class="line">      query = query.where(<span class="s">'createdBy'</span>, <span class="s">'=='</span>, auth.user.uid);</span><span class="line">    }</span><span class="line"></span><span class="line">    <span class="k">const</span> snapshot = <span class="k">await</span> query</span><span class="line">      .orderBy(<span class="s">'createdAt'</span>, <span class="s">'desc'</span>)</span><span class="line">      .limit(limit)</span><span class="line">      .get();</span></span></pre>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 1.3 ═══ -->
+    <div class="impl-step" id="step-1-3">
+      <div class="impl-step-header">
+        <input type="checkbox" class="impl-checkbox" data-step="3">
+        <div class="impl-step-body">
+          <span class="impl-step-num">1.3</span>
+          <div class="impl-step-title">Ownership guard on GET by ID</div>
+          <div class="impl-step-desc">After fetching an enquiry by ID, check if the caller is allowed to see it. Admin can see any. Non-admin can only see their own. Return 403 otherwise.</div>
+          <div class="impl-step-meta">
+            <span>File: <code>unique-backend/src/app/api/v1/enquiry/[id]/route.js</code></span>
+            <span>Line: 49</span>
+          </div>
+        </div>
+      </div>
+      <div class="diff-section">
+        <div class="diff-label before">Before (line 49)</div>
+<pre class="code-block"><span class="line"><span class="del">    const d = doc.data();</span></span><span class="line"><span class="del">    return success({ data: { id: doc.id, ...d, ... } });</span></span></pre>
+        <div class="diff-label after" style="margin-top:12px;">After</div>
+<pre class="code-block"><span class="line">    <span class="k">const</span> d = doc.data();</span><span class="line"></span><span class="line">    <span class="c">// Ownership check: non-admin can only read their own</span></span><span class="line">    <span class="k">if</span> (auth.user.role !== <span class="s">'ADMIN'</span> && d.createdBy !== auth.user.uid) {</span><span class="line">      <span class="k">return</span> error(<span class="s">'Forbidden — you can only view your own enquiries'</span>, 403);</span><span class="line">    }</span><span class="line"></span><span class="line">    <span class="k">return</span> success({ data: { id: doc.id, ...d, ... } });</span></span></pre>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 1.4 ═══ -->
+    <div class="impl-step" id="step-1-4">
+      <div class="impl-step-header">
+        <input type="checkbox" class="impl-checkbox" data-step="4">
+        <div class="impl-step-body">
+          <span class="impl-step-num">1.4</span>
+          <div class="impl-step-title">Ownership guard on PATCH</div>
+          <div class="impl-step-desc">Same ownership check on the update endpoint. Admin can edit any enquiry. Non-admin can only edit their own. Return 403 otherwise.</div>
+          <div class="impl-step-meta">
+            <span>File: <code>unique-backend/src/app/api/v1/enquiry/[id]/route.js</code></span>
+            <span>Line: 70</span>
+          </div>
+        </div>
+      </div>
+      <div class="diff-section">
+        <div class="diff-label before">Before (line 70)</div>
+<pre class="code-block"><span class="line"><span class="del">    const snap = await docRef.get();</span></span><span class="line"><span class="del">    if (!snap.exists) return error('Not found', 404);</span></span><span class="line"><span class="del">    const changes = diffFields(snap.data(), fields);</span></span></pre>
+        <div class="diff-label after" style="margin-top:12px;">After</div>
+<pre class="code-block"><span class="line">    <span class="k">const</span> snap = <span class="k">await</span> docRef.get();</span><span class="line">    <span class="k">if</span> (!snap.exists) <span class="k">return</span> error(<span class="s">'Not found'</span>, 404);</span><span class="line"></span><span class="line">    <span class="c">// Ownership check: non-admin can only edit their own</span></span><span class="line">    <span class="k">if</span> (auth.user.role !== <span class="s">'ADMIN'</span> && snap.data().createdBy !== auth.user.uid) {</span><span class="line">      <span class="k">return</span> error(<span class="s">'Forbidden — you can only edit your own enquiries'</span>, 403);</span><span class="line">    }</span><span class="line"></span><span class="line">    <span class="k">const</span> changes = diffFields(snap.data(), fields);</span></span></pre>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 1.5 ═══ -->
+    <div class="impl-step" id="step-1-5">
+      <div class="impl-step-header">
+        <input type="checkbox" class="impl-checkbox" data-step="5">
+        <div class="impl-step-body">
+          <span class="impl-step-num">1.5</span>
+          <div class="impl-step-title">Create Firestore composite index</div>
+          <div class="impl-step-desc">The filtered query in step 1.2 (<code>.where('createdBy', '==', ...).orderBy('createdAt', 'desc')</code>) requires a composite index. Without it, Firestore returns an error with a link to auto-create it. Create it proactively to avoid runtime errors.</div>
+          <div class="impl-step-meta">
+            <span>Collection: <code>enquiry</code></span>
+            <span>Fields: <code>createdBy</code> ASC + <code>createdAt</code> DESC</span>
+          </div>
+        </div>
+      </div>
+      <div class="diff-section">
+        <div class="diff-label">How to create the index</div>
+<pre class="code-block"><span class="line"><span class="c">// Option A: Firebase Console</span></span><span class="line"><span class="c">// Firestore Database → Indexes → Composite → Add</span></span><span class="line"><span class="c">//   Collection: enquiry</span></span><span class="line"><span class="c">//   Field 1: createdBy  (Ascending)</span></span><span class="line"><span class="c">//   Field 2: createdAt   (Descending)</span></span><span class="line"><span class="c">//   Query scope: Collection</span></span><span class="line"></span><span class="line"><span class="c">// Option B: Let Firestore auto-create it</span></span><span class="line"><span class="c">// Run the filtered query once as a non-admin user.</span></span><span class="line"><span class="c">// Firestore returns an error with a URL — click it to</span></span><span class="line"><span class="c">// auto-create the index. Takes 2-5 minutes to build.</span></span><span class="line"></span><span class="line"><span class="c">// Option C: firestore.indexes.json</span></span><span class="line">{</span><span class="line">  <span class="s">"indexes"</span>: [</span><span class="line">    {</span><span class="line">      <span class="s">"collectionGroup"</span>: <span class="s">"enquiry"</span>,</span><span class="line">      <span class="s">"queryScope"</span>: <span class="s">"COLLECTION"</span>,</span><span class="line">      <span class="s">"fields"</span>: [</span><span class="line">        { <span class="s">"fieldPath"</span>: <span class="s">"createdBy"</span>, <span class="s">"order"</span>: <span class="s">"ASCENDING"</span> },</span><span class="line">        { <span class="s">"fieldPath"</span>: <span class="s">"createdAt"</span>, <span class="s">"order"</span>: <span class="s">"DESCENDING"</span> }</span><span class="line">      ]</span><span class="line">    }</span><span class="line">  ]</span><span class="line">}</span></span></pre>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 1.6 ═══ -->
+    <div class="impl-step" id="step-1-6">
+      <div class="impl-step-header">
+        <input type="checkbox" class="impl-checkbox" data-step="6">
+        <div class="impl-step-body">
+          <span class="impl-step-num">1.6</span>
+          <div class="impl-step-title">Backfill <code>createdBy</code> on existing enquiries</div>
+          <div class="impl-step-desc">Existing enquiry documents have no <code>createdBy</code> field. After deploying steps 1.1–1.4, non-admin users will see ZERO existing enquiries (because <code>createdBy</code> is missing). Run a one-time migration to set <code>createdBy</code> on all old docs.</div>
+          <div class="impl-step-meta">
+            <span>Run: <code>node unique-backend/src/scripts/backfillCreatedBy.js</code></span>
+            <span>Type: one-time migration</span>
+          </div>
+        </div>
+      </div>
+      <div class="diff-section">
+        <div class="diff-label">Migration script</div>
+<pre class="code-block"><span class="line"><span class="c">// unique-backend/src/scripts/backfillCreatedBy.js</span></span><span class="line"><span class="k">import</span> { adminDb, adminAuth } <span class="k">from</span> <span class="s">'../lib/firebase-admin'</span>;</span><span class="line"></span><span class="line"><span class="k">async function</span> <span class="f">backfill</span>() {</span><span class="line">  <span class="k">const</span> snap = <span class="k">await</span> adminDb.collection(<span class="s">'enquiry'</span>).get();</span><span class="line">  <span class="k">const</span> adminUid = process.env.ADMIN_UID; <span class="c">// set in .env</span></span><span class="line"></span><span class="line">  <span class="k">let</span> count = 0;</span><span class="line">  <span class="k">for</span> (<span class="k">const</span> doc <span class="k">of</span> snap.docs) {</span><span class="line">    <span class="k">const</span> data = doc.data();</span><span class="line">    <span class="k">if</span> (!data.createdBy) {</span><span class="line">      <span class="k">await</span> doc.ref.update({</span><span class="line">        createdBy: adminUid,      <span class="c">// assign to admin</span></span><span class="line">        createdByName: <span class="s">'admin (backfilled)'</span>,</span><span class="line">      });</span><span class="line">      count++;</span><span class="line">    }</span><span class="line">  }</span><span class="line">  console.log(<span class="s">'Backfilled '</span> + count + <span class="s">' enquiries'</span>);</span><span class="line">}</span><span class="line"></span><span class="line"><span class="f">backfill</span>().then(() => process.exit(0));</span></span></pre>
+        <div class="diff-label" style="margin-top:10px;">Alternative: adjust the filter instead</div>
+<pre class="code-block"><span class="line"><span class="c">// If you don't want to run a migration, adjust step 1.2's</span></span><span class="line"><span class="c">// filter to also include docs where createdBy is missing:</span></span><span class="line"></span><span class="line"><span class="k">if</span> (auth.user.role !== <span class="s">'ADMIN'</span>) {</span><span class="line">  <span class="c">// Show own enquiries + unowned (legacy) enquiries</span></span><span class="line">  query = query.where(<span class="s">'createdBy'</span>, <span class="s">'in'</span>, [auth.user.uid, <span class="s">''</span>, <span class="s">'admin (backfilled)'</span>]);</span><span class="line">}</span></span></pre>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 1.7 ═══ -->
+    <div class="impl-step" id="step-1-7">
+      <div class="impl-step-header">
+        <input type="checkbox" class="impl-checkbox" data-step="7">
+        <div class="impl-step-body">
+          <span class="impl-step-num">1.7</span>
+          <div class="impl-step-title">Test: Admin sees all, User sees only own</div>
+          <div class="impl-step-desc">Verify the implementation with two tokens — one ADMIN, one USER. Run each scenario below and confirm the expected result.</div>
+          <div class="impl-step-meta">
+            <span>Method: <code>curl</code> or Postman</span>
+            <span>Need: 2 valid Firebase ID tokens (1 admin, 1 user)</span>
+          </div>
+        </div>
+      </div>
+      <div class="diff-section">
+        <div class="diff-label">Test scenarios</div>
+<pre class="code-block"><span class="line"><span class="c"># 1. Admin GET list → should return ALL enquiries</span></span><span class="line">curl -H <span class="s">"Authorization: Bearer $ADMIN_TOKEN"</span> \</span><span class="line">  localhost:3000/api/v1/enquiry</span><span class="line"><span class="c"># Expect: 200, all enquiries</span></span><span class="line"></span><span class="line"><span class="c"># 2. User GET list → should return ONLY their own</span></span><span class="line">curl -H <span class="s">"Authorization: Bearer $USER_TOKEN"</span> \</span><span class="line">  localhost:3000/api/v1/enquiry</span><span class="line"><span class="c"># Expect: 200, only enquiries where createdBy == user.uid</span></span><span class="line"></span><span class="line"><span class="c"># 3. User GET another user's enquiry by ID → 403</span></span><span class="line">curl -H <span class="s">"Authorization: Bearer $USER_TOKEN"</span> \</span><span class="line">  localhost:3000/api/v1/enquiry/OTHER_USER_ENQUIRY_ID</span><span class="line"><span class="c"># Expect: 403 Forbidden</span></span><span class="line"></span><span class="line"><span class="c"># 4. User PATCH another user's enquiry → 403</span></span><span class="line">curl -X PATCH -H <span class="s">"Authorization: Bearer $USER_TOKEN"</span> \</span><span class="line">  -H <span class="s">"Content-Type: application/json"</span> \</span><span class="line">  -d <span class="s">'{"customerName":"Hacked"}'</span> \</span><span class="line">  localhost:3000/api/v1/enquiry/OTHER_USER_ENQUIRY_ID</span><span class="line"><span class="c"># Expect: 403 Forbidden</span></span><span class="line"></span><span class="line"><span class="c"># 5. Admin GET/PATCH any enquiry → 200</span></span><span class="line">curl -H <span class="s">"Authorization: Bearer $ADMIN_TOKEN"</span> \</span><span class="line">  localhost:3000/api/v1/enquiry/ANY_ID</span><span class="line"><span class="c"># Expect: 200, full access</span></span><span class="line"></span><span class="line"><span class="c"># 6. User DELETE any enquiry → 403 (already guarded)</span></span><span class="line">curl -X DELETE -H <span class="s">"Authorization: Bearer $USER_TOKEN"</span> \</span><span class="line">  localhost:3000/api/v1/enquiry/ANY_ID</span><span class="line"><span class="c"># Expect: 403 Admin access required</span></span></pre>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="page-footer">
+    Unique Sorter CRM &mdash; Step 1 Backend Implementation Tracker &middot; <a href="meeting-requirements-27june-split.html">&larr; Back to split view</a><br>
+    7 steps &middot; Files: <code>enquiry/route.js</code>, <code>enquiry/[id]/route.js</code>, Firestore console &middot; Phase 1 refinement
+  </footer>
+
+  <script>
+    const checkboxes = document.querySelectorAll('.impl-checkbox');
+    const progressFill = document.getElementById('progressFill');
+    const progressCount = document.getElementById('progressCount');
+
+    function updateProgress() {
+      const total = checkboxes.length;
+      const checked = document.querySelectorAll('.impl-checkbox:checked').length;
+      const pct = (checked / total) * 100;
+      progressFill.style.width = pct + '%';
+      progressCount.textContent = checked;
+
+      checkboxes.forEach(cb => {
+        const step = cb.closest('.impl-step');
+        step.classList.toggle('completed', cb.checked);
+      });
+
+      // Save to localStorage
+      const state = {};
+      checkboxes.forEach(cb => { state[cb.dataset.step] = cb.checked; });
+      localStorage.setItem('step1-backend-progress', JSON.stringify(state));
+    }
+
+    // Restore from localStorage
+    const saved = JSON.parse(localStorage.getItem('step1-backend-progress') || '{}');
+    checkboxes.forEach(cb => {
+      if (saved[cb.dataset.step]) cb.checked = true;
+      cb.addEventListener('change', updateProgress);
+    });
+
+    updateProgress();
+  </script>
+
+</body>
+</html>

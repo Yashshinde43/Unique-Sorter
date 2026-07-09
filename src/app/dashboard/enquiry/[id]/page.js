@@ -872,6 +872,7 @@ export default function EnquiryDetailPage() {
                           Edit
                         </button>
                         <div className="eqd-more-sep" />
+                        {isAdminUser && (
                         <button className="eqd-more-item eqd-more-item--danger" onClick={() => { setConfirmDel(true); setEditing(false); setShowMore(false); }}>
                           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
                             <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
@@ -879,6 +880,7 @@ export default function EnquiryDetailPage() {
                           </svg>
                           Delete
                         </button>
+                        )}
                       </div>
                     </>
                   )}

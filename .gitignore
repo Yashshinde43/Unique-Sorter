@@ -39,3 +39,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# secrets — never commit
+*-firebase-adminsdk-*.json
+*.service-account-key.json
+
+# graphify generated output
+/graphify-out/
+
+# playwright
+/.playwright-mcp/
+
+# claude local settings
+/.claude/settings.local.json

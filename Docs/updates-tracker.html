@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unique Sorter CRM — Development Roadmap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --ink: #1a1a2e;
+      --body: #3d3d5c;
+      --muted: #7a7a9e;
+      --faint: #b0b0c8;
+      --border: #e2e2ef;
+      --surface: #f5f5fa;
+      --card: #ffffff;
+      --brand: #1A37AA;
+      --brand-light: #e8ecfa;
+      --brand-glow: rgba(26, 55, 170, 0.06);
+      --green: #16a34a;
+      --green-bg: #f0fdf4;
+      --amber: #ca8a04;
+      --amber-bg: #fefce8;
+      --red: #dc2626;
+      --red-bg: #fef2f2;
+      --blue-bg: #eff6ff;
+      --purple: #7c3aed;
+      --purple-bg: #f5f3ff;
+      --teal: #0d9488;
+      --teal-bg: #f0fdfa;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      color: var(--body);
+      background: var(--surface);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── HEADER ── */
+    .page-header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 40px 32px 32px;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-mark {
+      width: 44px;
+      height: 44px;
+      background: var(--brand);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-text {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 20px;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .logo-sub {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-top: 1px;
+    }
+
+    .doc-date {
+      text-align: right;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .doc-date strong {
+      color: var(--body);
+      font-weight: 600;
+    }
+
+    .header-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 28px;
+      color: var(--ink);
+      font-weight: 700;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .header-desc {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 700px;
+      line-height: 1.6;
+    }
+
+    /* ── HOW TO READ ── */
+    .how-to-read {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 24px 32px 0;
+    }
+
+    .how-to-read-box {
+      background: var(--brand-glow);
+      border: 1px solid var(--brand-light);
+      border-radius: 10px;
+      padding: 20px 24px;
+      font-size: 14px;
+      color: var(--body);
+      line-height: 1.7;
+    }
+
+    .how-to-read-box strong {
+      color: var(--brand);
+    }
+
+    .how-to-read-box .read-title {
+      font-weight: 700;
+      color: var(--ink);
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    /* ── PROGRESS BAR ── */
+    .progress-section {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 24px 32px;
+    }
+
+    .progress-track {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      position: relative;
+    }
+
+    .progress-phase {
+      flex: 1;
+      text-align: center;
+      position: relative;
+      padding: 14px 8px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+      background: var(--card);
+      border: 1px solid var(--border);
+      margin-right: -1px;
+    }
+
+    .progress-phase:first-child { border-radius: 8px 0 0 8px; }
+    .progress-phase:last-child { border-radius: 0 8px 8px 0; margin-right: 0; }
+
+    .progress-phase .phase-num {
+      display: block;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 2px;
+    }
+
+    .progress-phase .phase-items {
+      font-size: 11px;
+      color: var(--faint);
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    .progress-phase.p1 { border-bottom: 3px solid var(--red); }
+    .progress-phase.p2 { border-bottom: 3px solid var(--amber); }
+    .progress-phase.p3 { border-bottom: 3px solid var(--brand); }
+    .progress-phase.p4 { border-bottom: 3px solid var(--green); }
+    .progress-phase.p5 { border-bottom: 3px solid var(--teal); }
+    .progress-phase.p6 { border-bottom: 3px solid var(--purple); }
+
+    /* ── CONTENT ── */
+    .content {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 0 32px 80px;
+    }
+
+    /* ── PHASE BLOCK ── */
+    .phase {
+      margin-bottom: 48px;
+    }
+
+    .phase-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 8px;
+    }
+
+    .phase-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      color: white;
+      font-weight: 800;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .phase-badge.p1 { background: var(--red); }
+    .phase-badge.p2 { background: var(--amber); }
+    .phase-badge.p3 { background: var(--brand); }
+    .phase-badge.p4 { background: var(--green); }
+    .phase-badge.p5 { background: var(--teal); }
+    .phase-badge.p6 { background: var(--purple); }
+
+    .phase-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 20px;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .phase-why {
+      margin-left: 52px;
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+      line-height: 1.6;
+    }
+
+    /* ── STEP CARDS ── */
+    .step-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 12px;
+      margin-left: 52px;
+      position: relative;
+      transition: box-shadow 0.2s ease;
+    }
+
+    .step-card:hover {
+      box-shadow: 0 2px 12px rgba(26, 55, 170, 0.06);
+    }
+
+    /* connector line */
+    .step-card::before {
+      content: '';
+      position: absolute;
+      left: -27px;
+      top: 0;
+      bottom: -12px;
+      width: 2px;
+      background: var(--border);
+    }
+
+    .step-card:last-child::before {
+      bottom: 50%;
+    }
+
+    .step-card::after {
+      content: '';
+      position: absolute;
+      left: -32px;
+      top: 24px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 2px solid var(--border);
+    }
+
+    .step-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .step-number {
+      background: var(--surface);
+      color: var(--ink);
+      font-weight: 700;
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      white-space: nowrap;
+    }
+
+    .step-body { flex: 1; }
+
+    .step-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 4px;
+      line-height: 1.4;
+    }
+
+    .step-desc {
+      font-size: 14px;
+      color: var(--body);
+      line-height: 1.65;
+    }
+
+    .step-desc strong {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    /* ── WHAT / WHY boxes inside cards ── */
+    .what-box {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .what-item {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .what-item.current {
+      background: var(--red-bg);
+      border: 1px solid #fecaca;
+    }
+
+    .what-item.current .what-label {
+      color: var(--red);
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 3px;
+    }
+
+    .what-item.expected {
+      background: var(--green-bg);
+      border: 1px solid #bbf7d0;
+    }
+
+    .what-item.expected .what-label {
+      color: var(--green);
+      font-weight: 600;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 3px;
+    }
+
+    /* ── NOTE BOX ── */
+    .note-box {
+      background: var(--brand-glow);
+      border: 1px solid var(--brand-light);
+      border-left: 3px solid var(--brand);
+      border-radius: 0 8px 8px 0;
+      padding: 12px 16px;
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--body);
+      line-height: 1.6;
+    }
+
+    .note-box strong {
+      color: var(--brand);
+    }
+
+    /* ── ARROW CONNECTOR between phases ── */
+    .phase-connector {
+      text-align: center;
+      margin: -24px 0 24px 52px;
+      color: var(--faint);
+      font-size: 20px;
+      letter-spacing: 4px;
+    }
+
+    /* ── FOOTER ── */
+    .page-footer {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 24px 32px;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* ── PRINT ── */
+    @media print {
+      body { background: white; }
+      .page-header { border-bottom: 2px solid var(--ink); }
+      .step-card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+      .progress-section { display: none; }
+    }
+
+    /* ── MOBILE ── */
+    @media (max-width: 640px) {
+      .header-inner { padding: 24px 16px 20px; }
+      .header-top { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .doc-date { text-align: left; }
+      .header-title { font-size: 22px; }
+      .content { padding: 0 16px 60px; }
+      .how-to-read { padding: 16px 16px 0; }
+      .progress-section { padding: 16px; overflow-x: auto; }
+      .progress-track { min-width: 560px; }
+      .step-card { margin-left: 24px; padding: 16px; }
+      .phase-why { margin-left: 24px; }
+      .step-card::before { left: -15px; }
+      .step-card::after { left: -20px; }
+      .phase-connector { margin-left: 24px; }
+      .what-box { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="page-header">
+    <div class="header-inner">
+      <div class="header-top">
+        <div class="logo-area">
+          <div class="logo-mark">US</div>
+          <div>
+            <div class="logo-text">Unique Sorter</div>
+            <div class="logo-sub">CRM Application</div>
+          </div>
+        </div>
+        <div class="doc-date">
+          <strong>Document Date:</strong> 27 June 2026<br>
+          Location: Raipur, Chhattisgarh
+        </div>
+      </div>
+      <h1 class="header-title">Development Roadmap &mdash; Step-by-Step Updates</h1>
+      <p class="header-desc">This document lists all 15 changes requested for the CRM app, arranged in the <strong>correct order a developer should follow</strong>. Each phase builds on the previous one. Start from Phase 1 and go down.</p>
+
+    </div>
+  </header>
+
+  <!-- HOW TO READ -->
+  <div class="how-to-read">
+    <div class="how-to-read-box">
+      <div class="read-title">How to read this document</div>
+      The updates are arranged in <strong>5 phases</strong>, numbered from Phase 1 to Phase 5. Each phase must be completed before moving to the next one, because later features depend on earlier ones. Within each phase, the steps (Step 1, Step 2, etc.) can be done in any order. The <strong>"Why do this first?"</strong> note under each phase explains the reason for the ordering.
+    </div>
+  </div>
+
+  <!-- PROGRESS BAR -->
+  <div class="progress-section">
+    <div class="progress-track">
+      <div class="progress-phase p1">
+        <span class="phase-num">1</span>
+        Permissions &amp; Access
+        <span class="phase-items">3 steps</span>
+      </div>
+      <div class="progress-phase p2">
+        <span class="phase-num">2</span>
+        Remove &amp; Add Fields
+        <span class="phase-items">3 steps</span>
+      </div>
+      <div class="progress-phase p3">
+        <span class="phase-num">3</span>
+        Form Features
+        <span class="phase-items">4 steps</span>
+      </div>
+      <div class="progress-phase p4">
+        <span class="phase-num">4</span>
+        Quotation Fixes
+        <span class="phase-items">3 steps</span>
+      </div>
+      <div class="progress-phase p5">
+        <span class="phase-num">5</span>
+        Communication
+        <span class="phase-items">2 steps</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ═══════════════════════════════════════════
+         PHASE 1: Permissions & Access Control
+         ═══════════════════════════════════════════ -->
+    <div class="phase">
+      <div class="phase-header">
+        <div class="phase-badge p1">1</div>
+        <h2 class="phase-title">Permissions &amp; Access Control</h2>
+      </div>
+      <div class="phase-why">
+        <strong>Why do this first?</strong> &mdash; Permissions are the foundation. If we add new fields or features first, we won't know who can see or edit them. Setting up Admin vs. User access first means every future feature automatically respects the rules.
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 1</span>
+          <div class="step-body">
+            <div class="step-title">Give Admin Full Access to All Enquiry Forms</div>
+            <div class="step-desc">Admin users should be able to <strong>view, edit, add, and change any field</strong> in every enquiry form. No restrictions for Admin.</div>
+            <div class="what-box">
+              <div class="what-item current">
+                <div class="what-label">Currently</div>
+                Admin may not be able to edit some fields in enquiries created by other users.
+              </div>
+              <div class="what-item expected">
+                <div class="what-label">After Update</div>
+                Admin opens any enquiry and can change anything — name, status, amounts, all fields.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 2</span>
+          <div class="step-body">
+            <div class="step-title">Only Admin Can Delete Enquiry Forms</div>
+            <div class="step-desc">Remove the delete button/option for normal users. <strong>Only Admin</strong> should see and use the delete option on enquiry forms.</div>
+            <div class="what-box">
+              <div class="what-item current">
+                <div class="what-label">Currently</div>
+                Any user can delete enquiry forms, which is risky.
+              </div>
+              <div class="what-item expected">
+                <div class="what-label">After Update</div>
+                Normal users see no delete option. Only Admin can delete.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 3</span>
+          <div class="step-body">
+            <div class="step-title">Bank Details Field — Admin Only</div>
+            <div class="step-desc">The Bank Details field should be <strong>completely hidden</strong> from normal users. Only Admin users should be able to see and edit bank information.</div>
+            <div class="what-box">
+              <div class="what-item current">
+                <div class="what-label">Currently</div>
+                Everyone can see the bank details field.
+              </div>
+              <div class="what-item expected">
+                <div class="what-label">After Update</div>
+                Only Admin sees the bank details section. Other users see nothing there.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-connector">&#8595; &#8595; &#8595;</div>
+
+    <!-- ═══════════════════════════════════════════
+         PHASE 2: Remove & Add Fields (Database)
+         ═══════════════════════════════════════════ -->
+    <div class="phase">
+      <div class="phase-header">
+        <div class="phase-badge p2">2</div>
+        <h2 class="phase-title">Remove &amp; Add Fields</h2>
+      </div>
+      <div class="phase-why">
+        <strong>Why do this second?</strong> &mdash; Before building features on top of the form, we need to clean up the form structure itself. Remove what's not needed, add what's missing. This avoids building features on fields that will later be deleted.
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 4</span>
+          <div class="step-body">
+            <div class="step-title">Remove "Electronics" Field &amp; "Warranty" Field</div>
+            <div class="step-desc">These two fields are <strong>no longer needed</strong>. Delete them from the enquiry form and from the database. They should not appear anywhere in the app.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 5</span>
+          <div class="step-body">
+            <div class="step-title">Add New Fields: Immediate / No-Future / Follow-up</div>
+            <div class="step-desc">Add a new classification to enquiries with three options: <strong>Immediate</strong> (urgent enquiry), <strong>No-Future</strong> (not interested), and <strong>Follow-up</strong> (will check later). This should appear in both the enquiry form and in the table/grid view.</div>
+            <div class="what-box">
+              <div class="what-item current">
+                <div class="what-label">Currently</div>
+                No way to classify how urgent or important an enquiry is.
+              </div>
+              <div class="what-item expected">
+                <div class="what-label">After Update</div>
+                Every enquiry gets a tag: Immediate, No-Future, or Follow-up — visible in the form and in the list.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 6</span>
+          <div class="step-body">
+            <div class="step-title">Set Default Delivery Point to "Raipur"</div>
+            <div class="step-desc">When creating a new enquiry or quotation, the <strong>Point of Delivery should automatically show "Raipur"</strong>. The user can change it if needed. After selecting delivery point, they can choose the freight option.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-connector">&#8595; &#8595; &#8595;</div>
+
+    <!-- ═══════════════════════════════════════════
+         PHASE 3: Form Features & Logic
+         ═══════════════════════════════════════════ -->
+    <div class="phase">
+      <div class="phase-header">
+        <div class="phase-badge p3">3</div>
+        <h2 class="phase-title">Form Features &amp; Workflow</h2>
+      </div>
+      <div class="phase-why">
+        <strong>Why do this third?</strong> &mdash; Now that permissions are set and form fields are finalized, we can safely build features like log history, remarks, customer search, and stage alerts on top of the correct structure.
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 7</span>
+          <div class="step-body">
+            <div class="step-title">Remark Field — Make It Compulsory &amp; Keep History</div>
+            <div class="step-desc">The Remark field should be <strong>mandatory</strong> — users must write something. When a new remark is added, <strong>old remarks should NOT be deleted</strong>. All remarks should be saved as a timeline log, one below the other with date and time.</div>
+            <div class="note-box">
+              <strong>Example:</strong> If a user writes "Called customer, will follow up tomorrow" on June 25, and then adds "Customer confirmed the order" on June 27 — both entries should be visible as a log. The old one stays, the new one gets added on top.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 8</span>
+          <div class="step-body">
+            <div class="step-title">Enquiry Form — Complete Log History</div>
+            <div class="step-desc">Every change made to an enquiry form should be <strong>automatically recorded</strong> — what was changed, who changed it, and when. This lets Admin track the full history of every enquiry.</div>
+            <div class="what-box">
+              <div class="what-item current">
+                <div class="what-label">Currently</div>
+                No record of who changed what in an enquiry.
+              </div>
+              <div class="what-item expected">
+                <div class="what-label">After Update</div>
+                A "History" section shows: "Rahul changed Status from New to In Progress on 25 June at 3:30 PM" — for every change.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 9</span>
+          <div class="step-body">
+            <div class="step-title">Add Existing Customer in Customer Field</div>
+            <div class="step-desc">When creating a new enquiry, the user should be able to <strong>search and select an existing customer</strong> from a dropdown list, instead of typing the same customer's details again every time.</div>
+            <div class="what-box">
+              <div class="what-item current">
+                <div class="what-label">Currently</div>
+                User has to type the customer name and details manually every time, even for repeat customers.
+              </div>
+              <div class="what-item expected">
+                <div class="what-label">After Update</div>
+                User starts typing a customer name, a dropdown shows matching existing customers, and clicking one fills in all their details automatically.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 10</span>
+          <div class="step-body">
+            <div class="step-title">Stage Change Alerts</div>
+            <div class="step-desc">When someone changes the stage of an enquiry (e.g., from "New" to "Quotation Sent"), <strong>an alert or notification should appear</strong> so the team knows the enquiry has moved forward.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-connector">&#8595; &#8595; &#8595;</div>
+
+    <!-- ═══════════════════════════════════════════
+         PHASE 4: Quotation Page Fixes
+         ═══════════════════════════════════════════ -->
+    <div class="phase">
+      <div class="phase-header">
+        <div class="phase-badge p4">4</div>
+        <h2 class="phase-title">Quotation Page Fixes</h2>
+      </div>
+      <div class="phase-why">
+        <strong>Why do this fourth?</strong> &mdash; Quotation pages are generated from enquiry data. Now that the form structure and data are correct, we can safely fix how quotations look — logo, margins, and formatting.
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 11</span>
+          <div class="step-body">
+            <div class="step-title">Make Logo Same on Both Quotation Pages</div>
+            <div class="step-desc">The two quotation pages currently show <strong>different logos</strong>. Both pages should display the <strong>same company logo</strong> for a professional, consistent look.</div>
+            <div class="what-box">
+              <div class="what-item current">
+                <div class="what-label">Currently</div>
+                One quotation page has a different logo than the other.
+              </div>
+              <div class="what-item expected">
+                <div class="what-label">After Update</div>
+                Both quotation pages show the exact same Unique Sorter logo.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 12</span>
+          <div class="step-body">
+            <div class="step-title">Fix Left Margin — Content Should Start from the Left</div>
+            <div class="step-desc">The quotation content should start <strong>closer to the left side</strong> of the page, like how we type in Microsoft Word. Right now there is too much empty space on the left. Some space on the right side is fine.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 13</span>
+          <div class="step-body">
+            <div class="step-title">Fix Rupee Symbol &amp; Number Formatting in Detailed Quotation</div>
+            <div class="step-desc">In the detailed quotation view, the <strong>Rupee symbol (&#8377;)</strong> and number formatting is broken or inconsistent. All currency amounts should display properly with the &#8377; symbol and correct number format (e.g., &#8377;1,25,000).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase-connector">&#8595; &#8595; &#8595;</div>
+
+    <!-- ═══════════════════════════════════════════
+         PHASE 5: Communication & Snapshot
+         ═══════════════════════════════════════════ -->
+    <div class="phase">
+      <div class="phase-header">
+        <div class="phase-badge p5">5</div>
+        <h2 class="phase-title">Communication &amp; Snapshot</h2>
+      </div>
+      <div class="phase-why">
+        <strong>Why do this fifth?</strong> &mdash; Email and WhatsApp features work best when all the form data, quotation formatting, and permissions are already correct. Snapshot also makes more sense once the UI is finalized.
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 14</span>
+          <div class="step-body">
+            <div class="step-title">Email &amp; WhatsApp Options for Suppliers and Users</div>
+            <div class="step-desc">Add both <strong>Email and WhatsApp</strong> buttons/options so that suppliers and users can be contacted through either channel directly from the app.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-top">
+          <span class="step-number">Step 15</span>
+          <div class="step-body">
+            <div class="step-title">Snapshot Feature</div>
+            <div class="step-desc">Add a <strong>snapshot button</strong> that lets users capture and save the current state of a record or screen — like taking a photo of the data at that moment for reference.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="page-footer">
+    Unique Sorter CRM &mdash; Development Roadmap &middot; Prepared on 27 June 2026 &middot; Raipur, Chhattisgarh &middot; Total: 15 updates across 5 phases
+  </footer>
+
+</body>
+</html>

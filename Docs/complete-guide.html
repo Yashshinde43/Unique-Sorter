@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unique Sorter CRM - Complete Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --navy: #0c1a3a;
+      --ink: #111827;
+      --body: #374151;
+      --muted: #6b7280;
+      --faint: #9ca3af;
+      --border: #e5e7eb;
+      --surface: #f9fafb;
+      --card: #ffffff;
+      --accent: #1A37AA;
+      --accent-light: #eef2ff;
+      --accent-glow: rgba(26, 55, 170, 0.08);
+      --green: #059669;
+      --green-bg: #ecfdf5;
+      --amber: #d97706;
+      --amber-bg: #fffbeb;
+      --red: #dc2626;
+      --red-bg: #fef2f2;
+      --radius: 10px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--body);
+      background: var(--surface);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      position: fixed; top: 0; left: 0; bottom: 0;
+      width: 280px; background: var(--card);
+      border-right: 1px solid var(--border);
+      overflow-y: auto; z-index: 100;
+      padding: 24px 0;
+      transition: transform 0.3s ease;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    .sb-brand {
+      padding: 0 20px 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 12px;
+    }
+    .sb-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 17px; color: var(--navy);
+      letter-spacing: -0.3px;
+    }
+    .sb-logo span { color: var(--accent); }
+    .sb-tag {
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--faint); margin-top: 3px;
+    }
+
+    .nav-group { padding: 6px 14px; }
+    .nav-label {
+      font-size: 9.5px; font-weight: 700;
+      letter-spacing: 1.2px; text-transform: uppercase;
+      color: var(--faint); padding: 0 8px; margin-bottom: 5px;
+    }
+    .nav-link {
+      display: block; padding: 6px 12px; border-radius: 6px;
+      font-size: 13px; font-weight: 500;
+      color: var(--muted); text-decoration: none;
+      transition: all 0.15s; margin-bottom: 1px;
+    }
+    .nav-link:hover { color: var(--ink); background: var(--surface); }
+    .nav-link.active { color: var(--accent); background: var(--accent-light); font-weight: 600; }
+
+    .nav-divider {
+      height: 1px; background: var(--border);
+      margin: 10px 20px;
+    }
+
+    .hamburger {
+      display: none; position: fixed; top: 14px; left: 14px; z-index: 200;
+      width: 40px; height: 40px; border-radius: 8px;
+      background: var(--card); border: 1px solid var(--border);
+      cursor: pointer; align-items: center; justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .hamburger svg { color: var(--ink); }
+    .overlay {
+      display: none; position: fixed; inset: 0; z-index: 99;
+      background: rgba(0,0,0,0.3); backdrop-filter: blur(2px);
+    }
+
+    /* ── MAIN ── */
+    .main {
+      margin-left: 280px;
+      max-width: 840px;
+      padding: 44px 44px 120px;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #0c1a3a 0%, #1A37AA 70%, #2e4fd0 100%);
+      border-radius: 16px;
+      padding: 52px 44px;
+      margin-bottom: 44px;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at 80% 20%, rgba(255,255,255,0.07), transparent 60%),
+                  radial-gradient(circle at 10% 90%, rgba(255,255,255,0.04), transparent 50%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-block; font-size: 10.5px; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.1);
+      padding: 5px 14px; border-radius: 20px;
+      margin-bottom: 16px; position: relative;
+    }
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 34px; color: #fff;
+      line-height: 1.2; margin-bottom: 12px;
+      position: relative;
+    }
+    .hero p {
+      font-size: 15px; color: rgba(255,255,255,0.7);
+      max-width: 560px; line-height: 1.7;
+      position: relative;
+    }
+    .hero-links {
+      display: flex; gap: 10px; margin-top: 20px;
+      position: relative;
+    }
+    .hero-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 13px; font-weight: 600;
+      color: #fff; text-decoration: none;
+      background: rgba(255,255,255,0.15);
+      padding: 8px 16px; border-radius: 8px;
+      transition: background 0.2s;
+    }
+    .hero-link:hover { background: rgba(255,255,255,0.25); }
+
+    /* ── SECTIONS ── */
+    .sec { margin-bottom: 52px; }
+    .anchor { display: block; position: relative; top: -70px; visibility: hidden; }
+    .sec > h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 24px; color: var(--navy);
+      margin-bottom: 6px; line-height: 1.3;
+    }
+    .sec > .sub {
+      font-size: 13.5px; color: var(--muted);
+      margin-bottom: 24px;
+    }
+    h3 {
+      font-size: 16px; font-weight: 700;
+      color: var(--ink); margin: 28px 0 10px;
+    }
+    h3:first-child { margin-top: 0; }
+    p { margin-bottom: 12px; }
+
+    .divider { height: 1px; background: var(--border); margin: 36px 0; }
+
+    .section-header {
+      background: linear-gradient(135deg, var(--accent) 0%, #2e4fd0 100%);
+      border-radius: 12px; padding: 28px 32px;
+      margin-bottom: 36px; margin-top: 8px;
+    }
+    .section-header h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 22px; color: #fff; margin-bottom: 4px;
+    }
+    .section-header p {
+      font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 0;
+    }
+
+    /* ── TABLES ── */
+    .tw {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+      margin: 14px 0;
+    }
+    .tw table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .tw th {
+      text-align: left; padding: 9px 14px;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.8px; text-transform: uppercase;
+      color: var(--faint); background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .tw td {
+      padding: 9px 14px; border-bottom: 1px solid #f3f4f6;
+      color: var(--body);
+    }
+    .tw tr:last-child td { border-bottom: none; }
+    .tw .price { font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .tw .hl { background: #fffde7; }
+
+    /* ── CARDS ── */
+    .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .card:hover { border-color: #c7d2fe; box-shadow: 0 4px 16px var(--accent-glow); }
+    .card-icon {
+      width: 36px; height: 36px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 10px;
+    }
+    .card-icon.blue { background: var(--accent-light); color: var(--accent); }
+    .card-icon.green { background: var(--green-bg); color: var(--green); }
+    .card-icon.amber { background: var(--amber-bg); color: var(--amber); }
+    .card-icon.red { background: var(--red-bg); color: var(--red); }
+    .card-t { font-size: 13.5px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+    .card-d { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+    /* ── STEPS ── */
+    .steps { display: flex; flex-direction: column; gap: 14px; }
+    .step {
+      display: flex; gap: 14px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .step:hover { border-color: #c7d2fe; box-shadow: 0 4px 16px var(--accent-glow); }
+    .step-n {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--accent); color: #fff;
+      font-family: 'DM Serif Display', serif; font-size: 15px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-b { flex: 1; min-width: 0; }
+    .step-t { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+    .step-d { font-size: 12.5px; color: var(--muted); line-height: 1.65; }
+
+    /* ── CALLOUT ── */
+    .callout {
+      display: flex; gap: 12px;
+      border-radius: var(--radius); padding: 14px 16px;
+      margin: 14px 0;
+    }
+    .callout.info { background: var(--accent-light); border: 1px solid #c7d2fe; }
+    .callout.warn { background: var(--amber-bg); border: 1px solid #fde68a; }
+    .callout.green { background: var(--green-bg); border: 1px solid #a7f3d0; }
+    .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .callout-body { font-size: 13px; color: var(--ink); line-height: 1.65; }
+    .callout-body strong { font-weight: 700; }
+
+    /* ── FLOW ── */
+    .flow {
+      display: flex; align-items: center; gap: 0;
+      flex-wrap: wrap; margin: 16px 0; justify-content: center;
+    }
+    .flow-n {
+      background: var(--card); border: 1.5px solid var(--border);
+      border-radius: 8px; padding: 8px 14px;
+      font-size: 12px; font-weight: 600; color: var(--ink); text-align: center;
+    }
+    .flow-n.hl { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
+    .flow-a { color: var(--faint); font-size: 16px; padding: 0 5px; flex-shrink: 0; }
+
+    /* ── FIELDS ── */
+    .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
+    .field-item {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--body); padding: 6px 0;
+    }
+    .field-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); flex-shrink: 0;
+    }
+    .field-dot.opt { background: var(--faint); }
+
+    /* ── BADGES ── */
+    .badge {
+      display: inline-block; font-size: 10.5px; font-weight: 600;
+      padding: 2px 9px; border-radius: 10px; letter-spacing: 0.3px;
+    }
+    .badge.blue { background: var(--accent-light); color: var(--accent); }
+    .badge.green { background: var(--green-bg); color: var(--green); }
+    .badge.amber { background: var(--amber-bg); color: var(--amber); }
+
+    /* ── VS BOX ── */
+    .vs { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
+    .vs-box { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .vs-head { padding: 12px 16px; font-size: 13px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
+    .vs-head.a { background: var(--accent); }
+    .vs-head.b { background: var(--green); }
+    .vs-body { padding: 14px 16px; font-size: 12.5px; color: var(--body); line-height: 1.7; }
+    .vs-body ul { margin: 6px 0 0 16px; }
+    .vs-body li { margin-bottom: 4px; }
+
+    /* ── FOOTER ── */
+    .footer {
+      margin-top: 56px; padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 12px; color: var(--faint); text-align: center;
+    }
+
+    /* ── TOP BTN ── */
+    .top-btn {
+      position: fixed; bottom: 20px; right: 20px;
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--accent); color: #fff; border: none;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(26,55,170,0.25);
+      opacity: 0; transform: translateY(12px);
+      transition: opacity 0.3s, transform 0.3s; z-index: 50;
+    }
+    .top-btn.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .hamburger { display: flex; }
+      .overlay.open { display: block; }
+      .main { margin-left: 0; padding: 20px 16px 100px; }
+      .hero { padding: 32px 20px; border-radius: 12px; }
+      .hero h1 { font-size: 24px; }
+      .cards, .vs, .fields { grid-template-columns: 1fr; }
+      .flow { gap: 4px; }
+      .flow-n { font-size: 11px; padding: 7px 10px; }
+      .hero-links { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-brand">
+      <div class="sb-logo">Unique <span>Sorter</span></div>
+      <div class="sb-tag">Complete Guide</div>
+    </div>
+
+    <nav>
+      <div class="nav-group">
+        <div class="nav-label">Getting Started</div>
+        <a href="#overview" class="nav-link active">Overview</a>
+        <a href="#how-it-works" class="nav-link">How It Works</a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Access & Login</div>
+        <a href="#registration" class="nav-link">Registration</a>
+        <a href="#login" class="nav-link">Login (OTP / Password)</a>
+        <a href="#dashboard" class="nav-link">Dashboard</a>
+        <a href="#profile" class="nav-link">Your Profile</a>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <div class="nav-group">
+        <div class="nav-label">Enquiry Form (Detailed)</div>
+        <a href="#enquiry-form" class="nav-link">How the Form Works</a>
+        <a href="#price-table" class="nav-link">Price Table</a>
+        <a href="#state-changes" class="nav-link">When State Changes</a>
+        <a href="#model-size" class="nav-link">Model & Size</a>
+        <a href="#items-section" class="nav-link">Adding Items</a>
+        <a href="#immediate-vs-future" class="nav-link">Immediate vs Future</a>
+        <a href="#saving-flow" class="nav-link">Saving an Enquiry</a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Managing Enquiries</div>
+        <a href="#enquiry-mgmt" class="nav-link">View, Edit & Delete</a>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <div class="nav-group">
+        <div class="nav-label">Quotations (Detailed)</div>
+        <a href="#quot-overview" class="nav-link">How Quotations Work</a>
+        <a href="#single-page" class="nav-link">1-Page Quotation</a>
+        <a href="#detailed-page" class="nav-link">6-Page Quotation</a>
+        <a href="#1p-vs-6p" class="nav-link">1-Page vs 6-Page</a>
+        <a href="#auto-mapping" class="nav-link">Enquiry &rarr; Quotation</a>
+        <a href="#gst-calc" class="nav-link">GST Calculation</a>
+        <a href="#amount-words" class="nav-link">Amount in Words</a>
+        <a href="#pdf-generation" class="nav-link">PDF & Sharing</a>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <div class="nav-group">
+        <div class="nav-label">Roles & Admin</div>
+        <a href="#roles" class="nav-link">User vs Admin</a>
+        <a href="#settings" class="nav-link">Admin Settings</a>
+        <a href="#screen-access" class="nav-link">Screen Access</a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-label">Admin Features</div>
+        <a href="#csv-export" class="nav-link">CSV Export</a>
+        <a href="#bulk-actions" class="nav-link">Bulk Select & Delete</a>
+        <a href="#email-notifications" class="nav-link">Email Notifications</a>
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <div class="nav-group">
+        <div class="nav-label">Reference</div>
+        <a href="#defaults" class="nav-link">Default Values</a>
+        <a href="#bank-details" class="nav-link">Bank Details</a>
+        <a href="#pages-map" class="nav-link">All Pages</a>
+        <a href="#data-stored" class="nav-link">Data & Storage</a>
+        <a href="#faq" class="nav-link">FAQ</a>
+      </div>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- HERO -->
+    <div class="hero">
+      <div class="hero-badge">Complete Guide</div>
+      <h1>Unique Sorter CRM</h1>
+      <p>Everything you need to know &mdash; from submitting enquiries to generating quotations, managing users, and sharing professional PDFs. One document for the entire platform.</p>
+      <div class="hero-links">
+        <a href="#enquiry-form" class="hero-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Enquiry Guide
+        </a>
+        <a href="#quot-overview" class="hero-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          Quotation Guide
+        </a>
+        <a href="#roles" class="hero-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Admin Panel
+        </a>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!--  PART 1: GETTING STARTED                      -->
+    <!-- ══════════════════════════════════════════════ -->
+
+    <!-- OVERVIEW -->
+    <section class="sec">
+      <span class="anchor" id="overview"></span>
+      <h2>Overview</h2>
+      <p class="sub">What this platform does and who it is for.</p>
+
+      <p>The Unique Sorter CRM is a web-based platform that helps the team at <strong>Unique Sorter And Equipment Pvt. Ltd.</strong> manage their entire sales workflow in one place. Field engineers on site collect customer requirements and enter them into the system. The back-office team then reviews enquiries, generates quotations, and shares professional PDFs with clients.</p>
+
+      <div class="cards">
+        <div class="card">
+          <div class="card-icon blue"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+          <div class="card-t">Enquiry Management</div>
+          <div class="card-d">Field engineers capture customer requirements on site through a structured form. Track each enquiry with full details, items, pricing, and follow-up dates.</div>
+        </div>
+        <div class="card">
+          <div class="card-icon green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <div class="card-t">Quotation Generation</div>
+          <div class="card-d">Convert enquiries into professional, GST-compliant PDF quotations with one click. Share via WhatsApp or email instantly.</div>
+        </div>
+        <div class="card">
+          <div class="card-icon amber"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+          <div class="card-t">Team Collaboration</div>
+          <div class="card-d">All team members can view enquiries, edit details, and generate quotations. Admins get additional controls.</div>
+        </div>
+        <div class="card">
+          <div class="card-icon red"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <div class="card-t">Secure Access</div>
+          <div class="card-d">Phone OTP + Password login with admin approval. Per-user screen access control ensures data security.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- HOW IT WORKS -->
+    <section class="sec">
+      <span class="anchor" id="how-it-works"></span>
+      <h2>How It Works</h2>
+      <p class="sub">The complete flow from site visit to quotation delivery.</p>
+
+      <div class="flow">
+        <div class="flow-n">Engineer visits client</div>
+        <span class="flow-a">&rarr;</span>
+        <div class="flow-n hl">Enters enquiry in CRM</div>
+        <span class="flow-a">&rarr;</span>
+        <div class="flow-n">Saved to database</div>
+        <span class="flow-a">&rarr;</span>
+        <div class="flow-n hl">Team reviews enquiry</div>
+        <span class="flow-a">&rarr;</span>
+        <div class="flow-n">Generates quotation</div>
+        <span class="flow-a">&rarr;</span>
+        <div class="flow-n hl">PDF shared with customer</div>
+      </div>
+
+      <div class="steps" style="margin-top: 24px;">
+        <div class="step"><div class="step-n">1</div><div class="step-b"><div class="step-t">Field Engineer Submits an Enquiry</div><div class="step-d">A field engineer visits the client site, collects their requirements, and enters the details into the CRM through the enquiry form.</div></div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-b"><div class="step-t">Team Reviews the Enquiry</div><div class="step-d">Back-office team members log into the dashboard and see all submitted enquiries in a searchable table with full details.</div></div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-b"><div class="step-t">Generate a Quotation</div><div class="step-d">From any enquiry, generate a professional quotation with one click. The system auto-fills customer details, product info, pricing, and GST.</div></div></div>
+        <div class="step"><div class="step-n">4</div><div class="step-b"><div class="step-t">Download & Share the PDF</div><div class="step-d">Preview the quotation, download as PDF, or share directly via WhatsApp or Gmail.</div></div></div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- REGISTRATION -->
+    <section class="sec">
+      <span class="anchor" id="registration"></span>
+      <h2>Registration</h2>
+      <p class="sub">How to request access to the CRM.</p>
+
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-b"><div class="step-t">Go to the Registration Page</div><div class="step-d">Click "Register here" from the login page, or navigate directly to <code>/register</code>.</div></div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-b"><div class="step-t">Fill in Your Details</div><div class="step-d">Enter your <strong>full name</strong>, <strong>phone number</strong> (10 digits, starting with 6&ndash;9), choose your <strong>role</strong> (User or Admin), and set a <strong>password</strong>.</div></div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-b"><div class="step-t">Wait for Admin Approval</div><div class="step-d">Your request is submitted with <strong>pending</strong> status. You <strong>cannot login</strong> until an administrator approves your account from Settings.</div></div></div>
+        <div class="step"><div class="step-n">4</div><div class="step-b"><div class="step-t">Login After Approval</div><div class="step-d">Once approved, sign in using either OTP or password login.</div></div></div>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-icon">&#9888;&#65039;</span>
+        <div class="callout-body"><strong>No self-registration:</strong> Every new account requires admin approval. Users created directly by an admin from Settings are auto-approved immediately.</div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- LOGIN -->
+    <section class="sec">
+      <span class="anchor" id="login"></span>
+      <h2>Login (OTP or Password)</h2>
+      <p class="sub">Two ways to sign in &mdash; choose whichever is more convenient.</p>
+
+      <p>The login page has a <strong>toggle switch</strong> at the top to choose between OTP and Password login.</p>
+
+      <h3>Method 1: Phone + OTP</h3>
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-b"><div class="step-t">Enter Your Phone Number</div><div class="step-d">Type your 10-digit phone number. The country code +91 is added automatically.</div></div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-b"><div class="step-t">Receive OTP via SMS</div><div class="step-d">Click "Send OTP". A 6-digit code is sent to your phone.</div></div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-b"><div class="step-t">Enter the Code & Sign In</div><div class="step-d">Type the code into the 6 boxes (auto-advances). You can also paste the full code. Resend after 60 seconds if needed.</div></div></div>
+      </div>
+
+      <h3>Method 2: Phone/Email + Password</h3>
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-b"><div class="step-t">Switch to Password Tab</div><div class="step-d">Click the <strong>"Password"</strong> tab at the top of the login card.</div></div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-b"><div class="step-t">Enter Credentials</div><div class="step-d">Enter your <strong>phone number</strong> or <strong>email address</strong> in the first field, then your password.</div></div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-b"><div class="step-t">Click Sign In</div><div class="step-d">You are logged in instantly and redirected to the dashboard.</div></div></div>
+      </div>
+
+      <h3>Forgot Password?</h3>
+      <p>Click <strong>"Forgot Password?"</strong> below the password form. Enter your phone number &rarr; verify with OTP &rarr; set a new password (minimum 6 characters).</p>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- DASHBOARD -->
+    <section class="sec">
+      <span class="anchor" id="dashboard"></span>
+      <h2>Dashboard</h2>
+      <p class="sub">Your home base after logging in.</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Menu Item</th><th>What It Does</th><th>Access</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Dashboard</strong></td><td>Welcome screen with your name and role</td><td><span class="badge green">Everyone</span></td></tr>
+            <tr><td><strong>Enquiry</strong></td><td>View, search, filter, and manage all customer enquiries</td><td><span class="badge green">Everyone</span></td></tr>
+            <tr><td><strong>Quotations</strong></td><td>View all generated quotations, open details, download PDFs</td><td><span class="badge green">Everyone</span></td></tr>
+            <tr><td><strong>Settings</strong></td><td>User management, approvals, screen access configuration</td><td><span class="badge amber">Admin Only</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>On mobile, the sidebar collapses into a hamburger menu at the top-left corner.</p>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- PROFILE -->
+    <section class="sec">
+      <span class="anchor" id="profile"></span>
+      <h2>Your Profile</h2>
+      <p class="sub">View and edit your account information.</p>
+
+      <p>Click your <strong>avatar</strong> (top-right corner) and select <strong>"Profile"</strong>.</p>
+
+      <div class="fields">
+        <div class="field-item"><span class="field-dot"></span> Full Name (editable)</div>
+        <div class="field-item"><span class="field-dot"></span> Phone Number</div>
+        <div class="field-item"><span class="field-dot"></span> Role (User / Administrator)</div>
+        <div class="field-item"><span class="field-dot"></span> Member Since date</div>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">&#128274;</span>
+        <div class="callout-body">Phone number and role cannot be changed from the profile page. Contact an administrator if these need to be updated.</div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!--  PART 2: ENQUIRY FORM (DETAILED)              -->
+    <!-- ══════════════════════════════════════════════ -->
+
+    <div class="section-header">
+      <h2>Enquiry Form &mdash; Detailed Guide</h2>
+      <p>Everything about the enquiry form: pricing, state changes, models, items, and saving.</p>
+    </div>
+
+    <!-- ENQUIRY FORM -->
+    <section class="sec">
+      <span class="anchor" id="enquiry-form"></span>
+      <h2>How the Enquiry Form Works</h2>
+      <p class="sub">The complete flow of entering a customer's requirements.</p>
+
+      <p>When a field engineer visits a client and collects their sorting machine requirements, they enter everything into the enquiry form. The form is <strong>smart</strong> &mdash; it automatically calculates prices based on the state, model, and size selected.</p>
+
+      <div class="flow">
+        <div class="flow-n">Select State</div>
+        <span class="flow-a">&rarr;</span>
+        <div class="flow-n hl">Choose Model</div>
+        <span class="flow-a">&rarr;</span>
+        <div class="flow-n">Pick Size</div>
+        <span class="flow-a">&rarr;</span>
+        <div class="flow-n hl">Price Auto-Fills</div>
+        <span class="flow-a">&rarr;</span>
+        <div class="flow-n">Multiply by Qty</div>
+      </div>
+
+      <p>The form has four main sections:</p>
+      <div class="cards">
+        <div class="card">
+          <div class="card-icon blue"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+          <div class="card-t">Customer Info</div>
+          <div class="card-d">Name, company, mobile, email, GST, lead source</div>
+        </div>
+        <div class="card">
+          <div class="card-icon green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <div class="card-t">Location</div>
+          <div class="card-d">City, state (affects pricing), full address</div>
+        </div>
+        <div class="card">
+          <div class="card-icon amber"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+          <div class="card-t">Requirement & Items</div>
+          <div class="card-d">Model, size, quantity, auto-calculated price</div>
+        </div>
+        <div class="card">
+          <div class="card-icon red"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <div class="card-t">Remarks</div>
+          <div class="card-d">Any additional notes from the site visit</div>
+        </div>
+      </div>
+
+      <h3>Required Fields</h3>
+      <p><strong>Customer Information:</strong></p>
+      <div class="fields">
+        <div class="field-item"><span class="field-dot"></span> Customer Name (required)</div>
+        <div class="field-item"><span class="field-dot"></span> Mill / Company Name (required)</div>
+        <div class="field-item"><span class="field-dot"></span> Mobile Number (required)</div>
+        <div class="field-item"><span class="field-dot opt"></span> Email Address (optional)</div>
+        <div class="field-item"><span class="field-dot opt"></span> GST Number (optional)</div>
+        <div class="field-item"><span class="field-dot"></span> Lead Source (dropdown)</div>
+      </div>
+
+      <p><strong>Location:</strong></p>
+      <div class="fields">
+        <div class="field-item"><span class="field-dot"></span> City / Location (required)</div>
+        <div class="field-item"><span class="field-dot"></span> State (required)</div>
+        <div class="field-item"><span class="field-dot"></span> Full Address (required)</div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- PRICE TABLE -->
+    <section class="sec">
+      <span class="anchor" id="price-table"></span>
+      <h2>Price Table</h2>
+      <p class="sub">The complete pricing for every state, model, and size combination.</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>State</th><th>Model</th><th>Size (Chutes)</th><th>Price per Unit</th></tr></thead>
+          <tbody>
+            <tr><td>Telangana</td><td>Pinnacle</td><td>5</td><td class="price">&#8377; 30,00,000</td></tr>
+            <tr><td>Telangana</td><td>Pinnacle</td><td>6</td><td class="price">&#8377; 33,00,000</td></tr>
+            <tr><td>Telangana</td><td>Pinnacle</td><td>7</td><td class="price">&#8377; 36,00,000</td></tr>
+            <tr><td>Telangana</td><td>Pinnacle</td><td>8</td><td class="price">&#8377; 40,00,000</td></tr>
+            <tr><td>Telangana</td><td>Pinnacle</td><td>10</td><td class="price">&#8377; 47,00,000</td></tr>
+            <tr><td class="hl">Karnataka</td><td>Pinnacle</td><td>5</td><td class="price">&#8377; 30,00,000</td></tr>
+            <tr><td class="hl">Karnataka</td><td>Pinnacle</td><td>6</td><td class="price">&#8377; 33,00,000</td></tr>
+            <tr><td class="hl">Karnataka</td><td>Pinnacle</td><td>7</td><td class="price">&#8377; 36,00,000</td></tr>
+            <tr><td class="hl">Karnataka</td><td>Pinnacle</td><td>8</td><td class="price">&#8377; 40,00,000</td></tr>
+            <tr><td class="hl">Karnataka</td><td>Pinnacle</td><td>10</td><td class="price">&#8377; 47,00,000</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">&#128161;</span>
+        <div class="callout-body"><strong>Currently, both states have identical pricing.</strong> The system supports different prices per state &mdash; if pricing differs in the future, it will automatically show different amounts.</div>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-icon">&#9888;&#65039;</span>
+        <div class="callout-body"><strong>Nandak model:</strong> Available for selection but does <strong>not have auto-pricing</strong>. The price field stays empty and must be entered manually. Only Pinnacle has pre-configured prices.</div>
+      </div>
+
+      <p>Final price = <strong>Price per Unit &times; Quantity</strong>. E.g., 2 units of Pinnacle 8-chute in Telangana = &#8377;40,00,000 &times; 2 = <strong>&#8377;80,00,000</strong>.</p>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- STATE CHANGES -->
+    <section class="sec">
+      <span class="anchor" id="state-changes"></span>
+      <h2>When You Change the State</h2>
+      <p class="sub">What updates and what stays the same.</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Field</th><th>What Happens</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Price of ALL items</strong></td><td><span class="badge green">Recalculates</span> &mdash; every item's price updates</td></tr>
+            <tr><td>Customer name, company, mobile</td><td><span class="badge amber">No change</span></td></tr>
+            <tr><td>Model, Size, Quantity</td><td><span class="badge amber">No change</span></td></tr>
+            <tr><td>City, address</td><td><span class="badge amber">No change</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-icon">&#9888;&#65039;</span>
+        <div class="callout-body"><strong>Important:</strong> Changing the state affects ALL items at once. If you have 3 items, all 3 prices recalculate.</div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- MODEL & SIZE -->
+    <section class="sec">
+      <span class="anchor" id="model-size"></span>
+      <h2>Model & Size Selection</h2>
+      <p class="sub">How choosing a model or size affects the price.</p>
+
+      <h3>When You Change the Model</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Field</th><th>What Happens</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Price of this item</strong></td><td><span class="badge green">Recalculates</span></td></tr>
+            <tr><td>Size, Quantity, Other items</td><td><span class="badge amber">No change</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Available Sizes</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Size</th><th>Pinnacle Price</th></tr></thead>
+          <tbody>
+            <tr><td><strong>5 Chute</strong></td><td class="price">&#8377; 30,00,000</td></tr>
+            <tr><td><strong>6 Chute</strong></td><td class="price">&#8377; 33,00,000</td></tr>
+            <tr><td><strong>7 Chute</strong></td><td class="price">&#8377; 36,00,000</td></tr>
+            <tr><td><strong>8 Chute</strong></td><td class="price">&#8377; 40,00,000</td></tr>
+            <tr><td><strong>10 Chute</strong></td><td class="price">&#8377; 47,00,000</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ITEMS -->
+    <section class="sec">
+      <span class="anchor" id="items-section"></span>
+      <h2>Adding Multiple Items</h2>
+      <p class="sub">How to add, remove, and manage items in the enquiry.</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Rule</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Minimum items</strong></td><td>1 &mdash; always starts with one item, cannot remove the last one</td></tr>
+            <tr><td><strong>Maximum items</strong></td><td>No limit</td></tr>
+            <tr><td><strong>"+ Add Item"</strong></td><td>Adds a new empty row with model, size, quantity, and price fields</td></tr>
+            <tr><td><strong>Remove button</strong></td><td>Only appears when there are 2+ items</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- IMMEDIATE VS FUTURE -->
+    <section class="sec">
+      <span class="anchor" id="immediate-vs-future"></span>
+      <h2>Immediate vs Future Requirement</h2>
+      <p class="sub">Two different modes based on the customer's timeline.</p>
+
+      <div class="vs">
+        <div class="vs-box">
+          <div class="vs-head a">Yes &mdash; Immediate Requirement</div>
+          <div class="vs-body">
+            The customer wants to buy now:
+            <ul>
+              <li><strong>Items</strong> &mdash; model, size, quantity, price</li>
+              <li>Can add multiple items</li>
+              <li>Prices auto-calculate</li>
+              <li>Can generate a quotation</li>
+            </ul>
+          </div>
+        </div>
+        <div class="vs-box">
+          <div class="vs-head b">No &mdash; Future Requirement</div>
+          <div class="vs-body">
+            Customer is interested but not ready:
+            <ul>
+              <li><strong>Commodity</strong> &mdash; Rice, Pulses, etc.</li>
+              <li><strong>Notes</strong> for follow-up</li>
+              <li><strong>Next follow-up date</strong></li>
+              <li><strong>Probable month</strong> of order</li>
+              <li><strong>% Chances</strong> of order (dropdown)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <h3>% Chances of Order &mdash; Pipeline Stages</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>%</th><th>Meaning</th></tr></thead>
+          <tbody>
+            <tr><td class="price">0%</td><td>Received enquiry, but no solution / competitor won / requirement dropped</td></tr>
+            <tr><td class="price">10%</td><td>Identified a prospect (phone call, reference, cold call, existing customer)</td></tr>
+            <tr><td class="price">20%</td><td>Have a clear understanding of the requirement</td></tr>
+            <tr><td class="price">30%</td><td>Visited customer and explained our product clearly</td></tr>
+            <tr><td class="price">40%</td><td>Prospect has taken feedback from our users / good opinion about machines</td></tr>
+            <tr><td class="price">60%</td><td>Expressed interest on us</td></tr>
+            <tr><td class="price">70%</td><td>Commercial discussions, with price negotiation</td></tr>
+            <tr><td class="price">80%</td><td>Cleared all commercial points, except final price</td></tr>
+            <tr><td class="price">90%</td><td>Mutually agreed on final price, bank loan / documentation pending</td></tr>
+            <tr><td class="price">100%</td><td>Received advance with verbal or written confirmation of order</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- SAVING FLOW -->
+    <section class="sec">
+      <span class="anchor" id="saving-flow"></span>
+      <h2>Saving an Enquiry</h2>
+      <p class="sub">What happens when you click "Save Enquiry".</p>
+
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-b"><div class="step-t">Validation Check</div><div class="step-d">The system checks all required fields. If anything is missing, the page <strong>scrolls automatically</strong> to the first error.</div></div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-b"><div class="step-t">Confirmation Dialog</div><div class="step-d">A <strong>review dialog</strong> appears showing all entered details organized by section.</div></div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-b"><div class="step-t">Review & Confirm</div><div class="step-d">Click <strong>"Edit"</strong> to go back or <strong>"Confirm & Save"</strong> to submit.</div></div></div>
+        <div class="step"><div class="step-n">4</div><div class="step-b"><div class="step-t">Form Resets</div><div class="step-d">After successful save, the form <strong>clears to empty</strong>, ready for the next enquiry.</div></div></div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ENQUIRY MANAGEMENT -->
+    <section class="sec">
+      <span class="anchor" id="enquiry-mgmt"></span>
+      <h2>Managing Enquiries</h2>
+      <p class="sub">How to view, edit, filter, and act on customer enquiries.</p>
+
+      <h3>Viewing</h3>
+      <p>Navigate to <strong>Enquiry</strong> in the sidebar to see a searchable table with customer name, requirement type, mill name, mobile, location, and date.</p>
+
+      <h3>Creating a New Enquiry</h3>
+      <p>Click <strong>"+ New Enquiry"</strong> at the top. After filling out the form and clicking Save, a confirmation dialog appears showing all details. Click <strong>"Confirm & Save"</strong>. The form resets to empty after saving.</p>
+
+      <h3>Editing & Deleting</h3>
+      <p>Click any row to open the detail page. Use the <strong>three-dot menu</strong> (top-right) for Edit or Delete options.</p>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!--  PART 3: QUOTATIONS (DETAILED)                -->
+    <!-- ══════════════════════════════════════════════ -->
+
+    <div class="section-header">
+      <h2>Quotations &mdash; Detailed Guide</h2>
+      <p>1-page vs 6-page quotations, GST calculations, auto-mapping, PDF generation, and sharing.</p>
+    </div>
+
+    <!-- QUOTATION OVERVIEW -->
+    <section class="sec">
+      <span class="anchor" id="quot-overview"></span>
+      <h2>How Quotations Work</h2>
+      <p class="sub">From enquiry to professional PDF in seconds.</p>
+
+      <div class="vs">
+        <div class="vs-box">
+          <div class="vs-head a">1-Page Quotation</div>
+          <div class="vs-body">
+            A single A4 page with:
+            <ul>
+              <li>Company header + reference numbers</li>
+              <li>Customer details + product table</li>
+              <li>GST breakdown + total + amount in words</li>
+              <li>Terms & conditions + bank details</li>
+            </ul>
+            <strong>Best for:</strong> Quick quotes, simple orders
+          </div>
+        </div>
+        <div class="vs-box">
+          <div class="vs-head b">6-Page Detailed Quotation</div>
+          <div class="vs-body">
+            Comprehensive 6-page document with:
+            <ul>
+              <li>2-page cover letter introducing PINNACLE series</li>
+              <li>Full technical specifications table</li>
+              <li>Commercial offer + GST + terms</li>
+              <li>Bank details + force majeure + signatures</li>
+            </ul>
+            <strong>Best for:</strong> Large orders, formal tenders
+          </div>
+        </div>
+      </div>
+
+      <div class="flow" style="margin-top: 20px;">
+        <div class="flow-n">Open Enquiry</div>
+        <span class="flow-a">&rarr;</span>
+        <div class="flow-n hl">Click "Generate Quotation"</div>
+        <span class="flow-a">&rarr;</span>
+        <div class="flow-n">Auto-fills from enquiry</div>
+        <span class="flow-a">&rarr;</span>
+        <div class="flow-n hl">Review & adjust</div>
+        <span class="flow-a">&rarr;</span>
+        <div class="flow-n">Preview / Download / Share</div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 1-PAGE QUOTATION -->
+    <section class="sec">
+      <span class="anchor" id="single-page"></span>
+      <h2>1-Page Quotation (Quick Quote)</h2>
+      <p class="sub">Everything about the single-page quotation format.</p>
+
+      <h3>Available Models</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Model</th><th>Auto-Filled Description</th><th>HSN Code</th></tr></thead>
+          <tbody>
+            <tr><td><strong>USEPL-4V PINNACLE</strong></td><td>Color sorting Machine (USEPL-4V) PINNACLE<br><em>With AI (Advance intelligent Algorithm)</em></td><td>84371000</td></tr>
+            <tr><td><strong>USEPL-6V PINNACLE</strong></td><td>Color sorting Machine (USEPL-6V) PINNACLE<br><em>With AI (Advance intelligent Algorithm)</em></td><td>84371000</td></tr>
+            <tr><td><strong>USEPL-8V PINNACLE</strong></td><td>Color sorting Machine (USEPL-8V) PINNACLE<br><em>With AI (Advance intelligent Algorithm)</em></td><td>84371000</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Sections in the Form</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Section</th><th>Fields</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Reference</strong></td><td>Ref Number, Ref Date, Quotation Number, Quotation Date</td></tr>
+            <tr><td><strong>Client Details</strong></td><td>Salutation + Contact Person, Company, Address, City, State, Mobile, Email</td></tr>
+            <tr><td><strong>Product</strong></td><td>Model (dropdown), Quantity, Description, Short Name, HSN Code, Base Price, Exclusions/Note</td></tr>
+            <tr><td><strong>Pricing & GST</strong></td><td>GST Rate (0/5/12/18/28%), GST Amount (auto), Total (auto)</td></tr>
+            <tr><td><strong>Terms</strong></td><td>Payment Terms, Delivery Point, Lead Time, Commodity, Validity, Electricity, Freight, Warranty, Cancellation Policy</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 6-PAGE QUOTATION -->
+    <section class="sec">
+      <span class="anchor" id="detailed-page"></span>
+      <h2>6-Page Detailed Quotation</h2>
+      <p class="sub">The comprehensive quotation for formal tenders.</p>
+
+      <h3>Available Products</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Product</th><th>Modules</th><th>Cameras</th><th>Base Price</th></tr></thead>
+          <tbody>
+            <tr><td><strong>PINNACLE 6 (USEPL 6V)</strong></td><td>6 Modules / 378 channels</td><td>12 Holographic</td><td class="price">&#8377; 24,15,254</td></tr>
+            <tr><td><strong>PINNACLE 8 (USEPL 8V)</strong></td><td>8 Modules / 504 channels</td><td>16 Holographic</td><td class="price">&#8377; 32,20,339</td></tr>
+            <tr><td><strong>PINNACLE 10 (USEPL 10V)</strong></td><td>10 Modules / 630 channels</td><td>20 Holographic</td><td class="price">&#8377; 40,25,424</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>What Each Page Contains</h3>
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-b"><div class="step-t">Cover Letter (Pages 1-2)</div><div class="step-d">Formal introduction to the PINNACLE series. AI-powered sorting technology, trichromatic cameras, 1500+ machines sold.</div></div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-b"><div class="step-t">Technical Specifications (Page 3)</div><div class="step-d">Detailed specs table: modules, channels, cameras, sorting capacity, air requirement, power, dimensions, weight.</div></div></div>
+        <div class="step"><div class="step-n">4</div><div class="step-b"><div class="step-t">Commercial Offer (Page 4)</div><div class="step-d">Product table with pricing. GST at 18%. Total amount in words. First set of terms & conditions.</div></div></div>
+        <div class="step"><div class="step-n">5</div><div class="step-b"><div class="step-t">Terms & Bank Details (Page 5)</div><div class="step-d">Continued terms. Bank account details. Exclusions list (compressor, dryer, etc.).</div></div></div>
+        <div class="step"><div class="step-n">6</div><div class="step-b"><div class="step-t">Force Majeure & Signatures (Page 6)</div><div class="step-d">Force majeure clause. Signature block for company and customer acceptance.</div></div></div>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-icon">&#9888;&#65039;</span>
+        <div class="callout-body"><strong>GST in 6-page quotation is fixed at 18%.</strong> Unlike the 1-page format where you can choose 0-28%.</div>
+      </div>
+
+      <h3>Auto-Selection from Enquiry</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Enquiry Size</th><th>Product Selected</th></tr></thead>
+          <tbody>
+            <tr><td>5 or 6 chutes</td><td>PINNACLE 6 (USEPL 6V)</td></tr>
+            <tr><td>7 or 8 chutes</td><td>PINNACLE 8 (USEPL 8V)</td></tr>
+            <tr><td>10 chutes</td><td>PINNACLE 10 (USEPL 10V)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 1P VS 6P -->
+    <section class="sec">
+      <span class="anchor" id="1p-vs-6p"></span>
+      <h2>1-Page vs 6-Page Comparison</h2>
+      <p class="sub">Side-by-side comparison of both quotation types.</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Feature</th><th>1-Page</th><th>6-Page</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Models</strong></td><td>USEPL-4V, 6V, 8V</td><td>USEPL-6V, 8V, 10V</td></tr>
+            <tr><td><strong>GST rate</strong></td><td>Selectable (0-28%)</td><td>Fixed at 18%</td></tr>
+            <tr><td><strong>Technical specs</strong></td><td>Not included</td><td>Full page</td></tr>
+            <tr><td><strong>Cover letter</strong></td><td>Not included</td><td>2 pages</td></tr>
+            <tr><td><strong>Force majeure</strong></td><td>Not included</td><td>Included</td></tr>
+            <tr><td><strong>Prices</strong></td><td>Editable</td><td>Fixed from catalogue</td></tr>
+            <tr><td><strong>Best for</strong></td><td>Quick quotes</td><td>Formal tenders</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- AUTO MAPPING -->
+    <section class="sec">
+      <span class="anchor" id="auto-mapping"></span>
+      <h2>Enquiry to Quotation Mapping</h2>
+      <p class="sub">What auto-fills when you generate a quotation from an enquiry.</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Enquiry Field</th><th>Fills Into</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Customer Name</td><td>Contact Person</td><td>Direct copy</td></tr>
+            <tr><td>Mill / Company</td><td>Company</td><td>Mill name first; falls back to customer name</td></tr>
+            <tr><td>Mobile</td><td>Mobile</td><td>Direct copy</td></tr>
+            <tr><td>Email</td><td>Email</td><td>Direct copy</td></tr>
+            <tr><td>Location</td><td>City</td><td>Direct copy</td></tr>
+            <tr><td>State</td><td>State</td><td>Direct copy</td></tr>
+            <tr><td>Address</td><td>Address Line 1</td><td>Direct copy</td></tr>
+            <tr><td>First item's model</td><td>Model + Description + HSN</td><td>Looked up from catalogue</td></tr>
+            <tr><td>First item's quantity</td><td>Quantity</td><td>Formatted as "1 Set."</td></tr>
+            <tr><td>First item's price</td><td>Base Price</td><td>Before GST</td></tr>
+            <tr><td>Commodity</td><td>Commodity</td><td>Defaults to "Rice"</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">&#128161;</span>
+        <div class="callout-body"><strong>Only the first item</strong> from the enquiry is mapped. If the enquiry has multiple items, adjust the quotation manually.</div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- GST CALC -->
+    <section class="sec">
+      <span class="anchor" id="gst-calc"></span>
+      <h2>GST & Price Calculation</h2>
+      <p class="sub">How the system calculates GST and the final total.</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Calculation</th><th>Formula</th><th>Example (Base = &#8377;31,35,593)</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Base Price</strong></td><td>Entered or auto-filled</td><td class="price">&#8377; 31,35,593</td></tr>
+            <tr><td><strong>GST Amount</strong></td><td>Base Price &times; GST Rate</td><td class="price">&#8377; 5,64,407 (at 18%)</td></tr>
+            <tr><td><strong>Total</strong></td><td>Base Price + GST Amount</td><td class="price">&#8377; 37,00,000</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>GST Amount and Total are <strong>auto-calculated</strong> and update instantly when you change the base price or GST rate.</p>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- AMOUNT IN WORDS -->
+    <section class="sec">
+      <span class="anchor" id="amount-words"></span>
+      <h2>Amount in Words</h2>
+      <p class="sub">How the total is converted to words for the PDF.</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Amount</th><th>In Words</th></tr></thead>
+          <tbody>
+            <tr><td class="price">&#8377; 37,00,000</td><td>Rs. Thirty Seven Lakh Only.</td></tr>
+            <tr><td class="price">&#8377; 47,20,000</td><td>Rs. Forty Seven Lakh Twenty Thousand Only.</td></tr>
+            <tr><td class="price">&#8377; 1,25,00,000</td><td>Rs. One Crore Twenty Five Lakh Only.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- PDF & SHARING -->
+    <section class="sec">
+      <span class="anchor" id="pdf-generation"></span>
+      <h2>PDF Generation & Sharing</h2>
+      <p class="sub">How quotations become downloadable PDFs and how to share them.</p>
+
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-b"><div class="step-t">Click "Preview"</div><div class="step-d">The system builds the quotation layout and displays it in a full-screen preview (A4 size).</div></div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-b"><div class="step-t">Click "Download PDF"</div><div class="step-d">The preview is captured as a high-resolution image and converted into a PDF. For 6-page quotations, all pages are combined into one file.</div></div></div>
+      </div>
+
+      <h3>Sharing Options</h3>
+      <div class="cards">
+        <div class="card">
+          <div class="card-icon green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+          <div class="card-t">WhatsApp</div>
+          <div class="card-d">Opens WhatsApp with a pre-filled message. Attach the downloaded PDF and send.</div>
+        </div>
+        <div class="card">
+          <div class="card-icon blue"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+          <div class="card-t">Gmail / Email</div>
+          <div class="card-d">Opens Gmail with pre-filled subject and body. Attach the PDF to complete the email.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!--  PART 4: ROLES & ADMIN                        -->
+    <!-- ══════════════════════════════════════════════ -->
+
+    <div class="section-header">
+      <h2>Roles & Admin Features</h2>
+      <p>User vs Admin roles, settings, screen access, CSV export, bulk actions, and email notifications.</p>
+    </div>
+
+    <!-- ROLES -->
+    <section class="sec">
+      <span class="anchor" id="roles"></span>
+      <h2>User vs Admin Roles</h2>
+      <p class="sub">What each role can and cannot do.</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Feature</th><th>User</th><th>Admin</th></tr></thead>
+          <tbody>
+            <tr><td>View, create & edit enquiries</td><td><span class="badge green">Yes</span></td><td><span class="badge green">Yes</span></td></tr>
+            <tr><td>Generate & download quotation PDFs</td><td><span class="badge green">Yes</span></td><td><span class="badge green">Yes</span></td></tr>
+            <tr><td>Edit profile</td><td><span class="badge green">Yes</span></td><td><span class="badge green">Yes</span></td></tr>
+            <tr><td>Bulk select & delete</td><td><span class="badge amber">No</span></td><td><span class="badge green">Yes</span></td></tr>
+            <tr><td>Download CSV export</td><td><span class="badge amber">No</span></td><td><span class="badge green">Yes</span></td></tr>
+            <tr><td>Manage per-user screen access</td><td><span class="badge amber">No</span></td><td><span class="badge green">Yes</span></td></tr>
+            <tr><td>Approve new registrations</td><td><span class="badge amber">No</span></td><td><span class="badge green">Yes</span></td></tr>
+            <tr><td>Access Settings page</td><td><span class="badge amber">No</span></td><td><span class="badge green">Yes</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- SETTINGS -->
+    <section class="sec">
+      <span class="anchor" id="settings"></span>
+      <h2>Admin Settings</h2>
+      <p class="sub">Platform configuration available to administrators only.</p>
+
+      <h3>User Management</h3>
+      <div class="fields">
+        <div class="field-item"><span class="field-dot"></span> Set name, phone, password, and role</div>
+        <div class="field-item"><span class="field-dot"></span> Approve pending registrations</div>
+        <div class="field-item"><span class="field-dot"></span> Configure per-user screen access</div>
+        <div class="field-item"><span class="field-dot"></span> Remove users from the system</div>
+      </div>
+
+      <h3>Approving New Users</h3>
+      <p>When someone registers, their account shows as <strong>"Pending"</strong> with an amber badge. Click the green checkmark to approve. Users created directly by admin are auto-approved.</p>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- SCREEN ACCESS -->
+    <section class="sec">
+      <span class="anchor" id="screen-access"></span>
+      <h2>Per-User Screen Access</h2>
+      <p class="sub">Admin controls which dashboard screens each user can see.</p>
+
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-b"><div class="step-t">Open Settings &rarr; Edit User</div><div class="step-d">Click Edit on any user with the "User" role.</div></div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-b"><div class="step-t">Toggle Screen Checkboxes</div><div class="step-d">Checkboxes for: Dashboard, Enquiry, Quotations, Profile, Reports, Products, Orders, Inventory, Clients. Dashboard and Profile are always on.</div></div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-b"><div class="step-t">Save</div><div class="step-d">The user's sidebar updates to show only allowed screens. Visiting a blocked URL redirects to the dashboard.</div></div></div>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">&#128161;</span>
+        <div class="callout-body"><strong>Default:</strong> If no restrictions are set, the user sees all screens their role allows. Admins always see everything.</div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- CSV EXPORT -->
+    <section class="sec">
+      <span class="anchor" id="csv-export"></span>
+      <h2>CSV Export</h2>
+      <p class="sub">Download all enquiries or quotations as a CSV file (admin-only).</p>
+
+      <p>Admins see a <strong>"CSV"</strong> button on both the Enquiry and Quotations pages. Clicking it downloads all records as a CSV that opens in Excel or Google Sheets.</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Export</th><th>File Name</th><th>Includes</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Enquiries</strong></td><td><code>enquiries-YYYY-MM-DD.csv</code></td><td>Customer info, location, up to 3 items with model/size/qty/price, future fields, remarks, date</td></tr>
+            <tr><td><strong>Quotations</strong></td><td><code>quotations-YYYY-MM-DD.csv</code></td><td>Quote/ref numbers, type, client details, product info, GST breakdown, all terms, dates</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- BULK ACTIONS -->
+    <section class="sec">
+      <span class="anchor" id="bulk-actions"></span>
+      <h2>Bulk Select & Delete</h2>
+      <p class="sub">Select multiple items and delete them at once (admin-only).</p>
+
+      <div class="steps">
+        <div class="step"><div class="step-n">1</div><div class="step-b"><div class="step-t">Select Items</div><div class="step-d">A checkbox column appears for admins. Use individual checkboxes or the header checkbox to select all.</div></div></div>
+        <div class="step"><div class="step-n">2</div><div class="step-b"><div class="step-t">Floating Action Bar</div><div class="step-d">A dark bar slides up at the bottom showing how many items are selected, with Delete and Cancel buttons.</div></div></div>
+        <div class="step"><div class="step-n">3</div><div class="step-b"><div class="step-t">Confirm & Delete</div><div class="step-d">Click Delete, then confirm in the dialog. This action cannot be undone.</div></div></div>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-icon">&#9888;&#65039;</span>
+        <div class="callout-body"><strong>When items are selected</strong>, clicking a row toggles its selection instead of navigating to the detail page. Click "Cancel" to clear the selection.</div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- EMAIL NOTIFICATIONS -->
+    <section class="sec">
+      <span class="anchor" id="email-notifications"></span>
+      <h2>Email Notifications</h2>
+      <p class="sub">Automatic emails sent when key events happen in the CRM.</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Event</th><th>Who Gets Emailed</th><th>What It Contains</th></tr></thead>
+          <tbody>
+            <tr><td><strong>New Registration</strong></td><td>Admin</td><td>User name, phone, role, "Review in Settings" button</td></tr>
+            <tr><td><strong>Account Approved</strong></td><td>The approved user</td><td>Welcome message with "Login Now" button (requires email on file)</td></tr>
+            <tr><td><strong>Enquiry Submitted</strong></td><td>Admin</td><td>Customer name, company, mobile, location, requirement, items, "View in Dashboard" button</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">&#128161;</span>
+        <div class="callout-body"><strong>Emails never block the main action.</strong> If the email service is down, registration, approval, and enquiry submission still work normally.</div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ══════════════════════════════════════════════ -->
+    <!--  PART 5: REFERENCE                            -->
+    <!-- ══════════════════════════════════════════════ -->
+
+    <!-- DEFAULTS -->
+    <section class="sec">
+      <span class="anchor" id="defaults"></span>
+      <h2>Default Values</h2>
+      <p class="sub">Pre-filled values that appear in every new quotation.</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Field</th><th>Default Value</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Payment Terms</strong></td><td>50% advance with Purchase Order and balance before despatch.</td></tr>
+            <tr><td><strong>Freight</strong></td><td>At actual in your scope.</td></tr>
+            <tr><td><strong>Warranty</strong></td><td>One year.</td></tr>
+            <tr><td><strong>Cancellation Policy</strong></td><td>Order once confirmed & processed cannot be cancelled.</td></tr>
+            <tr><td><strong>Electricity Supply</strong></td><td>220 V Frequency- 50Hz.</td></tr>
+            <tr><td><strong>GST Rate</strong></td><td>18%</td></tr>
+            <tr><td><strong>HSN Code</strong></td><td>84371000</td></tr>
+            <tr><td><strong>Commodity</strong></td><td>Rice (if not specified)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- BANK DETAILS -->
+    <section class="sec">
+      <span class="anchor" id="bank-details"></span>
+      <h2>Bank Details</h2>
+      <p class="sub">Company bank information printed on every quotation.</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th>Detail</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Account Number</strong></td><td>004784600001921</td></tr>
+            <tr><td><strong>IFSC Code</strong></td><td>YESB0000047</td></tr>
+            <tr><td><strong>Bank</strong></td><td>YES BANK</td></tr>
+            <tr><td><strong>Branch</strong></td><td>Civil Lines, Raipur (C.G.)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warn">
+        <span class="callout-icon">&#9888;&#65039;</span>
+        <div class="callout-body"><strong>These bank details are fixed</strong> and cannot be changed from the quotation form.</div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- ALL PAGES -->
+    <section class="sec">
+      <span class="anchor" id="pages-map"></span>
+      <h2>All Pages</h2>
+      <p class="sub">Complete map of every page in the platform.</p>
+
+      <h3>Public Pages (No Login Required)</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>URL</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><code>/</code></td><td>Homepage &mdash; company overview, features, and login link</td></tr>
+            <tr><td><code>/login</code></td><td>Login (OTP or Password, with Forgot Password)</td></tr>
+            <tr><td><code>/register</code></td><td>Request an account (requires admin approval)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Dashboard Pages (Login Required)</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>URL</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><code>/enquiry</code></td><td>Enquiry submission form</td></tr>
+            <tr><td><code>/dashboard</code></td><td>Main dashboard &mdash; welcome screen</td></tr>
+            <tr><td><code>/dashboard/enquiry</code></td><td>All enquiries &mdash; searchable table</td></tr>
+            <tr><td><code>/dashboard/enquiry/[id]</code></td><td>Single enquiry detail & edit</td></tr>
+            <tr><td><code>/dashboard/quotations</code></td><td>All quotations &mdash; searchable table</td></tr>
+            <tr><td><code>/dashboard/quotations/[id]</code></td><td>Single quotation detail, preview, PDF</td></tr>
+            <tr><td><code>/dashboard/quotations/new</code></td><td>Create a new quotation from scratch</td></tr>
+            <tr><td><code>/dashboard/profile</code></td><td>Your profile &mdash; view & edit name</td></tr>
+            <tr><td><code>/dashboard/settings</code></td><td>Admin settings (admin only)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- DATA & STORAGE -->
+    <section class="sec">
+      <span class="anchor" id="data-stored"></span>
+      <h2>Data & Storage</h2>
+      <p class="sub">Where your data lives and how it is protected.</p>
+
+      <div class="cards">
+        <div class="card">
+          <div class="card-icon blue"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
+          <div class="card-t">Firebase Firestore</div>
+          <div class="card-d">All data (user accounts, enquiries, quotations) stored in Google's secure cloud database.</div>
+        </div>
+        <div class="card">
+          <div class="card-icon green"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          <div class="card-t">Firebase Authentication</div>
+          <div class="card-d">Phone OTP + password login. Sessions encrypted with JWT tokens.</div>
+        </div>
+      </div>
+
+      <h3>Data Collections</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Collection</th><th>What It Stores</th></tr></thead>
+          <tbody>
+            <tr><td><code>userdata</code></td><td>User profiles &mdash; name, phone, role, creation date</td></tr>
+            <tr><td><code>enquiry</code></td><td>All enquiries &mdash; customer info, items, pricing, notes, dates</td></tr>
+            <tr><td><code>quotations</code></td><td>All quotations &mdash; client details, product info, terms, pricing</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- FAQ -->
+    <section class="sec">
+      <span class="anchor" id="faq"></span>
+      <h2>Frequently Asked Questions</h2>
+      <p class="sub">Common questions and quick answers.</p>
+
+      <h3>I'm not receiving the OTP. What should I do?</h3>
+      <p>Wait for the full 60-second timer, then click "Resend OTP". Ensure your phone has SMS reception. You can also try <strong>Password login</strong> instead.</p>
+
+      <h3>I forgot my password. How do I reset it?</h3>
+      <p>On the login page, switch to the <strong>Password</strong> tab and click <strong>"Forgot Password?"</strong>. Enter your phone, verify with OTP, then set a new password.</p>
+
+      <h3>I registered but can't login. Why?</h3>
+      <p>New registrations require <strong>admin approval</strong>. Your account is in "pending" status until an admin approves it from Settings.</p>
+
+      <h3>Can I login with my email address?</h3>
+      <p>Yes. On the Password tab, enter your email along with your password. Your email must be stored in your account (set by admin).</p>
+
+      <h3>Can customers see the dashboard?</h3>
+      <p>No. Every page except the homepage, login, and registration requires authentication.</p>
+
+      <h3>Can I edit a quotation after saving it?</h3>
+      <p>Yes. Open the quotation and modify any field. Re-download or re-share the updated PDF.</p>
+
+      <h3>How are prices calculated?</h3>
+      <p>Prices are auto-filled based on <strong>state</strong>, <strong>model</strong>, and <strong>size (chutes)</strong>. They can be manually overridden in the quotation editor.</p>
+
+      <h3>How do I delete multiple enquiries at once?</h3>
+      <p>Admins can use <strong>bulk select</strong>. Check the checkboxes, then click Delete in the floating action bar.</p>
+
+      <h3>Is the platform mobile-friendly?</h3>
+      <p>Yes. Every page is fully responsive with touch-friendly forms and a slide-out sidebar on phones.</p>
+    </section>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <p>&copy; 2026 Unique Sorter And Equipment Pvt. Ltd. &mdash; All rights reserved.</p>
+      <p style="margin-top: 4px;">Complete Guide &middot; Last updated June 2026</p>
+    </div>
+
+  </main>
+
+  <button class="top-btn" id="topBtn" onclick="window.scrollTo({top:0})" aria-label="Back to top">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
+
+  <script>
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('overlay').classList.toggle('open');
+    }
+    document.querySelectorAll('.nav-link').forEach(l => l.addEventListener('click', () => {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('overlay').classList.remove('open');
+    }));
+    const anchors = document.querySelectorAll('.anchor');
+    const links = document.querySelectorAll('.nav-link');
+    const obs = new IntersectionObserver(es => {
+      es.forEach(e => {
+        if (e.isIntersecting) {
+          const id = e.target.id;
+          links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    anchors.forEach(a => obs.observe(a));
+    window.addEventListener('scroll', () => {
+      document.getElementById('topBtn').classList.toggle('visible', window.scrollY > 400);
+    });
+  </script>
+</body>
+</html>

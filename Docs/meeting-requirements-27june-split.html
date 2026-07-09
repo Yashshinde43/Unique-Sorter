@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unique Sorter CRM — Meeting Requirements (27 June 2026) — Split View</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --ink: #1a1a2e;
+      --body: #3d3d5c;
+      --muted: #7a7a9e;
+      --faint: #b0b0c8;
+      --border: #e2e2ef;
+      --surface: #f5f5fa;
+      --card: #ffffff;
+      --brand: #1A37AA;
+      --brand-light: #e8ecfa;
+      --brand-glow: rgba(26, 55, 170, 0.06);
+      --green: #16a34a;
+      --green-bg: #f0fdf4;
+      --amber: #ca8a04;
+      --amber-bg: #fefce8;
+      --red: #dc2626;
+      --red-bg: #fef2f2;
+      --blue-bg: #eff6ff;
+      --purple: #7c3aed;
+      --purple-bg: #f5f3ff;
+      --teal: #0d9488;
+      --teal-bg: #f0fdfa;
+      --orange: #ea580c;
+      --orange-bg: #fff7ed;
+      --fe: #1A37AA;
+      --be: #16a34a;
+      --shared: #ca8a04;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      color: var(--body);
+      background: var(--surface);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page-header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 40px 32px 24px;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-mark {
+      width: 44px;
+      height: 44px;
+      background: var(--brand);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .logo-text {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 20px;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .logo-sub {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-top: 1px;
+    }
+
+    .doc-date {
+      text-align: right;
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .doc-date strong { color: var(--body); font-weight: 600; }
+
+    .header-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 30px;
+      color: var(--ink);
+      font-weight: 700;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .header-desc {
+      font-size: 17px;
+      color: var(--muted);
+      max-width: 750px;
+      line-height: 1.6;
+    }
+
+    .meeting-meta {
+      margin-top: 16px;
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      font-size: 15px;
+      color: var(--muted);
+    }
+
+    .meeting-meta span { display: flex; align-items: center; gap: 6px; }
+    .meeting-meta strong { color: var(--body); font-weight: 600; }
+
+    /* TAB BAR */
+    .tab-bar {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 20px 32px 0;
+      display: flex;
+      gap: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tab-btn {
+      padding: 12px 22px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-bottom: none;
+      border-radius: 10px 10px 0 0;
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.2s;
+      position: relative;
+      top: 1px;
+    }
+
+    .tab-btn:hover { color: var(--body); background: var(--surface); }
+
+    .tab-btn.active {
+      background: var(--card);
+      color: var(--ink);
+      border-color: var(--border);
+    }
+
+    .tab-btn[data-tab="frontend"].active { color: var(--fe); }
+    .tab-btn[data-tab="backend"].active { color: var(--be); }
+
+    .tab-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .tab-btn[data-tab="frontend"] .tab-dot { background: var(--fe); }
+    .tab-btn[data-tab="backend"] .tab-dot { background: var(--be); }
+
+    .tab-count {
+      background: var(--surface);
+      padding: 1px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .tab-btn.active .tab-count { background: var(--brand-light); color: var(--brand); }
+
+    /* TAB CONTENT */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* CONTENT */
+    .content {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 32px 80px;
+    }
+
+    /* PHASE */
+    .phase { margin-bottom: 48px; }
+
+    .phase-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 8px;
+    }
+
+    .phase-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .p1 .phase-badge, .phase-badge.p1 { background: var(--red); }
+    .p2 .phase-badge, .phase-badge.p2 { background: var(--amber); }
+    .p3 .phase-badge, .phase-badge.p3 { background: var(--brand); }
+    .p4 .phase-badge, .phase-badge.p4 { background: var(--green); }
+    .p5 .phase-badge, .phase-badge.p5 { background: var(--teal); }
+    .p6 .phase-badge, .phase-badge.p6 { background: var(--purple); }
+    .p7 .phase-badge, .phase-badge.p7 { background: var(--orange); }
+
+    .phase-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 23px;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .phase-why {
+      margin-left: 52px;
+      font-size: 16px;
+      color: var(--muted);
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+      line-height: 1.6;
+    }
+
+    /* CARDS */
+    .step-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 12px;
+      margin-left: 52px;
+      position: relative;
+      transition: box-shadow 0.2s;
+    }
+
+    .step-card:hover { box-shadow: 0 2px 12px rgba(26, 55, 170, 0.06); }
+
+    .step-card::before {
+      content: '';
+      position: absolute;
+      left: -27px;
+      top: 0;
+      bottom: -12px;
+      width: 2px;
+      background: var(--border);
+    }
+
+    .step-card:last-child::before { bottom: 50%; }
+
+    .step-card::after {
+      content: '';
+      position: absolute;
+      left: -32px;
+      top: 24px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 2px solid var(--border);
+    }
+
+    .step-top { display: flex; align-items: flex-start; gap: 12px; }
+
+    .step-number {
+      background: var(--surface);
+      color: var(--ink);
+      font-weight: 700;
+      font-size: 14px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      white-space: nowrap;
+    }
+
+    .step-body { flex: 1; }
+
+    .step-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 4px;
+      line-height: 1.4;
+    }
+
+    .step-desc {
+      font-size: 16px;
+      color: var(--body);
+      line-height: 1.65;
+    }
+
+    .step-desc strong { color: var(--ink); font-weight: 600; }
+
+    /* SHARED TAG */
+    .shared-tag {
+      display: inline-block;
+      padding: 2px 10px;
+      background: var(--amber-bg);
+      border: 1px solid #fde68a;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--amber);
+      margin-left: 8px;
+      vertical-align: middle;
+      letter-spacing: 0.3px;
+    }
+
+    .cross-ref {
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: var(--amber-bg);
+      border: 1px solid #fde68a;
+      border-left: 3px solid var(--amber);
+      border-radius: 0 6px 6px 0;
+      font-size: 14px;
+      color: var(--body);
+      line-height: 1.5;
+    }
+
+    .cross-ref strong { color: var(--amber); }
+
+    /* WHAT BOX */
+    .what-box {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .what-item { padding: 10px 14px; border-radius: 8px; font-size: 15px; line-height: 1.5; }
+
+    .what-item.current { background: var(--red-bg); border: 1px solid #fecaca; }
+    .what-item.current .what-label {
+      color: var(--red); font-weight: 600; font-size: 11px;
+      text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 3px;
+    }
+    .what-item.expected { background: var(--green-bg); border: 1px solid #bbf7d0; }
+    .what-item.expected .what-label {
+      color: var(--green); font-weight: 600; font-size: 11px;
+      text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 3px;
+    }
+
+    /* NOTE */
+    .note-box {
+      background: var(--brand-glow);
+      border: 1px solid var(--brand-light);
+      border-left: 3px solid var(--brand);
+      border-radius: 0 8px 8px 0;
+      padding: 12px 16px;
+      margin-top: 10px;
+      font-size: 15px;
+      color: var(--body);
+      line-height: 1.6;
+    }
+
+    .note-box strong { color: var(--brand); }
+
+    .note-box.client-quote { border-left-color: var(--amber); background: var(--amber-bg); }
+    .note-box.client-quote strong { color: var(--amber); }
+
+    /* CONNECTOR */
+    .phase-connector {
+      text-align: center;
+      margin: -24px 0 24px 52px;
+      color: var(--faint);
+      font-size: 20px;
+      letter-spacing: 4px;
+    }
+
+    /* DISCUSSION BOX */
+    .discussion-box {
+      background: var(--amber-bg);
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 12px;
+      margin-left: 52px;
+    }
+
+    .discussion-box .disc-title {
+      font-weight: 700;
+      color: var(--amber);
+      font-size: 16px;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .discussion-box p { font-size: 16px; color: var(--body); line-height: 1.6; }
+
+    /* LEGEND */
+    .legend {
+      max-width: 960px;
+      margin: 24px auto 0;
+      padding: 0 32px;
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+    .legend-dot.fe { background: var(--fe); }
+    .legend-dot.be { background: var(--be); }
+    .legend-dot.shared { background: var(--shared); }
+
+    /* IMPL CHECKBOX */
+    .impl-checkbox { accent-color: var(--green); cursor: pointer; }
+    .impl-item:has(.impl-checkbox:checked) {
+      background: var(--green-bg) !important;
+      border: 1px solid #bbf7d0;
+    }
+    .impl-item:has(.impl-checkbox:checked) span strong {
+      text-decoration: line-through;
+      color: var(--muted);
+    }
+    .impl-item:has(.impl-checkbox:checked) span span {
+      color: var(--faint);
+    }
+
+    /* EMPTY TAB STATE */
+    .empty-state {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 60px 32px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    /* FOOTER */
+    .page-footer {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 32px;
+      border-top: 1px solid var(--border);
+      font-size: 15px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media print {
+      body { background: white; }
+      .tab-bar, .legend { display: none; }
+      .tab-panel { display: block !important; }
+      .step-card { break-inside: avoid; }
+    }
+
+    @media (max-width: 640px) {
+      .header-inner { padding: 24px 16px 20px; }
+      .header-top { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .doc-date { text-align: left; }
+      .header-title { font-size: 22px; }
+      .content { padding: 24px 16px 60px; }
+      .tab-bar { padding: 12px 16px 0; overflow-x: auto; }
+      .step-card { margin-left: 24px; padding: 16px; }
+      .phase-why { margin-left: 24px; }
+      .step-card::before { left: -15px; }
+      .step-card::after { left: -20px; }
+      .discussion-box { margin-left: 24px; }
+      .phase-connector { margin-left: 24px; }
+      .what-box { grid-template-columns: 1fr; }
+      .meeting-meta { flex-direction: column; gap: 8px; }
+      .legend { padding: 0 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="page-header">
+    <div class="header-inner">
+      <div class="header-top">
+        <div class="logo-area">
+          <div class="logo-mark">US</div>
+          <div>
+            <div class="logo-text">Unique Sorter</div>
+            <div class="logo-sub">CRM Application</div>
+          </div>
+        </div>
+        <div class="doc-date">
+          <strong>Meeting Date:</strong> 27 June 2026<br>
+          Location: Raipur, Chhattisgarh
+        </div>
+      </div>
+      <h1 class="header-title">Client Meeting &mdash; All Requirements Discussed <span style="font-size:18px;color:var(--muted);font-weight:500;">(Frontend / Backend split)</span></h1>
+      <p class="header-desc">Complete list of requirements, changes, and decisions extracted from the 80-minute client discussion call. Switch between the <strong>Frontend</strong> and <strong>Backend</strong> tabs to see which side owns each item. Shared items appear in both tabs with a small note.</p>
+      <div class="phase-banner" style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;font-size:13px;">
+        <span class="phase-pill" style="padding:4px 12px;border-radius:14px;background:#f0fdf4;border:1px solid #86efac;color:#166534;font-weight:600;">Phase 1 &mdash; Delivered &amp; Complete</span>
+        <span class="phase-pill" style="padding:4px 12px;border-radius:14px;background:#fefce8;border:1px solid #fde68a;color:#854d0e;font-weight:600;">Phase 2 &mdash; Next (after &#8377;50k advance)</span>
+        <span class="phase-pill" style="padding:4px 12px;border-radius:14px;background:#f5f3ff;border:1px solid #c4b5fd;color:#5b21b6;font-weight:600;">Phase 3 &mdash; Future (Flutter Android)</span>
+        <span style="padding:4px 12px;color:var(--muted);font-size:13px;">Source: <code style="font-size:12px;">client-scope-agreement.html</code> &middot; US-CRM-SOW-2026</span>
+      </div>
+      <div class="meeting-meta">
+        <span><strong>Participants:</strong> Chirag (Dev), Jna Ji, Subhash, Kuki, Sharad Ji</span>
+        <span><strong>Total Items:</strong> 28 requirements across 7 areas</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- TAB BAR -->
+  <nav class="tab-bar" role="tablist">
+    <button class="tab-btn active" data-tab="frontend" role="tab" aria-selected="true">
+      <span class="tab-dot"></span> Frontend <span class="tab-count" id="count-fe">0</span>
+    </button>
+    <button class="tab-btn" data-tab="backend" role="tab" aria-selected="false">
+      <span class="tab-dot"></span> Backend <span class="tab-count" id="count-be">0</span>
+    </button>
+  </nav>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <span class="legend-item"><span class="legend-dot fe"></span> Frontend-only item</span>
+    <span class="legend-item"><span class="legend-dot be"></span> Backend-only item</span>
+    <span class="legend-item"><span class="legend-dot shared"></span> Shared &mdash; appears in both tabs</span>
+  </div>
+
+  <!-- ═════════════════════ FRONTEND PANEL ═════════════════════ -->
+  <div class="tab-panel active" id="panel-frontend" role="tabpanel">
+
+    <div class="content">
+
+      <!-- ═══ PHASE-WISE IMPLEMENTATION STATUS ═══ -->
+      <div class="phase" id="fe-status">
+        <div class="phase-header">
+          <div class="phase-badge" style="background:var(--brand);">★</div>
+          <h2 class="phase-title">Phase-wise Implementation Status</h2>
+        </div>
+        <div class="phase-why">
+          Cross-reference from <code>client-scope-agreement.html</code> (Ref: US-CRM-SOW-2026, 29 June 2026). Each phase below is shown on both tabs so you can see what the other side owns for the same phase.
+        </div>
+
+        <!-- Phase 1 — Delivered -->
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number" style="background:#f0fdf4;color:#166534;">Phase 1</span>
+            <div class="step-body">
+              <div class="step-title" style="color:#166534;">Enquiry → Quotation → Share → Follow-up — Delivered ✓</div>
+              <div class="step-desc">
+                <strong>Frontend delivered:</strong> Enquiry form, quotation generator with auto-pricing + PDF, share via WhatsApp / Email with auto-attached catalogue, follow-up tracker with % chances + pipeline stages.<br>
+                <strong>Backend delivered:</strong> Enquiry/Quotation API, Resend email integration, Firebase Auth + Firestore, WhatsApp share links, region-wise pricing.<br>
+                <em>Source (US-CRM-SOW-2026, Phase 1 §1–§5): all 5 features marked <strong style="color:#16a34a;">INCLUDED</strong>.</em>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 2 — Next -->
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number" style="background:#fefce8;color:#854d0e;">Phase 2</span>
+            <div class="step-body">
+              <div class="step-title" style="color:#854d0e;">Inventory + Sales Invoice + Delivery — Next</div>
+              <div class="step-desc">
+                <strong>Frontend scope:</strong> Sales invoice generator, inventory list (Available / Booked / Delivered), machine-booking UI, delivery-tracking screens, new role panels for Warehouse Manager / Owners.<br>
+                <strong>Backend scope:</strong> <code>POST /api/v1/sales</code>, <code>POST /api/v1/invoices</code>, inventory CRUD with serial number + status, booking workflow, delivery records, role-permission matrix.<br>
+                <strong>Payment gate:</strong> &#8377;50,000 advance required before development begins (balance &#8377;50,000 on completion).<br>
+                <em>Source (US-CRM-SOW-2026, Phase 2 §1–§6): all 6 features marked <strong style="color:#16a34a;">INCLUDED</strong>. Excludes: mobile app, online enquiry integration, region auto-assignment, MIS reports, accounting integration.</em>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 3 — Future -->
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number" style="background:#f5f3ff;color:#5b21b6;">Phase 3</span>
+            <div class="step-body">
+              <div class="step-title" style="color:#5b21b6;">Flutter Android Mobile App — Future</div>
+              <div class="step-desc">
+                <strong>Frontend scope:</strong> Flutter Android app mirroring web CRM flows; optimised for mobile devices; same Firebase backend.<br>
+                <strong>Backend scope:</strong> <em>no new backend</em> — mobile connects to existing Firebase. Auth, Firestore rules, and APIs already in place from Phase 1.<br>
+                <strong>Delivery:</strong> Installable APK / AAB file. Google Play Store publishing is <strong>not included</strong> (separate fee, requires 5–10 testers + ongoing compliance maintenance).<br>
+                <strong>Fee:</strong> &#8377;1,20,000 (one-time for app development).<br>
+                <em>Source (US-CRM-SOW-2026, Phase 3 §1–§3): all 3 features marked <strong style="color:#16a34a;">INCLUDED</strong>.</em>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment summary -->
+        <div class="step-card" style="margin-left:0;background:var(--brand-glow);border-color:var(--brand-light);">
+          <div class="step-top">
+            <span class="step-number">₹</span>
+            <div class="step-body">
+              <div class="step-title">Payment Milestones</div>
+              <div class="step-desc">
+                <table style="width:100%;border-collapse:collapse;font-size:14px;margin-top:8px;">
+                  <thead><tr style="text-align:left;border-bottom:1px solid var(--border);"><th style="padding:6px;">Phase</th><th style="padding:6px;">Total</th><th style="padding:6px;">Advance</th><th style="padding:6px;">Balance</th><th style="padding:6px;">Status</th></tr></thead>
+                  <tbody>
+                    <tr><td style="padding:6px;">Phase 1</td><td style="padding:6px;">&#8377;1,00,000</td><td style="padding:6px;">&#8377;50,000</td><td style="padding:6px;">&#8377;50,000</td><td style="padding:6px;color:#16a34a;font-weight:600;">Delivered</td></tr>
+                    <tr><td style="padding:6px;">Phase 2</td><td style="padding:6px;">&#8377;1,00,000</td><td style="padding:6px;">&#8377;50,000</td><td style="padding:6px;">&#8377;50,000</td><td style="padding:6px;color:#ca8a04;font-weight:600;">Pending advance</td></tr>
+                    <tr><td style="padding:6px;">Phase 3</td><td style="padding:6px;">&#8377;1,20,000</td><td style="padding:6px;">—</td><td style="padding:6px;">&#8377;1,20,000</td><td style="padding:6px;color:#7c3aed;font-weight:600;">Future</td></tr>
+                  </tbody>
+                </table>
+                <em style="display:block;margin-top:8px;color:var(--muted);font-size:13px;">Rule: development for each phase begins only after advance payment is received.</em>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="phase-connector">&#8595; &#8595; &#8595;</div>
+
+      <!-- ═══ PHASE 1: Admin & Permissions ═══ -->
+      <div class="phase" id="fe-admin">
+        <div class="phase-header">
+          <div class="phase-badge p1">1</div>
+          <h2 class="phase-title">Admin &amp; Permissions <span class="phase-status" style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;background:#f0fdf4;border:1px solid #86efac;color:#166534;margin-left:8px;vertical-align:middle;">Phase 1 · Delivered</span></h2>
+        </div>
+        <div class="phase-why">
+          <strong>Why this matters for Frontend:</strong> &mdash; the UI must expose admin-only controls (delete buttons, bank-edit fields, dropdown editors, pricing panel, mandatory/optional toggles) and hide them for normal users.
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 1</span>
+            <div class="step-body">
+              <div class="step-title">Give Admin Full Access to All Enquiry Forms <span class="shared-tag">shared</span></div>
+              <div class="step-desc">Admin should be able to <strong>view, edit, add, and change any field</strong> in every enquiry form — including enquiries created by other users. <em>Frontend:</em> show edit/add controls for Admin only.</div>
+              <div class="cross-ref"><strong>Also in Backend:</strong> RBAC checks on enquiry read/write/update endpoints — Admin role bypasses ownership checks.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 2</span>
+            <div class="step-body">
+              <div class="step-title">Only Admin Can Delete Enquiry Forms <span class="shared-tag">shared</span></div>
+              <div class="step-desc">Remove the delete option from normal users. <strong>Only Admin</strong> should be able to delete enquiries. <em>Frontend:</em> hide the delete button in row actions / detail view for non-admins.</div>
+              <div class="cross-ref"><strong>Also in Backend:</strong> DELETE /api/v1/enquiry/:id must verify role === 'ADMIN' before allowing deletion.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 3</span>
+            <div class="step-body">
+              <div class="step-title">Bank Details — Admin Only</div>
+              <div class="step-desc">Bank details in the quotation should be <strong>editable only by Admin</strong>. <em>Frontend:</em> disable / hide the bank-details editor for non-admin roles; show as read-only text in the preview.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 4</span>
+            <div class="step-body">
+              <div class="step-title">Admin Access to Add/Edit States, Lead Sources &amp; Dropdown Values</div>
+              <div class="step-desc"><em>Frontend:</em> build a settings panel where Admin can add/edit/delete States, Lead Sources, and other dropdown options inline.</div>
+              <div class="note-box client-quote">
+                <strong>Client said:</strong> "Aaj hum do state mein kar rahe hain, kal hum teen state mein karenge — ye sab kahan set kar payenge? Ye access humko chahiye."
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 5</span>
+            <div class="step-body">
+              <div class="step-title">Admin Access to Add/Edit Models, Sizes &amp; Pricing</div>
+              <div class="step-desc"><em>Frontend:</em> settings panel to add new machine models, sizes, and update pricing.</div>
+              <div class="note-box client-quote">
+                <strong>Client said:</strong> "Future ke liye agar humko add karna hai toh uska access hum mein rahe toh zyada better hai taki hum kabhi bhi edit kar sakein."
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 6</span>
+            <div class="step-body">
+              <div class="step-title">Admin Access to Mandatory/Optional Field Settings</div>
+              <div class="step-desc"><em>Frontend:</em> toggle UI to mark each enquiry field as required or optional; reflect this on form validation messages.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-connector">&#8595; &#8595; &#8595;</div>
+
+      <!-- ═══ PHASE 2: Enquiry Form ═══ -->
+      <div class="phase" id="fe-enquiry">
+        <div class="phase-header">
+          <div class="phase-badge p2">2</div>
+          <h2 class="phase-title">Enquiry Form Changes <span class="phase-status" style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;background:#f0fdf4;border:1px solid #86efac;color:#166534;margin-left:8px;vertical-align:middle;">Phase 1 · Delivered</span></h2>
+        </div>
+        <div class="phase-why">
+          <strong>Frontend scope:</strong> &mdash; add new fields (Negotiated Price, Existing Customer option), rework follow-up display, build remark timeline UI, show edit-log viewer for Admin, add CSV/Excel/PDF download buttons.
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 7</span>
+            <div class="step-body">
+              <div class="step-title">Add "Existing Customer" in Lead Source Dropdown</div>
+              <div class="step-desc">Add <strong>"Existing Customer"</strong> as a new option in the Lead Source / Type of Leads dropdown. Current options: Cold Call, Reference, Referral, Online Website, Social Media, Others.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 8</span>
+            <div class="step-body">
+              <div class="step-title">Follow-up &amp; % Chances Fields — Show in BOTH Immediate and Future</div>
+              <div class="step-desc"><em>Frontend:</em> render the follow-up date field and % chances field in <strong>both</strong> "Yes Immediately" and "No Future" enquiry sections — not just in Future.</div>
+              <div class="note-box client-quote">
+                <strong>Client said:</strong> "Customer bolega immediate hai but woh kai baar immediate nahi hota. Today it could be immediate but after a week we realize it got postponed to future."
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 9</span>
+            <div class="step-title">Remark Field — Mandatory with Log History</div>
+            <div class="step-body">
+              <div class="step-desc"><em>Frontend:</em> make the Remark field mandatory (show red asterisk, validate on submit), and render previous remarks as a chronological timeline (date + author + text). New entries append, never overwrite.</div>
+              <div class="note-box client-quote">
+                <strong>Client said:</strong> "The second entry should not overwrite the first one. What was the first discussion that should be there, second discussion should be there, and a list should form. So that we will know the history of the discussion."
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 10</span>
+            <div class="step-body">
+              <div class="step-title">Complete Edit Log History (Admin Only) <span class="shared-tag">shared</span></div>
+              <div class="step-desc"><em>Frontend:</em> Admin sees a dedicated tab/section on each enquiry showing: field name, old value, new value, who changed it, when.</div>
+              <div class="what-box">
+                <div class="what-item current">
+                  <div class="what-label">Currently</div>
+                  No record of who changed what. Only "last edited" timestamp.
+                </div>
+                <div class="what-item expected">
+                  <div class="what-label">After Update</div>
+                  Admin sees: "Raj changed Model from Pinnacle 6 to Nandak 5 on 25 June at 3:30 PM"
+                </div>
+              </div>
+              <div class="cross-ref"><strong>Also in Backend:</strong> write an audit-log entry on every field-level PATCH to an enquiry; expose a GET endpoint restricted to Admin role.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 11</span>
+            <div class="step-body">
+              <div class="step-title">Add Negotiated Price Field</div>
+              <div class="step-desc"><em>Frontend:</em> add an input for <strong>negotiated price</strong> next to the standard area-specific price. Show both side-by-side so the salesperson sees what was originally quoted vs. what was actually offered.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 12</span>
+            <div class="step-body">
+              <div class="step-title">Commodities List — Make Flexible / Editable</div>
+              <div class="step-desc"><em>Frontend:</em> Admin can add new commodities (e.g. Maize) directly from the dropdown editor. Keep as dropdown to maintain uniform naming.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 13</span>
+            <div class="step-title">Download Options — Add CSV &amp; Excel Both</div>
+            <div class="step-body">
+              <div class="step-desc"><em>Frontend:</em> provide three download buttons next to the enquiry list — CSV, Excel, and PDF.</div>
+              <div class="cross-ref"><strong>Also in Backend:</strong> implement CSV/Excel serializers (e.g. using a library like xlsx/exceljs) and a PDF renderer; or keep CSV/Excel on the client and only PDF on the server.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-connector">&#8595; &#8595; &#8595;</div>
+
+      <!-- ═══ PHASE 3: Quotation Terms ═══ -->
+      <div class="phase" id="fe-quotation-terms">
+        <div class="phase-header">
+          <div class="phase-badge p3">3</div>
+          <h2 class="phase-title">Quotation — Terms &amp; Conditions <span class="phase-status" style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;background:#f0fdf4;border:1px solid #86efac;color:#166534;margin-left:8px;vertical-align:middle;">Phase 1 · Delivered</span></h2>
+        </div>
+        <div class="phase-why">
+          <strong>Frontend scope:</strong> &mdash; rebuild the terms section so that warranty, payment terms, freight option, and most T&amp;C text are user-editable; bank details remain admin-only.
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 14</span>
+            <div class="step-body">
+              <div class="step-title">Freight — Two Options: Inclusive &amp; Extra at Actuals</div>
+              <div class="step-desc"><em>Frontend:</em> add a freight toggle (Inclusive / Extra at Actuals). When "Extra at Actuals" is selected, lock the Point of Delivery field to <strong>"Raipur, Chhattisgarh"</strong>; when "Inclusive" is selected, let the user type the delivery location.</div>
+              <div class="note-box client-quote">
+                <strong>Client said:</strong> "When the user selects Freight Extra at Actuals, by default Point of Delivery should read as Raipur, Chhattisgarh. And if he says Freight Inclusive, then Point of Delivery is editable."
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 15</span>
+            <div class="step-body">
+              <div class="step-title">Remove "Electricity Supply" from Terms &amp; Conditions</div>
+              <div class="step-desc"><em>Frontend:</em> delete the "Electricity Supply: 220 Volts, Frequency 50 Hz" line from the T&amp;C renderer. Instead, show <strong>"220V Single Phase Supply"</strong> as a note line in the machine description area (below the item table), along with "Any other thing not mentioned above is not included in the supply."</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 16</span>
+            <div class="step-body">
+              <div class="step-title">Warranty — Editable by Both User &amp; Admin</div>
+              <div class="step-desc"><em>Frontend:</em> warranty input is editable for any authenticated user; default is 2 years.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 17</span>
+            <div class="step-body">
+              <div class="step-title">Payment Terms — Editable by User</div>
+              <div class="step-desc"><em>Frontend:</em> payment terms field is a free-text input; user can change per quotation (default: "50% Advance on PO, Balance before dispatch").</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 18</span>
+            <div class="step-body">
+              <div class="step-title">All Terms &amp; Conditions — Make Flexible</div>
+              <div class="step-desc"><em>Frontend:</em> T&amp;C rows become editable text inputs (per-quotation). Only the Bank Details row is read-only for non-admins.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-connector">&#8595; &#8595; &#8595;</div>
+
+      <!-- ═══ PHASE 4: Quotation Formatting ═══ -->
+      <div class="phase" id="fe-quotation-format">
+        <div class="phase-header">
+          <div class="phase-badge p4">4</div>
+          <h2 class="phase-title">Quotation — Formatting Fixes <span class="phase-status" style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;background:#f0fdf4;border:1px solid #86efac;color:#166534;margin-left:8px;vertical-align:middle;">Phase 1 · Delivered</span></h2>
+        </div>
+        <div class="phase-why">
+          <strong>Frontend scope:</strong> &mdash; these are pure visual fixes in the PDF renderer / preview.
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 19</span>
+            <div class="step-body">
+              <div class="step-title">Logo Must Match on Both Quotation Types</div>
+              <div class="step-desc"><em>Frontend:</em> point both the single-page and multi-page (detailed) quotation templates to the same logo image — the company letterhead logo.</div>
+              <div class="note-box client-quote">
+                <strong>Client said:</strong> "Uniform rehna chahiye, letterhead hai uniform rehna chahiye. It should match with the letter."
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 20</span>
+            <div class="step-body">
+              <div class="step-title">Fix Left Margin — Content Closer to Left</div>
+              <div class="step-desc"><em>Frontend:</em> reduce the left margin of the PDF / preview container so content starts closer to the edge, like a Word document. Keep some right margin.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 21</span>
+            <div class="step-body">
+              <div class="step-title">Fix Rupee Symbol &amp; Table Formatting</div>
+              <div class="step-desc"><em>Frontend:</em> in the detailed quotation's price table, reduce the column width consumed by the &#8377; symbol and improve number alignment so content doesn't overflow to the next page.</div>
+              <div class="note-box client-quote">
+                <strong>Client said:</strong> "Yahan pe Rupees ka symbol ke wajah se zyada jagah le raha hai, uski wajah se wo neeche aa gaya hai." (The Rupee symbol is taking too much space, pushing content to the next page.)
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-connector">&#8595; &#8595; &#8595;</div>
+
+      <!-- ═══ PHASE 5: Technical Specs ═══ -->
+      <div class="phase" id="fe-technical">
+        <div class="phase-header">
+          <div class="phase-badge p5">5</div>
+          <h2 class="phase-title">Technical Specification Auto-Fill <span class="phase-status" style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;background:#f0fdf4;border:1px solid #86efac;color:#166534;margin-left:8px;vertical-align:middle;">Phase 1 · Delivered</span></h2>
+        </div>
+        <div class="phase-why">
+          <strong>Frontend scope:</strong> &mdash; listen for model+size changes, fetch the spec from the lookup, and populate fields reactively. Also expose Admin UI to configure specs.
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 22</span>
+            <div class="step-body">
+              <div class="step-title">Auto-Fill Technical Specs Based on Model + Size <span class="shared-tag">shared</span></div>
+              <div class="step-desc"><em>Frontend:</em> when user selects a model (e.g., Nandak) and size (e.g., 5 chute), auto-populate the technical fields — Number of Modules &amp; Channels, Number of Cameras + Camera Specification, Sorting Modes, Light System, Air Filter System, etc.</div>
+              <div class="cross-ref"><strong>Also in Backend:</strong> provide an endpoint (e.g. <code>GET /api/v1/specs?model=X&amp;size=Y</code>) that returns the canonical spec for the chosen combination.</div>
+              <div class="note-box client-quote">
+                <strong>Client said:</strong> "Do hi select karte apan — model aur chute size. Uske saath number of cameras calculate karke likh dena, channels bhi. Taaki cross-fill karna na pade aur wrong entry na ho."
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 23</span>
+            <div class="step-body">
+              <div class="step-title">Admin Can Set/Update Technical Specs Per Model</div>
+              <div class="step-desc"><em>Frontend:</em> Admin settings panel with a table view to set/update the technical spec values for each model+size combination.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 24</span>
+            <div class="step-body">
+              <div class="step-title">Client to Provide Tabular Data for Models</div>
+              <div class="step-desc"><em>Frontend:</em> a bulk-import / paste-table form for Admin to seed the spec data quickly.</div>
+              <div class="note-box">
+                <strong>Action Item (Client):</strong> Jna Ji to share tabular data: Model &rarr; Size &rarr; Channels &rarr; Cameras &rarr; Specs for both Nandak and Pinnacle.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-connector">&#8595; &#8595; &#8595;</div>
+
+      <!-- ═══ PHASE 6: Sharing & Communication ═══ -->
+      <div class="phase" id="fe-sharing">
+        <div class="phase-header">
+          <div class="phase-badge p6">6</div>
+          <h2 class="phase-title">Sharing &amp; Communication <span class="phase-status" style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;background:#f0fdf4;border:1px solid #86efac;color:#166534;margin-left:8px;vertical-align:middle;">Phase 1 · Delivered</span></h2>
+        </div>
+        <div class="phase-why">
+          <strong>Frontend scope:</strong> &mdash; replace the Gmail-redirect behaviour with an in-app send dialog (Email + WhatsApp + "Send Both"), and add a sharing-history viewer for Admin.
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 25</span>
+            <div class="step-body">
+              <div class="step-title">Email &amp; WhatsApp — Both Options + "Send Both at Once" <span class="shared-tag">shared</span></div>
+              <div class="step-desc"><em>Frontend:</em> three buttons in the share sheet — Email, WhatsApp, Download — plus a 4th button <strong>"Send Both"</strong> that triggers email and WhatsApp in one click.</div>
+              <div class="cross-ref"><strong>Also in Backend:</strong> provide endpoints for <code>POST /share/email</code> and <code>POST /share/whatsapp</code> that can be called individually or together.</div>
+              <div class="note-box client-quote">
+                <strong>Client said:</strong> "Koi customer kehta hai WhatsApp nahi, mujhe email karo. We should have that option also. And both at once bhi chahiye."
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 26</span>
+            <div class="step-body">
+              <div class="step-title">Send Quotation from App Directly (Not via Gmail Redirect)</div>
+              <div class="step-desc"><em>Frontend:</em> replace the "Open in Gmail" link with an in-app modal: collect recipient email address, attach the generated PDF, click Send.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 27</span>
+            <div class="step-body">
+              <div class="step-title">Notify Superior When Quotation is Sent</div>
+              <div class="step-desc"><em>Frontend:</em> after a successful send, show a confirmation toast to the sender (e.g. "Sent &mdash; superior has been notified").</div>
+              <div class="cross-ref"><strong>Also in Backend:</strong> on every successful send, enqueue a WhatsApp notification to the sender's superior's phone number.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 28</span>
+            <div class="step-body">
+              <div class="step-title">Track Sharing History — Who Received, When</div>
+              <div class="step-desc"><em>Frontend:</em> Admin-only "Sharing History" tab on each quotation showing a timeline: send date, channel (email / WhatsApp / both), recipient, sender.</div>
+              <div class="cross-ref"><strong>Also in Backend:</strong> write a <code>share_events</code> record per send and expose <code>GET /quotations/:id/shares</code>.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-connector">&#8595; &#8595; &#8595;</div>
+
+      <!-- ═══ PHASE 7: Dashboard & Other ═══ -->
+      <div class="phase" id="fe-other">
+        <div class="phase-header">
+          <div class="phase-badge p7">7</div>
+          <h2 class="phase-title">Dashboard, Reporting &amp; Other Decisions <span class="phase-status" style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;background:#f0fdf4;border:1px solid #86efac;color:#166534;margin-left:8px;vertical-align:middle;">Phase 1 · Delivered</span></h2>
+        </div>
+        <div class="phase-why">
+          <strong>Frontend scope:</strong> &mdash; build the snapshot dashboard, MIS report views, and the persistent-login flow.
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Snapshot</span>
+            <div class="step-body">
+              <div class="step-title">Dashboard Snapshot — Intuitive Overview for Admin</div>
+              <div class="step-desc"><em>Frontend:</em> Admin dashboard with KPI cards (daily quotations, monthly count, YTD total) + charts + filter controls (region, user, commodity, machine size).</div>
+              <div class="note-box client-quote">
+                <strong>Client said:</strong> "Ek baar laptop mein khol liya toh intuitive aa jaana chahiye ki haan ye ab tak mera monthly ya is saal ka itna quotation generate hua hai."
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Report</span>
+            <div class="step-body">
+              <div class="step-title">MIS Reports — Daily &amp; Monthly (Admin Only)</div>
+              <div class="step-desc"><em>Frontend:</em> report screens with charts/tables for daily &amp; monthly quotation averages, plus a "top commodity × machine size" breakdown view.</div>
+              <div class="cross-ref"><strong>Also in Backend:</strong> aggregate endpoints (e.g. <code>GET /reports/daily</code>, <code>GET /reports/monthly</code>, <code>GET /reports/demand</code>) returning the data the dashboard binds to.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Login</span>
+            <div class="step-body">
+              <div class="step-title">Persistent Login — Stay Logged In for a Day <span class="shared-tag">shared</span></div>
+              <div class="step-desc"><em>Frontend:</em> store <code>authToken</code> + <code>refreshToken</code> in localStorage, schedule silent refresh ~5 min before expiry, and skip the login page if a valid session exists. (Already partially implemented.)</div>
+              <div class="cross-ref"><strong>Also in Backend:</strong> provide a <code>POST /auth/refresh</code> endpoint that exchanges a Firebase refresh token for a fresh ID token.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Decided</span>
+            <div class="step-body">
+              <div class="step-title">Authorized Signatory &amp; Quotation Reference Number</div>
+              <div class="step-desc"><em>Frontend:</em> render <strong>"Authorized Signatory: Subhash"</strong> as-is in the quotation footer; render the auto-generated reference number prominently (e.g. <code>USEPL/Q-D/2026/005/R0</code>).</div>
+              <div class="cross-ref"><strong>Also in Backend:</strong> reference number is auto-generated at quotation creation.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="discussion-box">
+          <div class="disc-title">Needs Separate Discussion (Frontend impact)</div>
+          <p><strong>Android App vs Web App:</strong> if the team moves to a native Android app, the current Next.js web frontend becomes the admin-only view while the Android app is used by sales/service persons. PWA is the intermediate option but needs offline support. A separate meeting with Purushottam Sir is needed to discuss scope, cost, and timeline for app development.</p>
+        </div>
+
+        <div class="discussion-box">
+          <div class="disc-title">Needs Separate Discussion</div>
+          <p><strong>Phase 1 vs Phase 2 Division:</strong> need a separate meeting to divide all modules across phases with timeline. Client said: "Ek clear communication ho jaaye dono end pe — kab aur kya hoga."</p>
+        </div>
+      </div>
+
+      <!-- ═══ FUTURE PHASES — Roadmap ═══ -->
+      <div class="phase" id="fe-future">
+        <div class="phase-header">
+          <div class="phase-badge" style="background:linear-gradient(135deg,#ca8a04,#7c3aed);">→</div>
+          <h2 class="phase-title">Future Phases — Roadmap <span class="phase-status" style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;background:linear-gradient(135deg,#fefce8,#f5f3ff);border:1px solid #c4b5fd;color:#5b21b6;margin-left:8px;vertical-align:middle;">Phase 2 + Phase 3</span></h2>
+        </div>
+        <div class="phase-why">
+          Items below are <strong>not yet built</strong>. They're scoped in <code>client-scope-agreement.html</code> (US-CRM-SOW-2026) but require advance payment and a detailed requirements meeting before development begins.
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number" style="background:#fefce8;color:#854d0e;">P2</span>
+            <div class="step-body">
+              <div class="step-title">Phase 2 — Inventory, Sales Invoice, Delivery</div>
+              <div class="step-desc">
+                <strong>Frontend to build:</strong> Sales Invoice generator screen, Inventory list view (filter by status: Available / Booked / Delivered), Machine Booking UI (assign serial number to customer), Delivery Tracker timeline, new Warehouse Manager / Owner role panels.<br>
+                <strong>Gate:</strong> &#8377;50,000 advance required before any Phase 2 code is written.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number" style="background:#f5f3ff;color:#5b21b6;">P3</span>
+            <div class="step-body">
+              <div class="step-title">Phase 3 — Flutter Android Mobile App</div>
+              <div class="step-desc">
+                <strong>Frontend to build:</strong> Flutter Android app mirroring web CRM flows (enquiry, quotation, share, follow-up). Single codebase, Firebase SDK for auth + data.<br>
+                <strong>Delivery:</strong> APK / AAB file. Play Store publishing is <strong>out of scope</strong>.<br>
+                <strong>Fee:</strong> &#8377;1,20,000.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card" style="margin-left:0;background:var(--surface);border-style:dashed;">
+          <div class="step-top">
+            <span class="step-number">!</span>
+            <div class="step-body">
+              <div class="step-title">Important: Phase 1 = Delivered, not Pending</div>
+              <div class="step-desc">
+                Per <code>client-scope-agreement.html</code>, <strong>Phase 1 has been completed and delivered</strong>. The detailed meeting-requirements list in this document captures refinements and additions discussed on 27 June — most of these are <strong>incremental improvements to the already-delivered Phase 1</strong> (admin settings panel, edit-log, technical-spec auto-fill, dashboard, etc.). The remaining future work is captured in Phase 2 and Phase 3 of the scope agreement.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═════════════════════ BACKEND PANEL ═════════════════════ -->
+  <div class="tab-panel" id="panel-backend" role="tabpanel">
+
+    <div class="content">
+
+      <!-- ═══ PHASE-WISE IMPLEMENTATION STATUS ═══ -->
+      <div class="phase" id="be-status">
+        <div class="phase-header">
+          <div class="phase-badge" style="background:var(--brand);">★</div>
+          <h2 class="phase-title">Phase-wise Implementation Status</h2>
+        </div>
+        <div class="phase-why">
+          Cross-reference from <code>client-scope-agreement.html</code> (Ref: US-CRM-SOW-2026, 29 June 2026). Backend-side view of what each phase delivers and what's excluded.
+        </div>
+
+        <!-- Phase 1 — Delivered -->
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number" style="background:#f0fdf4;color:#166534;">Phase 1</span>
+            <div class="step-body">
+              <div class="step-title" style="color:#166534;">Enquiry → Quotation → Share → Follow-up — Delivered ✓</div>
+              <div class="step-desc">
+                <strong>Backend endpoints live:</strong> <code>POST /api/v1/enquiry</code>, <code>POST /api/v1/quotation</code>, <code>POST /api/v1/share/email</code> + <code>/share/whatsapp</code>, follow-up CRUD with % chances, Resend email integration.<br>
+                <strong>Auth &amp; data:</strong> Firebase ID tokens + App JWT two-token system, Firestore collections for enquiries / quotations / users, region-wise pricing lookup.<br>
+                <em>Source (US-CRM-SOW-2026, Phase 1 §1–§5): all 5 features marked <strong style="color:#16a34a;">INCLUDED</strong> and shipped.</em>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 2 — Next -->
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number" style="background:#fefce8;color:#854d0e;">Phase 2</span>
+            <div class="step-body">
+              <div class="step-title" style="color:#854d0e;">Inventory + Sales Invoice + Delivery — Next</div>
+              <div class="step-desc">
+                <strong>Backend endpoints to add:</strong> <code>POST /api/v1/sales</code>, <code>POST /api/v1/invoices</code>, <code>GET/POST/PATCH /api/v1/inventory</code> with serial-number + status state machine (Available / Booked / Delivered), delivery-tracker endpoints, booking workflow.<br>
+                <strong>Schema additions:</strong> <code>invoices</code> collection, <code>inventory</code> collection, <code>deliveries</code> collection; quotation.status transitions to <code>SOLD</code> on sale conversion.<br>
+                <strong>RBAC additions:</strong> Warehouse Manager + Owner roles (permissions matrix pending follow-up meeting per agreement §6).<br>
+                <strong>Payment gate (enforced):</strong> Phase 2 development starts only after &#8377;50,000 advance received.<br>
+                <em>Source (US-CRM-SOW-2026, Phase 2 §1–§6): all 6 features marked <strong style="color:#16a34a;">INCLUDED</strong>. Excludes: mobile API additions, region auto-assignment logic, MIS endpoints, accounting/GST integration.</em>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phase 3 — Future -->
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number" style="background:#f5f3ff;color:#5b21b6;">Phase 3</span>
+            <div class="step-body">
+              <div class="step-title" style="color:#5b21b6;">Flutter Android Mobile App — Future</div>
+              <div class="step-desc">
+                <strong>No new backend required.</strong> Mobile app connects to the existing Firebase backend from Phase 1.<br>
+                <strong>Adjustments needed:</strong> Firebase Auth (mobile SDK), Firestore security rules to allow mobile-originated reads/writes, possibly <code>verify-token</code> endpoint hardening for Flutter primary auth.<br>
+                <strong>Delivery:</strong> APK / AAB file. <strong>Not included:</strong> Google Play Store publishing, store listing design, ongoing Play Store compliance maintenance.<br>
+                <strong>Fee:</strong> &#8377;1,20,000 (development only; Play Store publishing is a separate charge).<br>
+                <em>Source (US-CRM-SOW-2026, Phase 3 §1–§3): all 3 features marked <strong style="color:#16a34a;">INCLUDED</strong>.</em>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exclusions summary -->
+        <div class="step-card" style="margin-left:0;background:var(--red-bg);border-color:#fca5a5;">
+          <div class="step-top">
+            <span class="step-number" style="background:var(--red);color:white;">✗</span>
+            <div class="step-body">
+              <div class="step-title" style="color:var(--red);">Explicit Exclusions (per agreement)</div>
+              <div class="step-desc">
+                <strong>Not in Phase 1:</strong> sales invoice, inventory, machine booking, delivery tracking, online enquiry integration, region auto-assignment, MIS reports, mobile app.<br>
+                <strong>Not in Phase 2:</strong> mobile app (that's Phase 3), online enquiry integration, region auto-assignment, MIS/analytics, accounting/GST filing integration.<br>
+                <strong>Not in Phase 3:</strong> Google Play Store publishing, store-listing design, ongoing Play Store compliance.<br>
+                <em style="display:block;margin-top:8px;color:var(--body);font-size:13px;">Per agreement §5: any excluded item requested during a phase is treated as a formal change request and may carry additional cost.</em>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="phase-connector">&#8595; &#8595; &#8595;</div>
+
+      <!-- ═══ PHASE 1: Admin & Permissions ═══ -->
+      <div class="phase" id="be-admin">
+        <div class="phase-header">
+          <div class="phase-badge p1">1</div>
+          <h2 class="phase-title">Admin &amp; Permissions <span class="phase-status" style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;background:#f0fdf4;border:1px solid #86efac;color:#166534;margin-left:8px;vertical-align:middle;">Phase 1 · Delivered</span></h2>
+        </div>
+        <div class="phase-why">
+          <strong>Why this matters for Backend:</strong> &mdash; every protected endpoint must verify the caller's role, attach audit context, and reject writes outside the user's permission scope.
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 1</span>
+            <div class="step-body">
+              <div class="step-title">Give Admin Full Access to All Enquiry Forms <span class="shared-tag">shared</span></div>
+              <div class="step-desc"><em>Backend:</em> RBAC middleware on enquiry endpoints — Admin role bypasses ownership checks; non-admins only see/edit enquiries where <code>createdBy === user.uid</code>.</div>
+              <div class="cross-ref"><strong>Also in Frontend:</strong> show edit/add controls for Admin only.</div>
+
+              <div class="impl-section" style="margin-top:14px;border-top:1px dashed var(--border);padding-top:14px;">
+                <div style="font-size:13px;font-weight:700;color:var(--ink);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Backend Implementation Steps</div>
+                <div style="font-size:13px;color:var(--muted);margin-bottom:10px;">Files to modify: <code>unique-backend/src/app/api/v1/enquiry/route.js</code> &middot; <code>unique-backend/src/app/api/v1/enquiry/[id]/route.js</code></div>
+
+                <div class="impl-checklist" style="display:flex;flex-direction:column;gap:8px;">
+                  <label class="impl-item" style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:var(--surface);border-radius:8px;cursor:pointer;font-size:15px;line-height:1.5;">
+                    <input type="checkbox" class="impl-checkbox" style="margin-top:4px;flex-shrink:0;width:18px;height:18px;">
+                    <span><strong>1.1 &mdash; Set <code>createdBy</code> on enquiry create</strong><br><span style="color:var(--muted);font-size:14px;">In <code>POST /api/v1/enquiry</code> (<code>route.js</code> line 45), add <code>createdBy: auth.user.uid</code> and <code>createdByName: auth.user.phone</code> to the <code>.add()</code> payload so every enquiry records who created it.</span></span>
+                  </label>
+
+                  <label class="impl-item" style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:var(--surface);border-radius:8px;cursor:pointer;font-size:15px;line-height:1.5;">
+                    <input type="checkbox" class="impl-checkbox" style="margin-top:4px;flex-shrink:0;width:18px;height:18px;">
+                    <span><strong>1.2 &mdash; Filter enquiry list by role</strong><br><span style="color:var(--muted);font-size:14px;">In <code>GET /api/v1/enquiry</code> (<code>route.js</code> line 8), after <code>verifyAuth</code>, check <code>auth.user.role</code>. If <code>ADMIN</code> &rarr; query all (current behaviour). If <code>USER</code> &rarr; add <code>.where('createdBy', '==', auth.user.uid)</code> before <code>.orderBy()</code>.</span></span>
+                  </label>
+
+                  <label class="impl-item" style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:var(--surface);border-radius:8px;cursor:pointer;font-size:15px;line-height:1.5;">
+                    <input type="checkbox" class="impl-checkbox" style="margin-top:4px;flex-shrink:0;width:18px;height:18px;">
+                    <span><strong>1.3 &mdash; Ownership guard on GET by ID</strong><br><span style="color:var(--muted);font-size:14px;">In <code>GET /api/v1/enquiry/[id]</code> (<code>[id]/route.js</code> line 41), after fetching the doc, if <code>auth.user.role !== 'ADMIN'</code> and <code>d.createdBy !== auth.user.uid</code> &rarr; return <code>error('Forbidden', 403)</code>.</span></span>
+                  </label>
+
+                  <label class="impl-item" style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:var(--surface);border-radius:8px;cursor:pointer;font-size:15px;line-height:1.5;">
+                    <input type="checkbox" class="impl-checkbox" style="margin-top:4px;flex-shrink:0;width:18px;height:18px;">
+                    <span><strong>1.4 &mdash; Ownership guard on PATCH</strong><br><span style="color:var(--muted);font-size:14px;">In <code>PATCH /api/v1/enquiry/[id]</code> (<code>[id]/route.js</code> line 58), after fetching the snap, if <code>auth.user.role !== 'ADMIN'</code> and <code>snap.data().createdBy !== auth.user.uid</code> &rarr; return <code>error('Forbidden', 403)</code>.</span></span>
+                  </label>
+
+                  <label class="impl-item" style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:var(--surface);border-radius:8px;cursor:pointer;font-size:15px;line-height:1.5;">
+                    <input type="checkbox" class="impl-checkbox" style="margin-top:4px;flex-shrink:0;width:18px;height:18px;">
+                    <span><strong>1.5 &mdash; Add <code>createdBy</code> index in Firestore</strong><br><span style="color:var(--muted);font-size:14px;">Create a composite Firestore index on the <code>enquiry</code> collection: <code>createdBy</code> (ASC) + <code>createdAt</code> (DESC). Needed for the filtered <code>.where().orderBy()</code> query in step 1.2. Without this, Firestore returns an error with a link to auto-create it.</span></span>
+                  </label>
+
+                  <label class="impl-item" style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:var(--surface);border-radius:8px;cursor:pointer;font-size:15px;line-height:1.5;">
+                    <input type="checkbox" class="impl-checkbox" style="margin-top:4px;flex-shrink:0;width:18px;height:18px;">
+                    <span><strong>1.6 &mdash; Backfill <code>createdBy</code> on existing enquiries</strong><br><span style="color:var(--muted);font-size:14px;">Existing enquiry docs have no <code>createdBy</code> field. Run a one-time migration script: for each doc without <code>createdBy</code>, set <code>createdBy: &lt;admin-uid&gt;</code> (or the known creator's UID) so they remain visible. Alternatively, adjust the filter to also include docs where <code>createdBy</code> is missing (Admin-only fallback).</span></span>
+                  </label>
+
+                  <label class="impl-item" style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:var(--surface);border-radius:8px;cursor:pointer;font-size:15px;line-height:1.5;">
+                    <input type="checkbox" class="impl-checkbox" style="margin-top:4px;flex-shrink:0;width:18px;height:18px;">
+                    <span><strong>1.7 &mdash; Test: Admin sees all, User sees only own</strong><br><span style="color:var(--muted);font-size:14px;">Verify with two tokens (one ADMIN, one USER): Admin GET list returns all enquiries; User GET list returns only theirs. User GET/PATCH on another user's enquiry returns 403. Admin GET/PATCH on any enquiry succeeds. DELETE already guarded by <code>verifyAdmin</code>.</span></span>
+                  </label>
+                </div>
+
+                <div style="margin-top:12px;padding:10px 14px;background:var(--brand-glow);border-left:3px solid var(--brand);border-radius:0 6px 6px 0;font-size:14px;color:var(--body);">
+                  <strong style="color:var(--brand);">Current status:</strong> <code>GET</code> list returns ALL enquiries to ANY authenticated user (no filter). <code>POST</code> does not store <code>createdBy</code>. <code>GET [id]</code> and <code>PATCH</code> have no ownership check. <code>DELETE</code> already uses <code>verifyAdmin</code> &mdash; correct. All 7 steps above are <strong>not yet implemented</strong>.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 2</span>
+            <div class="step-body">
+              <div class="step-title">Only Admin Can Delete Enquiry Forms <span class="shared-tag">shared</span></div>
+              <div class="step-desc"><em>Backend:</em> DELETE /api/v1/enquiry/:id must verify <code>role === 'ADMIN'</code> before allowing deletion; return 403 otherwise.</div>
+              <div class="cross-ref"><strong>Also in Frontend:</strong> hide the delete button for non-admins.</div>
+
+              <div class="impl-section" style="margin-top:14px;border-top:1px dashed var(--border);padding-top:14px;">
+                <div style="font-size:13px;font-weight:700;color:var(--ink);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Implementation Status &amp; Test Steps</div>
+
+                <div style="margin-top:10px;padding:10px 14px;background:#f0fdf4;border:1px solid #bbf7d0;border-left:3px solid var(--green);border-radius:0 6px 6px 0;font-size:14px;color:var(--body);">
+                  <strong style="color:var(--green);">&#10003; Backend:</strong> <code>DELETE /api/v1/enquiry/[id]</code> already uses <code>verifyAdmin()</code> at <code>unique-backend/src/app/api/v1/enquiry/[id]/route.js:92</code>. Returns 403 for non-admin. No change needed.<br>
+                  <strong style="color:var(--green);">&#10003; Frontend:</strong> Delete buttons wrapped with <code>isAdminUser</code> guard in 3 locations:
+                  <code>enquiry/page.js</code> (drawer + bulk bar) and <code>enquiry/[id]/page.js</code> (3-dot menu). Non-admins no longer see Delete.
+                </div>
+
+                <div style="font-size:13px;color:var(--muted);margin-top:14px;margin-bottom:10px;">Verify with the test scenarios below:</div>
+
+                <div class="impl-checklist" style="display:flex;flex-direction:column;gap:8px;">
+                  <label class="impl-item" style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:var(--surface);border-radius:8px;cursor:pointer;font-size:15px;line-height:1.5;">
+                    <input type="checkbox" class="impl-checkbox" style="margin-top:4px;flex-shrink:0;width:18px;height:18px;">
+                    <span><strong>2.1 &mdash; Test: User DELETE returns 403</strong><br><span style="color:var(--muted);font-size:14px;">Send <code>DELETE /api/v1/enquiry/&lt;id&gt;</code> with a USER token. Expect: <code>403 Admin access required</code>. The enquiry must still exist in Firestore after the call.</span></span>
+                  </label>
+
+                  <label class="impl-item" style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:var(--surface);border-radius:8px;cursor:pointer;font-size:15px;line-height:1.5;">
+                    <input type="checkbox" class="impl-checkbox" style="margin-top:4px;flex-shrink:0;width:18px;height:18px;">
+                    <span><strong>2.2 &mdash; Test: Admin DELETE returns 200</strong><br><span style="color:var(--muted);font-size:14px;">Send <code>DELETE /api/v1/enquiry/&lt;id&gt;</code> with an ADMIN token. Expect: <code>200 { success: true }</code>. Confirm the enquiry is gone from Firestore.</span></span>
+                  </label>
+
+                  <label class="impl-item" style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:var(--surface);border-radius:8px;cursor:pointer;font-size:15px;line-height:1.5;">
+                    <input type="checkbox" class="impl-checkbox" style="margin-top:4px;flex-shrink:0;width:18px;height:18px;">
+                    <span><strong>2.3 &mdash; Test: Non-admin UI hides delete button (drawer)</strong><br><span style="color:var(--muted);font-size:14px;">Login as a non-admin user &rarr; open an enquiry in the drawer view. Confirm: <strong>no Delete button</strong> is shown in the drawer header (only Edit). Admin should still see Delete.</span></span>
+                  </label>
+
+                  <label class="impl-item" style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:var(--surface);border-radius:8px;cursor:pointer;font-size:15px;line-height:1.5;">
+                    <input type="checkbox" class="impl-checkbox" style="margin-top:4px;flex-shrink:0;width:18px;height:18px;">
+                    <span><strong>2.4 &mdash; Test: Non-admin UI hides delete (detail page 3-dot menu)</strong><br><span style="color:var(--muted);font-size:14px;">Login as a non-admin user &rarr; open enquiry detail page (<code>/dashboard/enquiry/[id]</code>). Click the 3-dot menu. Confirm: only <strong>Edit</strong> is shown, <strong>no Delete</strong> option. Admin should still see both.</span></span>
+                  </label>
+
+                  <label class="impl-item" style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:var(--surface);border-radius:8px;cursor:pointer;font-size:15px;line-height:1.5;">
+                    <input type="checkbox" class="impl-checkbox" style="margin-top:4px;flex-shrink:0;width:18px;height:18px;">
+                    <span><strong>2.5 &mdash; Test: Bulk delete bar hidden for non-admin</strong><br><span style="color:var(--muted);font-size:14px;">Login as a non-admin user &rarr; enquiry list page. Confirm: <strong>no checkbox column</strong> appears in the table, and the <strong>bulk delete bar</strong> never appears even when rows are clicked. Admin should see checkboxes and the bulk bar.</span></span>
+                  </label>
+
+                  <label class="impl-item" style="display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:var(--surface);border-radius:8px;cursor:pointer;font-size:15px;line-height:1.5;">
+                    <input type="checkbox" class="impl-checkbox" style="margin-top:4px;flex-shrink:0;width:18px;height:18px;">
+                    <span><strong>2.6 &mdash; Test: Direct API call bypass (defense in depth)</strong><br><span style="color:var(--muted);font-size:14px;">Open browser DevTools as a non-admin user. Run <code>fetch('/api/enquiry/&lt;id&gt;', { method: 'DELETE', headers: { ...getAuthHeaders() } })</code> in console. Expect: <code>403</code> from the backend even though the UI button is hidden. This confirms the backend guard works independently of the frontend.</span></span>
+                  </label>
+                </div>
+
+                <div style="margin-top:12px;padding:10px 14px;background:var(--brand-glow);border-left:3px solid var(--brand);border-radius:0 6px 6px 0;font-size:14px;color:var(--body);">
+                  <strong style="color:var(--brand);">Summary:</strong> Backend guard was already in place. Frontend now hides all 3 delete entry points for non-admin users (drawer button, detail page menu, bulk bar). 6 test scenarios above verify both the API and UI layers.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 3</span>
+            <div class="step-body">
+              <div class="step-title">Bank Details — Admin Only</div>
+              <div class="step-desc"><em>Backend:</em> PATCH /quotations/:id endpoint rejects updates to the <code>bankDetails</code> field from non-admin tokens; admins can update freely without contacting the developer.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 4</span>
+            <div class="step-body">
+              <div class="step-title">Admin Access to Add/Edit States, Lead Sources &amp; Dropdown Values</div>
+              <div class="step-desc"><em>Backend:</em> CRUD endpoints for the dropdown lookup tables (states, lead sources) restricted to Admin role. New values become immediately available across the system.</div>
+              <div class="note-box client-quote">
+                <strong>Client said:</strong> "Aaj hum do state mein kar rahe hain, kal hum teen state mein karenge — ye sab kahan set kar payenge? Ye access humko chahiye."
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 5</span>
+            <div class="step-body">
+              <div class="step-title">Admin Access to Add/Edit Models, Sizes &amp; Pricing</div>
+              <div class="step-desc"><em>Backend:</em> CRUD endpoints for <code>models</code>, <code>sizes</code>, and the price matrix <code>state × model × size → price</code>. Admin-only writes; reads available to all roles.</div>
+              <div class="note-box client-quote">
+                <strong>Client said:</strong> "Future ke liye agar humko add karna hai toh uska access hum mein rahe toh zyada better hai taki hum kabhi bhi edit kar sakein."
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 6</span>
+            <div class="step-body">
+              <div class="step-title">Admin Access to Mandatory/Optional Field Settings</div>
+              <div class="step-desc"><em>Backend:</em> store a per-field <code>required: boolean</code> flag in the enquiry-schema collection; the validate endpoint uses this to decide which fields are mandatory.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-connector">&#8595; &#8595; &#8595;</div>
+
+      <!-- ═══ PHASE 2: Enquiry Form ═══ -->
+      <div class="phase" id="be-enquiry">
+        <div class="phase-header">
+          <div class="phase-badge p2">2</div>
+          <h2 class="phase-title">Enquiry Form Changes <span class="phase-status" style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;background:#f0fdf4;border:1px solid #86efac;color:#166534;margin-left:8px;vertical-align:middle;">Phase 1 · Delivered</span></h2>
+        </div>
+        <div class="phase-why">
+          <strong>Backend scope:</strong> &mdash; schema changes (new dropdown value, new fields), remark-timeline storage, audit-log writes, and CSV/Excel/PDF export endpoints.
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 7</span>
+            <div class="step-body">
+              <div class="step-title">Add "Existing Customer" in Lead Source Dropdown</div>
+              <div class="step-desc"><em>Backend:</em> seed the lead-sources lookup with the new value; ensure validation accepts it on enquiry create/update.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 8</span>
+            <div class="step-body">
+              <div class="step-title">Follow-up &amp; % Chances Fields — Show in BOTH Immediate and Future</div>
+              <div class="step-desc"><em>Backend:</em> update the enquiry schema so <code>followUpDate</code> and <code>percentChances</code> are accepted on both Immediate and Future enquiries (drop the conditional requirement on the schema).</div>
+              <div class="note-box client-quote">
+                <strong>Client said:</strong> "Customer bolega immediate hai but woh kai baar immediate nahi hota. Today it could be immediate but after a week we realize it got postponed to future."
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 9</span>
+            <div class="step-title">Remark Field — Mandatory with Log History</div>
+            <div class="step-body">
+              <div class="step-desc"><em>Backend:</em> remark becomes required on every enquiry create/update. Store each remark as an append-only entry in a <code>remarkHistory</code> sub-collection — never overwrite; query returns all entries sorted by timestamp.</div>
+              <div class="note-box client-quote">
+                <strong>Client said:</strong> "The second entry should not overwrite the first one. What was the first discussion that should be there, second discussion should be there, and a list should form. So that we will know the history of the discussion."
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 10</span>
+            <div class="step-body">
+              <div class="step-title">Complete Edit Log History (Admin Only) <span class="shared-tag">shared</span></div>
+              <div class="step-desc"><em>Backend:</em> write an audit-log entry on every field-level PATCH to an enquiry (field, oldValue, newValue, changedBy, changedAt). Expose <code>GET /api/v1/enquiry/:id/audit</code> restricted to Admin.</div>
+              <div class="what-box">
+                <div class="what-item current">
+                  <div class="what-label">Currently</div>
+                  No record of who changed what. Only "last edited" timestamp.
+                </div>
+                <div class="what-item expected">
+                  <div class="what-label">After Update</div>
+                  Admin sees: "Raj changed Model from Pinnacle 6 to Nandak 5 on 25 June at 3:30 PM"
+                </div>
+              </div>
+              <div class="cross-ref"><strong>Also in Frontend:</strong> Admin sees a dedicated tab/section on each enquiry showing the audit entries.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 11</span>
+            <div class="step-body">
+              <div class="step-title">Add Negotiated Price Field</div>
+              <div class="step-desc"><em>Backend:</em> add <code>negotiatedPrice</code> (number, optional) to the enquiry schema. Return both <code>areaPrice</code> and <code>negotiatedPrice</code> in the API response so the client can show both.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 12</span>
+            <div class="step-body">
+              <div class="step-title">Commodities List — Make Flexible / Editable</div>
+              <div class="step-desc"><em>Backend:</em> treat commodities as a managed lookup list (similar to states / lead sources) — Admin CRUD; validate enquiry.commodity against the current list.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 13</span>
+            <div class="step-title">Download Options — Add CSV &amp; Excel Both</div>
+            <div class="step-body">
+              <div class="step-desc"><em>Backend:</em> implement CSV serializer (always), Excel serializer (xlsx), and PDF renderer for the enquiry list. Stream the response with the correct <code>Content-Type</code> and <code>Content-Disposition</code> headers.</div>
+              <div class="cross-ref"><strong>Also in Frontend:</strong> three download buttons — CSV, Excel, PDF.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-connector">&#8595; &#8595; &#8595;</div>
+
+      <!-- ═══ PHASE 3: Quotation Terms ═══ -->
+      <div class="phase" id="be-quotation-terms">
+        <div class="phase-header">
+          <div class="phase-badge p3">3</div>
+          <h2 class="phase-title">Quotation — Terms &amp; Conditions <span class="phase-status" style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;background:#f0fdf4;border:1px solid #86efac;color:#166534;margin-left:8px;vertical-align:middle;">Phase 1 · Delivered</span></h2>
+        </div>
+        <div class="phase-why">
+          <strong>Backend scope:</strong> &mdash; persist the editable fields per quotation, default freight behaviour, validate admin-only writes on bank details.
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 14</span>
+            <div class="step-body">
+              <div class="step-title">Freight — Two Options: Inclusive &amp; Extra at Actuals</div>
+              <div class="step-desc"><em>Backend:</em> store <code>freightMode: 'inclusive' | 'extra_at_actuals'</code> and <code>pointOfDelivery</code> per quotation. Default <code>pointOfDelivery</code> to "Raipur, Chhattisgarh" when <code>freightMode === 'extra_at_actuals'</code>.</div>
+              <div class="note-box client-quote">
+                <strong>Client said:</strong> "When the user selects Freight Extra at Actuals, by default Point of Delivery should read as Raipur, Chhattisgarh. And if he says Freight Inclusive, then Point of Delivery is editable."
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 15</span>
+            <div class="step-body">
+              <div class="step-title">Remove "Electricity Supply" from Terms &amp; Conditions</div>
+              <div class="step-desc"><em>Backend:</em> drop the "Electricity Supply: 220 Volts, Frequency 50 Hz" line from the quotation-template defaults; add <code>powerSupplyNote</code> field (default "220V Single Phase Supply") into the machine description section.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 16</span>
+            <div class="step-body">
+              <div class="step-title">Warranty — Editable by Both User &amp; Admin</div>
+              <div class="step-desc"><em>Backend:</em> warranty field is free-text on the quotation schema; default "2 years"; any authenticated user can write.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 17</span>
+            <div class="step-body">
+              <div class="step-title">Payment Terms — Editable by User</div>
+              <div class="step-desc"><em>Backend:</em> paymentTerms is free-text on the quotation schema; default "50% Advance on PO, Balance before dispatch"; any authenticated user can write.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 18</span>
+            <div class="step-body">
+              <div class="step-title">All Terms &amp; Conditions — Make Flexible</div>
+              <div class="step-desc"><em>Backend:</em> store T&amp;C as a structured array (key, value, editable) on each quotation; only <code>bankDetails</code> is locked to Admin writes.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PHASE 4 — formatting is Frontend-only; brief note in Backend tab -->
+      <div class="phase" id="be-quotation-format">
+        <div class="phase-header">
+          <div class="phase-badge p4">4</div>
+          <h2 class="phase-title">Quotation — Formatting Fixes <span class="phase-status" style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;background:#f0fdf4;border:1px solid #86efac;color:#166534;margin-left:8px;vertical-align:middle;">Phase 1 · Delivered</span></h2>
+        </div>
+        <div class="phase-why">
+          Formatting is <strong>purely a Frontend concern</strong> (PDF renderer / preview). Backend stays unchanged.
+        </div>
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">No items</span>
+            <div class="step-body">
+              <div class="step-title">No backend changes for Steps 19–21</div>
+              <div class="step-desc">Logo asset path is already served from <code>/public/logo.png</code> (both quotation templates can reference it). Margins and table column widths are CSS / PDF-layout concerns only. See the <strong>Frontend</strong> tab for the actual work items.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-connector">&#8595; &#8595; &#8595;</div>
+
+      <!-- ═══ PHASE 5: Technical Specs ═══ -->
+      <div class="phase" id="be-technical">
+        <div class="phase-header">
+          <div class="phase-badge p5">5</div>
+          <h2 class="phase-title">Technical Specification Auto-Fill <span class="phase-status" style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;background:#f0fdf4;border:1px solid #86efac;color:#166534;margin-left:8px;vertical-align:middle;">Phase 1 · Delivered</span></h2>
+        </div>
+        <div class="phase-why">
+          <strong>Backend scope:</strong> &mdash; store the spec catalogue and expose a lookup endpoint that the frontend calls when the user picks a model+size.
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 22</span>
+            <div class="step-body">
+              <div class="step-title">Auto-Fill Technical Specs Based on Model + Size <span class="shared-tag">shared</span></div>
+              <div class="step-desc"><em>Backend:</em> expose <code>GET /api/v1/specs?model=X&amp;size=Y</code> returning the canonical spec object (modules, channels, cameras, sorting modes, light system, air filter system, etc.).</div>
+              <div class="cross-ref"><strong>Also in Frontend:</strong> listen for model+size changes and populate the form fields reactively from the API response.</div>
+              <div class="note-box client-quote">
+                <strong>Client said:</strong> "Do hi select karte apan — model aur chute size. Uske saath number of cameras calculate karke likh dena, channels bhi. Taaki cross-fill karna na pade aur wrong entry na ho."
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 23</span>
+            <div class="step-body">
+              <div class="step-title">Admin Can Set/Update Technical Specs Per Model</div>
+              <div class="step-desc"><em>Backend:</em> CRUD endpoints for the spec catalogue — Admin-only writes, all-roles reads. New models added without code changes.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 24</span>
+            <div class="step-body">
+              <div class="step-title">Client to Provide Tabular Data for Models</div>
+              <div class="step-desc"><em>Backend:</em> provide a bulk-upsert endpoint (e.g. <code>POST /api/v1/specs/bulk</code>) so Admin can paste a table once and seed the entire catalogue at once.</div>
+              <div class="note-box">
+                <strong>Action Item (Client):</strong> Jna Ji to share tabular data: Model &rarr; Size &rarr; Channels &rarr; Cameras &rarr; Specs for both Nandak and Pinnacle.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-connector">&#8595; &#8595; &#8595;</div>
+
+      <!-- ═══ PHASE 6: Sharing & Communication ═══ -->
+      <div class="phase" id="be-sharing">
+        <div class="phase-header">
+          <div class="phase-badge p6">6</div>
+          <h2 class="phase-title">Sharing &amp; Communication <span class="phase-status" style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;background:#f0fdf4;border:1px solid #86efac;color:#166534;margin-left:8px;vertical-align:middle;">Phase 1 · Delivered</span></h2>
+        </div>
+        <div class="phase-why">
+          <strong>Backend scope:</strong> &mdash; send-email API, send-whatsapp API, "send both" orchestration, superior notification, and sharing-history persistence.
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 25</span>
+            <div class="step-body">
+              <div class="step-title">Email &amp; WhatsApp — Both Options + "Send Both at Once" <span class="shared-tag">shared</span></div>
+              <div class="step-desc"><em>Backend:</em> provide endpoints <code>POST /share/email</code> and <code>POST /share/whatsapp</code> callable independently, and <code>POST /share/both</code> that invokes both in parallel.</div>
+              <div class="cross-ref"><strong>Also in Frontend:</strong> three buttons in the share sheet, plus a 4th "Send Both" button.</div>
+              <div class="note-box client-quote">
+                <strong>Client said:</strong> "Koi customer kehta hai WhatsApp nahi, mujhe email karo. We should have that option also. And both at once bhi chahiye."
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 26</span>
+            <div class="step-body">
+              <div class="step-title">Send Quotation from App Directly (Not via Gmail Redirect)</div>
+              <div class="step-desc"><em>Backend:</em> <code>POST /share/email</code> accepts <code>{ quotationId, to, subject, body }</code>, generates the PDF server-side (or reuses a cached version), attaches it, and sends via Resend / SendGrid / SES. Returns 200 with message id.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 27</span>
+            <div class="step-body">
+              <div class="step-title">Notify Superior When Quotation is Sent</div>
+              <div class="step-desc"><em>Backend:</em> on every successful send, look up the sender's <code>reportsTo</code> user, resolve their phone, and enqueue a WhatsApp notification ("Raj sent quotation USEPL/Q-D/2026/005/R0 to Customer X").</div>
+              <div class="cross-ref"><strong>Also in Frontend:</strong> show a confirmation toast to the sender.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Step 28</span>
+            <div class="step-body">
+              <div class="step-title">Track Sharing History — Who Received, When</div>
+              <div class="step-desc"><em>Backend:</em> write a <code>share_events</code> document per send (<code>quotationId</code>, <code>channel</code>, <code>recipient</code>, <code>senderId</code>, <code>sentAt</code>). Expose <code>GET /quotations/:id/shares</code> restricted to Admin.</div>
+              <div class="cross-ref"><strong>Also in Frontend:</strong> Admin-only "Sharing History" tab on each quotation.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-connector">&#8595; &#8595; &#8595;</div>
+
+      <!-- ═══ PHASE 7: Dashboard & Other ═══ -->
+      <div class="phase" id="be-other">
+        <div class="phase-header">
+          <div class="phase-badge p7">7</div>
+          <h2 class="phase-title">Dashboard, Reporting &amp; Other Decisions <span class="phase-status" style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;background:#f0fdf4;border:1px solid #86efac;color:#166534;margin-left:8px;vertical-align:middle;">Phase 1 · Delivered</span></h2>
+        </div>
+        <div class="phase-why">
+          <strong>Backend scope:</strong> &mdash; aggregation endpoints for KPIs and reports; persistent-login refresh endpoint; auto-generated reference number.
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Snapshot</span>
+            <div class="step-body">
+              <div class="step-title">Dashboard Snapshot — Intuitive Overview for Admin</div>
+              <div class="step-desc"><em>Backend:</em> <code>GET /reports/snapshot</code> returning KPI counts (today, MTD, YTD) plus filterable aggregations by region, user, commodity, machine size. Admin-only.</div>
+              <div class="note-box client-quote">
+                <strong>Client said:</strong> "Ek baar laptop mein khol liya toh intuitive aa jaana chahiye ki haan ye ab tak mera monthly ya is saal ka itna quotation generate hua hai."
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Report</span>
+            <div class="step-body">
+              <div class="step-title">MIS Reports — Daily &amp; Monthly (Admin Only)</div>
+              <div class="step-desc"><em>Backend:</em> aggregation endpoints <code>GET /reports/daily</code>, <code>GET /reports/monthly</code>, <code>GET /reports/demand?groupBy=commodity,size</code>. Admin-only.</div>
+              <div class="cross-ref"><strong>Also in Frontend:</strong> report screens bind to these endpoints.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Login</span>
+            <div class="step-body">
+              <div class="step-title">Persistent Login — Stay Logged In for a Day <span class="shared-tag">shared</span></div>
+              <div class="step-desc"><em>Backend:</em> <code>POST /auth/refresh</code> exchanges a Firebase refresh token for a fresh ID token. Pair with Firebase Admin SDK so refresh tokens are honoured until explicitly revoked (logout, password change, admin disable).</div>
+              <div class="cross-ref"><strong>Also in Frontend:</strong> store refresh token in localStorage, schedule silent refresh 5 min before ID-token expiry, skip the login page if a valid session exists.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number">Decided</span>
+            <div class="step-body">
+              <div class="step-title">Authorized Signatory &amp; Quotation Reference Number</div>
+              <div class="step-desc"><em>Backend:</em> auto-generate reference number at quotation creation (format <code>USEPL/Q-D/YYYY/nnn/Rx</code>, sequential per year, last segment bumps on revision). Persist <code>authorizedSignatory</code> on the company profile (default "Subhash").</div>
+              <div class="cross-ref"><strong>Also in Frontend:</strong> render both values in the quotation footer / header.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="discussion-box">
+          <div class="disc-title">Needs Separate Discussion (Backend impact)</div>
+          <p><strong>Android App vs Web App:</strong> if a native Android app is built, the existing API will need auth flows adapted (Firebase Auth on mobile + the same refresh-token pattern), plus offline-sync handling. PWA is the intermediate option but needs offline storage. A separate meeting with Purushottam Sir is needed to discuss scope, cost, and timeline for app development.</p>
+        </div>
+
+        <div class="discussion-box">
+          <div class="disc-title">Needs Separate Discussion</div>
+          <p><strong>Phase 1 vs Phase 2 Division:</strong> need a separate meeting to divide all modules across phases with timeline. Client said: "Ek clear communication ho jaaye dono end pe — kab aur kya hoga."</p>
+        </div>
+      </div>
+
+      <!-- ═══ FUTURE PHASES — Backend Roadmap ═══ -->
+      <div class="phase" id="be-future">
+        <div class="phase-header">
+          <div class="phase-badge" style="background:linear-gradient(135deg,#ca8a04,#7c3aed);">→</div>
+          <h2 class="phase-title">Future Phases — Backend Roadmap <span class="phase-status" style="font-size:12px;font-weight:600;padding:3px 10px;border-radius:12px;background:linear-gradient(135deg,#fefce8,#f5f3ff);border:1px solid #c4b5fd;color:#5b21b6;margin-left:8px;vertical-align:middle;">Phase 2 + Phase 3</span></h2>
+        </div>
+        <div class="phase-why">
+          Scoped in <code>client-scope-agreement.html</code> but not yet started. Endpoints below are <strong>planned</strong>, not built.
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number" style="background:#fefce8;color:#854d0e;">P2</span>
+            <div class="step-body">
+              <div class="step-title">Phase 2 — Inventory + Sales Invoice + Delivery</div>
+              <div class="step-desc">
+                <strong>Backend endpoints to add:</strong><br>
+                • <code>POST /api/v1/sales</code> — convert quotation → sale (sets quotation.status = <code>SOLD</code>)<br>
+                • <code>POST /api/v1/invoices</code> — generate sales invoice from a sale<br>
+                • <code>GET/POST/PATCH /api/v1/inventory</code> — machine CRUD with serial number + status state machine (Available → Booked → Delivered)<br>
+                • <code>POST /api/v1/inventory/:id/book</code> — assign machine to a sale/customer<br>
+                • <code>GET/POST /api/v1/deliveries</code> — delivery tracker<br>
+                <strong>Schema additions:</strong> <code>invoices</code>, <code>inventory</code>, <code>deliveries</code> collections. RBAC matrix extended with Warehouse Manager + Owner roles.<br>
+                <strong>Gate:</strong> &#8377;50,000 advance required before any Phase 2 code is written.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-top">
+            <span class="step-number" style="background:#f5f3ff;color:#5b21b6;">P3</span>
+            <div class="step-body">
+              <div class="step-title">Phase 3 — Flutter Android (no new backend)</div>
+              <div class="step-desc">
+                <strong>Backend changes:</strong> <em>no new endpoints</em>. The Flutter app uses the same Firebase project as the web CRM.<br>
+                <strong>Adjustments needed:</strong><br>
+                • Firebase Auth mobile SDK setup<br>
+                • Firestore security rules extended for mobile-originated reads/writes<br>
+                • <code>POST /api/v1/auth/verify-token</code> hardening (Flutter uses this as primary auth)<br>
+                <strong>Delivery:</strong> APK / AAB. Play Store publishing is <strong>out of scope</strong>.<br>
+                <strong>Fee:</strong> &#8377;1,20,000.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card" style="margin-left:0;background:var(--surface);border-style:dashed;">
+          <div class="step-top">
+            <span class="step-number">!</span>
+            <div class="step-body">
+              <div class="step-title">Phase 1 = Delivered (not Pending)</div>
+              <div class="step-desc">
+                Per <code>client-scope-agreement.html</code> Phase 1 is <strong>completed and delivered</strong>. The endpoints referenced in the Frontend / Backend tabs above are already live. Phase 2 and Phase 3 endpoints listed in this roadmap are <strong>planned for future implementation</strong>, contingent on advance payment and a detailed requirements meeting per agreement §6.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="page-footer">
+    Unique Sorter CRM &mdash; Client Meeting Requirements (27 June 2026) &mdash; Frontend / Backend split &middot; Cross-referenced with Scope Agreement US-CRM-SOW-2026 (29 June 2026) &middot; 28 items across 7 phases &middot; Raipur, Chhattisgarh
+  </footer>
+
+  <script>
+    // Tab switching
+    const tabs = document.querySelectorAll('.tab-btn');
+    const panels = document.querySelectorAll('.tab-panel');
+
+    function activate(tabName) {
+      tabs.forEach(t => {
+        const active = t.dataset.tab === tabName;
+        t.classList.toggle('active', active);
+        t.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      panels.forEach(p => {
+        p.classList.toggle('active', p.id === 'panel-' + tabName);
+      });
+      // Scroll to top of panel content
+      window.scrollTo({ top: document.querySelector('.tab-bar').offsetTop - 12, behavior: 'smooth' });
+    }
+
+    tabs.forEach(t => {
+      t.addEventListener('click', () => activate(t.dataset.tab));
+    });
+
+    // Counts per tab
+    document.getElementById('count-fe').textContent =
+      document.querySelectorAll('#panel-frontend .step-card').length;
+    document.getElementById('count-be').textContent =
+      document.querySelectorAll('#panel-backend .step-card').length;
+  </script>
+
+</body>
+</html>

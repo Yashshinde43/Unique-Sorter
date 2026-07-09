@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unique Sorter CRM — Scope of Work & Client Agreement</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --ink: #1a1a2e;
+      --body: #3d3d5c;
+      --muted: #7a7a9e;
+      --border: #e2e2ef;
+      --surface: #f8f8fc;
+      --card: #ffffff;
+      --brand: #1A37AA;
+      --brand-light: #e8ecfa;
+      --green: #16a34a;
+      --green-bg: #f0fdf4;
+      --amber: #ca8a04;
+      --amber-bg: #fefce8;
+      --red: #dc2626;
+      --red-bg: #fef2f2;
+      --purple: #7c3aed;
+      --purple-bg: #f5f3ff;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      color: var(--body);
+      background: var(--surface);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── PRINT STYLES ── */
+    @media print {
+      body {
+        background: white;
+        font-size: 11pt;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+
+      .page-break {
+        page-break-before: always;
+      }
+
+      .content {
+        padding: 0 !important;
+      }
+
+      .phase-block {
+        break-inside: avoid;
+      }
+
+      .signature-block {
+        break-inside: avoid;
+      }
+
+      .header-inner {
+        padding: 20px 0 !important;
+      }
+
+      .nav-bar {
+        display: none !important;
+      }
+
+      .print-btn {
+        display: none !important;
+      }
+    }
+
+    /* ── HEADER ── */
+    .page-header {
+      background: var(--card);
+      border-bottom: 2px solid var(--brand);
+    }
+
+    .header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 32px 32px;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-mark {
+      width: 52px;
+      height: 52px;
+      background: var(--brand);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 22px;
+    }
+
+    .logo-text {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 22px;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .logo-sub {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .doc-meta {
+      text-align: right;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .doc-meta strong {
+      color: var(--body);
+      font-weight: 600;
+    }
+
+    .header-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 28px;
+      color: var(--ink);
+      font-weight: 700;
+      margin-bottom: 8px;
+      line-height: 1.3;
+      text-align: center;
+    }
+
+    .header-subtitle {
+      font-size: 16px;
+      color: var(--muted);
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .doc-badge {
+      display: inline-block;
+      margin: 16px auto 0;
+      padding: 6px 20px;
+      background: var(--brand);
+      color: white;
+      border-radius: 24px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .header-center {
+      text-align: center;
+    }
+
+    /* ── NAV ── */
+    .nav-bar {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16px 32px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .nav-chip {
+      padding: 8px 18px;
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 24px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--body);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .nav-chip:hover {
+      border-color: var(--brand);
+      color: var(--brand);
+    }
+
+    .nav-chip.green {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    .nav-chip.amber {
+      border-color: var(--amber);
+      color: var(--amber);
+    }
+
+    .nav-chip.purple {
+      border-color: var(--purple);
+      color: var(--purple);
+    }
+
+    .print-btn {
+      margin-left: auto;
+      padding: 8px 20px;
+      background: var(--brand);
+      color: white;
+      border: none;
+      border-radius: 24px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .print-btn:hover {
+      background: #142d8a;
+    }
+
+    /* ── CONTENT ── */
+    .content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 32px 60px;
+    }
+
+    /* ── PREAMBLE ── */
+    .preamble {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin: 24px 0 32px;
+    }
+
+    .preamble h2 {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 20px;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+
+    .preamble p {
+      font-size: 15px;
+      line-height: 1.8;
+      margin-bottom: 10px;
+    }
+
+    .preamble p:last-child {
+      margin-bottom: 0;
+    }
+
+    .preamble strong {
+      color: var(--ink);
+    }
+
+    .party-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+      font-size: 15px;
+    }
+
+    .party-table th {
+      background: var(--surface);
+      padding: 10px 16px;
+      text-align: left;
+      font-weight: 600;
+      color: var(--ink);
+      border: 1px solid var(--border);
+    }
+
+    .party-table td {
+      padding: 10px 16px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    /* ── PHASE BLOCK ── */
+    .phase-block {
+      background: var(--card);
+      border-radius: 14px;
+      border: 2px solid var(--border);
+      margin-bottom: 32px;
+      overflow: hidden;
+    }
+
+    .phase-header {
+      padding: 24px 28px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .phase-header.p1 {
+      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+      border-bottom-color: #86efac;
+    }
+
+    .phase-header.p2 {
+      background: linear-gradient(135deg, #fefce8, #fef9c3);
+      border-bottom-color: #fde68a;
+    }
+
+    .phase-header.p3 {
+      background: linear-gradient(135deg, #f5f3ff, #ede9fe);
+      border-bottom-color: #c4b5fd;
+    }
+
+    .phase-label {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      color: white;
+    }
+
+    .phase-header.p1 .phase-label {
+      background: var(--green);
+    }
+
+    .phase-header.p2 .phase-label {
+      background: var(--amber);
+    }
+
+    .phase-header.p3 .phase-label {
+      background: var(--purple);
+    }
+
+    .phase-header h2 {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 22px;
+      color: var(--ink);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .phase-header .phase-desc {
+      font-size: 15px;
+      color: var(--body);
+      line-height: 1.6;
+    }
+
+    .phase-header .phase-desc strong {
+      color: var(--ink);
+    }
+
+    .phase-body {
+      padding: 24px 28px;
+    }
+
+    /* ── SCOPE TABLE ── */
+    .scope-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+      margin-bottom: 20px;
+    }
+
+    .scope-table th {
+      background: var(--surface);
+      padding: 10px 16px;
+      text-align: left;
+      font-weight: 700;
+      color: var(--ink);
+      border: 1px solid var(--border);
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .scope-table td {
+      padding: 10px 16px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .scope-table .in {
+      color: var(--green);
+      font-weight: 700;
+    }
+
+    .scope-table .out {
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    .scope-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--brand-light);
+      color: var(--brand);
+      font-size: 12px;
+      font-weight: 700;
+      margin-right: 6px;
+      flex-shrink: 0;
+    }
+
+    .feature-row td:first-child {
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    /* ── PAYMENT BOX ── */
+    .payment-box {
+      background: var(--brand-light);
+      border: 2px solid var(--brand);
+      border-radius: 10px;
+      padding: 18px 22px;
+      margin-top: 8px;
+    }
+
+    .payment-box .amount {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--brand);
+    }
+
+    .payment-box .amount-label {
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .payment-box .payment-note {
+      font-size: 14px;
+      color: var(--body);
+      margin-top: 8px;
+      line-height: 1.6;
+    }
+
+    /* ── EXCLUSION CALLOUT ── */
+    .exclusion-callout {
+      background: var(--red-bg);
+      border: 1px solid #fca5a5;
+      border-left: 4px solid var(--red);
+      border-radius: 0 10px 10px 0;
+      padding: 16px 20px;
+      margin-top: 16px;
+    }
+
+    .exclusion-callout h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--red);
+      margin-bottom: 6px;
+    }
+
+    .exclusion-callout ul {
+      list-style: none;
+      padding: 0;
+      font-size: 14px;
+      color: var(--body);
+      line-height: 1.8;
+    }
+
+    .exclusion-callout ul li::before {
+      content: '\2717';
+      color: var(--red);
+      font-weight: 700;
+      margin-right: 8px;
+    }
+
+    /* ── TERMS SECTION ── */
+    .terms-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin-bottom: 32px;
+    }
+
+    .terms-section h2 {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 20px;
+      color: var(--ink);
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .terms-list {
+      list-style: none;
+      padding: 0;
+      counter-reset: term;
+    }
+
+    .terms-list li {
+      counter-increment: term;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 15px;
+      line-height: 1.7;
+      display: flex;
+      gap: 12px;
+    }
+
+    .terms-list li:last-child {
+      border-bottom: none;
+    }
+
+    .terms-list li::before {
+      content: counter(term) ".";
+      font-weight: 700;
+      color: var(--brand);
+      min-width: 28px;
+      flex-shrink: 0;
+    }
+
+    .terms-list li strong {
+      color: var(--ink);
+    }
+
+    /* ── SIGNATURE BLOCK ── */
+    .signature-section {
+      background: var(--card);
+      border: 2px solid var(--brand);
+      border-radius: 14px;
+      padding: 32px;
+      margin: 40px 0 32px;
+    }
+
+    .signature-section h2 {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 22px;
+      color: var(--ink);
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .signature-section .sig-intro {
+      font-size: 15px;
+      color: var(--body);
+      text-align: center;
+      margin-bottom: 28px;
+      line-height: 1.7;
+    }
+
+    .sig-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-top: 20px;
+    }
+
+    .sig-block {
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface);
+    }
+
+    .sig-block h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--brand);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    .sig-line {
+      border-bottom: 1px solid var(--ink);
+      margin-bottom: 20px;
+      padding-bottom: 4px;
+      min-height: 50px;
+      display: flex;
+      align-items: flex-end;
+    }
+
+    .sig-field {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .sig-field-item {
+      flex: 1;
+    }
+
+    .sig-field-item label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .sig-field-item .sig-input {
+      border: none;
+      border-bottom: 1px solid #ccc;
+      background: transparent;
+      width: 100%;
+      padding: 6px 0;
+      font-size: 15px;
+      font-family: inherit;
+      color: var(--ink);
+    }
+
+    .sig-field-item .sig-input:focus {
+      outline: none;
+      border-bottom-color: var(--brand);
+    }
+
+    /* ── FOOTER ── */
+    .page-footer {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px 32px;
+      border-top: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 640px) {
+      .header-inner {
+        padding: 24px 16px 20px;
+      }
+
+      .header-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .doc-meta {
+        text-align: left;
+      }
+
+      .header-title {
+        font-size: 22px;
+      }
+
+      .content {
+        padding: 0 16px 40px;
+      }
+
+      .nav-bar {
+        padding: 12px 16px;
+      }
+
+      .phase-body {
+        padding: 16px;
+      }
+
+      .phase-header {
+        padding: 18px 16px 14px;
+      }
+
+      .preamble,
+      .terms-section,
+      .signature-section {
+        padding: 20px 16px;
+      }
+
+      .sig-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="page-header">
+    <div class="header-inner">
+      <div class="header-top">
+        <div class="logo-area">
+          <div class="logo-mark">US</div>
+          <div>
+            <div class="logo-text">Unique Sorter</div>
+            <div class="logo-sub">CRM Application</div>
+          </div>
+        </div>
+        <div class="doc-meta">
+          <strong>Scope of Work Agreement</strong><br>
+          Document Date: 29 June 2026<br>
+          Ref: US-CRM-SOW-2026
+        </div>
+      </div>
+      <div class="header-center">
+        <h1 class="header-title">Scope of Work &amp; Phase Agreement</h1>
+        <p class="header-subtitle">This document defines the exact scope of each development phase. Both parties agree
+          that <strong>only the features listed under each phase will be delivered</strong> for that phase. Any
+          additional features require a separate written agreement.</p>
+        <div class="doc-badge">Requires Client Signature</div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="nav-bar no-print">
+    <a href="#phase1" class="nav-chip green">Phase 1</a>
+    <a href="#phase2" class="nav-chip amber">Phase 2</a>
+    <a href="#phase3" class="nav-chip purple">Phase 3</a>
+    <a href="#terms" class="nav-chip">Terms</a>
+    <a href="#signature" class="nav-chip">Sign-off</a>
+    <button class="print-btn" onclick="window.print()">Print / Save PDF</button>
+  </nav>
+
+  <div class="content">
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!--                       PREAMBLE                            -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="preamble">
+      <h2>Parties to this Agreement</h2>
+      <table class="party-table">
+        <thead>
+          <tr>
+            <th style="width:30%"></th>
+            <th>Service Provider (Developer)</th>
+            <th>Client</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Company / Name</strong></td>
+            <td>Datcrazy LLP</td>
+            <td>Unique Sorter</td>
+          </tr>
+          <tr>
+            <td><strong>Represented By</strong></td>
+            <td>Purushottam Kiri</td>
+            <td>____________________________</td>
+          </tr>
+          <tr>
+            <td><strong>Contact</strong></td>
+            <td>+91 7898498881</td>
+            <td>____________________________</td>
+          </tr>
+          <tr>
+            <td><strong>Location</strong></td>
+            <td>MM Silver Plaza 1st Floor Office No. 105, Mahaveer Nagar, Raipur, Chhattisgarh </td>
+            <td>____________________________</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style="margin-top: 18px;">This document outlines the agreed scope of work for the <strong>Unique Sorter CRM
+          Application</strong>, divided into three phases. Each phase has a clearly defined set of features that will be
+        delivered, along with features that are <strong>explicitly excluded</strong> from that phase.</p>
+      <p>By signing this document, both parties confirm that they understand and agree to the scope defined for each
+        phase. Any feature not listed as "Included" in a phase is <strong>not part of that phase</strong>, regardless of
+        prior verbal discussions.</p>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!--                        PHASE 1                            -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div id="phase1" class="phase-block">
+      <div class="phase-header p1">
+        <span class="phase-label">Phase 1 &mdash; Delivered &amp; Complete</span>
+        <h2>Enquiry &rarr; Quotation &rarr; Share &rarr; Follow-up</h2>
+        <p class="phase-desc">The complete basic CRM flow: a sales person generates an enquiry, creates a quotation from
+          it, shares it via WhatsApp/Email with catalogue, and tracks follow-ups. <strong>This phase has been completed
+            and delivered.</strong></p>
+      </div>
+
+      <div class="phase-body">
+        <table class="scope-table">
+          <thead>
+            <tr>
+              <th style="width:5%">#</th>
+              <th>Feature</th>
+              <th style="width:15%">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="feature-row">
+              <td><span class="scope-num">1</span></td>
+              <td><strong>Enquiry Generation Form</strong><br>Customer name, mobile, address/state, model
+                (Pinnacle/Nandak), size (4/5/6 chute), commodity, quantity. GST, email, pin code, % chances, month of
+                order as optional fields.</td>
+              <td class="in">INCLUDED</td>
+            </tr>
+            <tr class="feature-row">
+              <td><span class="scope-num">2</span></td>
+              <td><strong>Quotation Generation</strong><br>Linked to enquiry (no double entry), auto-generated reference
+                number with state code, region-wise auto-pricing, price modification before generating, standard terms
+                auto-fill (payment terms, warranty, bank details), instant PDF output.</td>
+              <td class="in">INCLUDED</td>
+            </tr>
+            <tr class="feature-row">
+              <td><span class="scope-num">3</span></td>
+              <td><strong>Share via WhatsApp + Email</strong><br>Send quotation PDF via WhatsApp or Email. Auto-attach
+                matching catalogue/brochure (Pinnacle brochure for Pinnacle machines, Nandak brochure for Nandak
+                machines).</td>
+              <td class="in">INCLUDED</td>
+            </tr>
+            <tr class="feature-row">
+              <td><span class="scope-num">4</span></td>
+              <td><strong>Follow-up Tracking</strong><br>Compulsory follow-up date after quotation is sent. During
+                follow-up, user fills % chances (5%, 10%, 20% etc.) and expected month of order. Pipeline stage
+                tracking.</td>
+              <td class="in">INCLUDED</td>
+            </tr>
+            <tr class="feature-row">
+              <td><span class="scope-num">5</span></td>
+              <td><strong>Email Notifications</strong><br>Automated email notifications for 3 key CRM events via Resend.
+              </td>
+              <td class="in">INCLUDED</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="exclusion-callout">
+          <h4>NOT Included in Phase 1</h4>
+          <ul>
+            <li>Sales invoice generation</li>
+            <li>Inventory / warehouse management</li>
+            <li>Machine booking &amp; delivery tracking</li>
+            <li>Online enquiry auto-integration (website &rarr; CRM)</li>
+            <li>Region-based auto-assignment of enquiries to managers</li>
+            <li>MIS reports &amp; regular enquiry reports</li>
+            <li>Mobile application (Android / iOS)</li>
+          </ul>
+        </div>
+
+        <div class="payment-box" style="margin-top: 20px;">
+          <div class="amount-label">Phase 1 Fee</div>
+          <div class="amount">&#8377;1,00,000</div>
+          <div class="payment-note">
+            <strong>Advance Paid:</strong> &#8377;50,000 &nbsp;&bull;&nbsp;
+            <strong>Balance Due:</strong> &#8377;50,000<br>
+            The total fee for Phase 1 is <strong>&#8377;1,00,000</strong>. An advance payment of
+            <strong>&#8377;50,000</strong> has been received. The remaining <strong>&#8377;50,000</strong> is payable
+            upon successful completion of Phase 1.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!--                        PHASE 2                            -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div id="phase2" class="phase-block page-break">
+      <div class="phase-header p2">
+        <span class="phase-label">Phase 2 &mdash; Next</span>
+        <h2>Inventory Management + Sales Invoice + Delivery</h2>
+        <p class="phase-desc">Extends the existing CRM pipeline beyond quotation. Adds sale conversion, invoice
+          generation, inventory tracking for machines in the warehouse, and delivery management. <strong>Starts after
+            Phase 2 payment is received.</strong></p>
+      </div>
+
+      <div class="phase-body">
+        <table class="scope-table">
+          <thead>
+            <tr>
+              <th style="width:5%">#</th>
+              <th>Feature</th>
+              <th style="width:15%">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="feature-row">
+              <td><span class="scope-num">1</span></td>
+              <td><strong>Sales Invoice Generation</strong><br>When a quotation converts to a confirmed sale, the system
+                generates a sales invoice. This completes the pipeline: Enquiry &rarr; Quotation &rarr; Sale &rarr;
+                Invoice.</td>
+              <td class="in">INCLUDED</td>
+            </tr>
+            <tr class="feature-row">
+              <td><span class="scope-num">2</span></td>
+              <td><strong>Inventory System (Machine Tracking)</strong><br>Track machines in the godown/warehouse. Each
+                machine entry includes serial number, model, and availability status (Available / Booked / Delivered).
+              </td>
+              <td class="in">INCLUDED</td>
+            </tr>
+            <tr class="feature-row">
+              <td><span class="scope-num">3</span></td>
+              <td><strong>Machine Booking on Sale</strong><br>When a sale is confirmed, a specific machine from
+                inventory gets booked to the customer. System shows: which machine is booked to whom, whether the
+                machine is available or booked, and the delivery date.</td>
+              <td class="in">INCLUDED</td>
+            </tr>
+            <tr class="feature-row">
+              <td><span class="scope-num">4</span></td>
+              <td><strong>Delivery Tracking</strong><br>Track delivery dates for booked machines. Visibility into
+                upcoming deliveries and their status.</td>
+              <td class="in">INCLUDED</td>
+            </tr>
+            <tr class="feature-row">
+              <td><span class="scope-num">5</span></td>
+              <td><strong>Multiple User Roles</strong><br>Different access levels for Warehouse Manager and Owners.
+                Exact permissions to be detailed in a follow-up requirements meeting before development begins.</td>
+              <td class="in">INCLUDED</td>
+            </tr>
+            <tr class="feature-row">
+              <td><span class="scope-num">6</span></td>
+              <td><strong>Linked Pipeline</strong><br>Inventory is directly connected to the CRM pipeline. When a sale
+                happens through the CRM, inventory updates automatically. No separate data entry required.</td>
+              <td class="in">INCLUDED</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="exclusion-callout">
+          <h4>NOT Included in Phase 2</h4>
+          <ul>
+            <li>Mobile application (Android / iOS) &mdash; this is Phase 3</li>
+            <li>Online enquiry auto-integration (website &rarr; CRM)</li>
+            <li>Region-based auto-assignment of enquiries</li>
+            <li>MIS reports &amp; analytics dashboards</li>
+            <li>Accounting / GST filing integration</li>
+            <li>Any feature not explicitly listed above as "INCLUDED"</li>
+          </ul>
+        </div>
+
+        <div class="payment-box" style="margin-top: 20px;">
+  <div class="amount-label">Phase 2 Fee</div>
+  <div class="amount">&#8377;1,00,000</div>
+  <div class="payment-note">
+    <strong>Advance Payment:</strong> &#8377;50,000 (required before Phase 2 development begins)<br>
+    <strong>Balance Due:</strong> &#8377;50,000 (payable upon successful completion of Phase 2)<br>
+    The total fee for Phase 2 is <strong>&#8377;1,00,000</strong>. Development will commence only after the advance payment of <strong>&#8377;50,000</strong> is received. The remaining <strong>&#8377;50,000</strong> is payable upon successful completion of Phase 2.
+  </div>
+</div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!--                        PHASE 3                            -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div id="phase3" class="phase-block page-break">
+  <div class="phase-header p3">
+    <span class="phase-label">Phase 3 &mdash; Future</span>
+    <h2>Mobile Application (Android)</h2>
+    <p class="phase-desc">
+      A mobile app built with <strong>Flutter</strong> that connects to the same Firebase
+      backend as the web CRM. The application will support <strong>Android</strong> devices using a single codebase.
+    </p>
+  </div>
+
+  <div class="phase-body">
+    <table class="scope-table">
+      <thead>
+        <tr>
+          <th style="width:5%">#</th>
+          <th>Feature</th>
+          <th style="width:15%">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="feature-row">
+          <td><span class="scope-num">1</span></td>
+          <td>
+            <strong>Flutter Mobile App</strong><br>
+            Android application with the same CRM functionality as the web application, optimized for mobile devices.
+          </td>
+          <td class="in">INCLUDED</td>
+        </tr>
+
+        <tr class="feature-row">
+          <td><span class="scope-num">2</span></td>
+          <td>
+            <strong>Same Firebase Backend</strong><br>
+            No new backend required. The mobile app connects to the existing Firebase backend. Web and mobile work side-by-side.
+          </td>
+          <td class="in">INCLUDED</td>
+        </tr>
+
+        <tr class="feature-row">
+          <td><span class="scope-num">3</span></td>
+          <td>
+            <strong>APK / App Bundle Delivery</strong><br>
+            The app will be delivered as an installable APK/AAB file for Android.
+          </td>
+          <td class="in">INCLUDED</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="exclusion-callout">
+      <h4>NOT Included in Phase 3 (Separate Charges Apply)</h4>
+      <ul>
+        <li>Google Play Store publishing (requires review process, 5–10 testers, separate fee)</li>
+        <li>Store listing design, screenshots, and descriptions</li>
+        <li>Ongoing Play Store maintenance &amp; updates for store compliance</li>
+      </ul>
+    </div>
+
+    <div class="payment-box" style="margin-top: 20px;">
+      <div class="amount-label">Phase 3 Fee</div>
+      <div class="amount">&#8377;1,20,000</div>
+      <div class="payment-note">
+        The total fee for <strong>Phase 3 (Android Mobile Application Development)</strong> is
+        <strong>&#8377;1,20,000</strong>.<br>
+        <strong>Note:</strong> Google Play Store publishing charges are additional and are not included in the Phase 3 development fee.
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!--                    TERMS & CONDITIONS                     -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div id="terms" class="terms-section page-break">
+      <h2>Terms &amp; Conditions</h2>
+      <ol class="terms-list">
+        <li><strong>Scope Freeze:</strong> Once a phase begins development, the scope for that phase is frozen. No
+          additional features will be added without a separate written change request and revised cost estimate.</li>
+        <li><strong>Change Requests:</strong> Any feature or modification not listed under a phase's "INCLUDED" items
+          requires a formal change request. Change requests may carry additional cost and timeline adjustments.</li>
+        <li><strong>Payment Before Work:</strong> Development for each phase begins only after the full payment for that
+          phase has been received. Partial payments do not initiate development.</li>
+        <li><strong>Phase Independence:</strong> Each phase is an independent unit of work. Completion of one phase does
+          not obligate either party to proceed with the next phase.</li>
+        <li><strong>Exclusions Are Final:</strong> Items listed under "NOT Included" for a phase are explicitly outside
+          the scope. If the client requests these during the phase, they will be treated as a change request.</li>
+        <li><strong>Detailed Requirements Meeting:</strong> Before Phase 2 and Phase 3 development begins, a detailed
+          requirements meeting will be conducted to finalize specific field-level details, user role permissions, and
+          workflow steps within the agreed scope.</li>
+        <li><strong>Delivery &amp; Acceptance:</strong> Upon completion of each phase, the client will be given a
+          reasonable period (7 working days) to review and accept the deliverables. Feedback within this period will be
+          addressed if it falls within the agreed scope.</li>
+        <li><strong>Technology Stack:</strong> Web CRM is built on React (Next.js) with Firebase backend. Mobile app
+          (Phase 3) will be built with Flutter. Any request to change the technology stack is outside the scope of this
+          agreement.</li>
+        <li><strong>Hosting &amp; Infrastructure:</strong> Firebase hosting and infrastructure costs are borne by the
+          client. The developer will assist in setup but ongoing cloud costs are the client's responsibility.</li>
+        <li><strong>Verbal Discussions:</strong> Only features documented in this signed agreement are considered in
+          scope. Verbal discussions, meeting conversations, or informal messages do not constitute scope changes unless
+          formally documented and signed.</li>
+      </ol>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!--                      SIGNATURE                            -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div id="signature" class="signature-section page-break">
+      <h2>Acceptance &amp; Sign-off</h2>
+      <p class="sig-intro">By signing below, both parties confirm that they have read, understood, and agree to the
+        scope of work, payment terms, and conditions described in this document.</p>
+
+      <div class="sig-grid">
+        <!-- Client Side -->
+        <div class="sig-block">
+          <h3>Client &mdash; Unique Sorter</h3>
+
+          <div class="sig-field">
+            <div class="sig-field-item">
+              <label>Full Name</label>
+              <input type="text" class="sig-input" placeholder="">
+            </div>
+          </div>
+
+          <div class="sig-field">
+            <div class="sig-field-item">
+              <label>Designation</label>
+              <input type="text" class="sig-input" placeholder="">
+            </div>
+          </div>
+
+          <label
+            style="font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px; margin-top: 8px;">Signature</label>
+          <div class="sig-line"></div>
+
+          <div class="sig-field">
+            <div class="sig-field-item">
+              <label>Date</label>
+              <input type="text" class="sig-input" placeholder="">
+            </div>
+            <div class="sig-field-item">
+              <label>Place</label>
+              <input type="text" class="sig-input" placeholder="">
+            </div>
+          </div>
+        </div>
+
+        <!-- Developer Side -->
+        <div class="sig-block">
+          <h3>Service Provider &mdash; Developer</h3>
+
+          <div class="sig-field">
+            <div class="sig-field-item">
+              <label>Full Name</label>
+              <input type="text" class="sig-input" placeholder="">
+            </div>
+          </div>
+
+          <div class="sig-field">
+            <div class="sig-field-item">
+              <label>Designation</label>
+              <input type="text" class="sig-input" placeholder="">
+            </div>
+          </div>
+
+          <label
+            style="font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px; margin-top: 8px;">Signature</label>
+          <div class="sig-line"></div>
+
+          <div class="sig-field">
+            <div class="sig-field-item">
+              <label>Date</label>
+              <input type="text" class="sig-input" placeholder="">
+            </div>
+            <div class="sig-field-item">
+              <label>Place</label>
+              <input type="text" class="sig-input" placeholder="">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="page-footer">
+    Unique Sorter CRM &mdash; Scope of Work Agreement &middot; Ref: US-CRM-SOW-2026 &middot; 29 June 2026<br>
+    This document is valid only when signed by both parties.
+  </footer>
+
+</body>
+
+</html>

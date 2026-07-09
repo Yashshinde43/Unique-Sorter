@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unique Sorter CRM — Phase Closure & Roadmap (29 June 2026)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --ink: #1a1a2e;
+      --body: #3d3d5c;
+      --muted: #7a7a9e;
+      --border: #e2e2ef;
+      --surface: #f5f5fa;
+      --card: #ffffff;
+      --brand: #1A37AA;
+      --brand-light: #e8ecfa;
+      --green: #16a34a;
+      --green-bg: #f0fdf4;
+      --amber: #ca8a04;
+      --amber-bg: #fefce8;
+      --red: #dc2626;
+      --red-bg: #fef2f2;
+      --purple: #7c3aed;
+      --purple-bg: #f5f3ff;
+      --teal: #0d9488;
+      --teal-bg: #f0fdfa;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      color: var(--body);
+      background: var(--surface);
+      line-height: 1.7;
+    }
+
+    /* HEADER */
+    .page-header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 32px 32px;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    .logo-area { display: flex; align-items: center; gap: 14px; }
+
+    .logo-mark {
+      width: 48px; height: 48px;
+      background: var(--brand); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 700; font-size: 20px;
+    }
+
+    .logo-text {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 22px; color: var(--ink); font-weight: 700;
+    }
+
+    .logo-sub {
+      font-size: 13px; color: var(--muted); font-weight: 500;
+      letter-spacing: 0.5px; text-transform: uppercase;
+    }
+
+    .doc-date { text-align: right; font-size: 15px; color: var(--muted); line-height: 1.5; }
+    .doc-date strong { color: var(--body); font-weight: 600; }
+
+    .header-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 30px; color: var(--ink); font-weight: 700;
+      margin-bottom: 10px; line-height: 1.3;
+    }
+
+    .header-desc { font-size: 17px; color: var(--muted); max-width: 800px; line-height: 1.6; }
+    .header-desc strong { color: var(--body); }
+
+    /* NAV */
+    .nav-bar {
+      max-width: 1000px; margin: 0 auto; padding: 20px 32px;
+      display: flex; gap: 10px; flex-wrap: wrap;
+    }
+
+    .nav-chip {
+      padding: 10px 20px; background: var(--card); border: 2px solid var(--border);
+      border-radius: 24px; font-size: 16px; font-weight: 600;
+      color: var(--body); text-decoration: none; transition: all 0.2s;
+    }
+
+    .nav-chip:hover { border-color: var(--brand); color: var(--brand); }
+    .nav-chip.green { border-color: var(--green); color: var(--green); }
+    .nav-chip.amber { border-color: var(--amber); color: var(--amber); }
+    .nav-chip.purple { border-color: var(--purple); color: var(--purple); }
+
+    /* CONTENT */
+    .content { max-width: 1000px; margin: 0 auto; padding: 0 32px 80px; }
+
+    /* ─── PHASE BANNER ─── */
+    .phase-banner {
+      border-radius: 14px;
+      padding: 28px 32px;
+      margin-bottom: 28px;
+      margin-top: 12px;
+    }
+
+    .phase-banner.p1 {
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+      border: 2px solid #86efac;
+    }
+
+    .phase-banner.p2 {
+      background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
+      border: 2px solid #fde68a;
+    }
+
+    .phase-banner.p3 {
+      background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+      border: 2px solid #c4b5fd;
+    }
+
+    .phase-tag {
+      display: inline-block;
+      padding: 5px 16px;
+      border-radius: 24px;
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .phase-banner.p1 .phase-tag { background: var(--green); color: white; }
+    .phase-banner.p2 .phase-tag { background: var(--amber); color: white; }
+    .phase-banner.p3 .phase-tag { background: var(--purple); color: white; }
+
+    .phase-banner h2 {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 24px; color: var(--ink); font-weight: 700; margin-bottom: 8px;
+    }
+
+    .phase-banner p { font-size: 16px; color: var(--body); line-height: 1.6; }
+    .phase-banner p strong { color: var(--ink); }
+
+    .phase-summary {
+      margin-top: 16px;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.7);
+      border-radius: 10px;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .phase-summary .item {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .phase-summary .num {
+      background: var(--ink);
+      color: white;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .phase-banner.p1 .phase-summary .num { background: var(--green); }
+    .phase-banner.p2 .phase-summary .num { background: var(--amber); }
+    .phase-banner.p3 .phase-summary .num { background: var(--purple); }
+
+    /* ─── SECTION ─── */
+    .section { margin-bottom: 32px; }
+
+    .section-header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 14px; padding-bottom: 10px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .section-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+
+    .section-icon.green { background: var(--green-bg); }
+    .section-icon.blue { background: #eff6ff; }
+    .section-icon.purple { background: var(--purple-bg); }
+    .section-icon.teal { background: var(--teal-bg); }
+    .section-icon.amber { background: var(--amber-bg); }
+    .section-icon.red { background: var(--red-bg); }
+
+    .section-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 20px; color: var(--ink); font-weight: 700;
+    }
+
+    /* ─── CARD ─── */
+    .req-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 22px;
+      margin-bottom: 10px;
+      margin-left: 20px;
+      position: relative;
+    }
+
+    .req-card:hover { box-shadow: 0 2px 12px rgba(26, 55, 170, 0.06); }
+
+    .req-card::before {
+      content: ''; position: absolute;
+      left: -12px; top: 0; bottom: -10px;
+      width: 2px; background: var(--border);
+    }
+    .req-card:last-child::before { bottom: 50%; }
+
+    .req-card::after {
+      content: ''; position: absolute;
+      left: -17px; top: 22px;
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--card); border: 2px solid var(--border);
+    }
+
+    .req-title { font-size: 17px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+    .req-desc { font-size: 15px; color: var(--body); line-height: 1.65; }
+    .req-desc strong { color: var(--ink); font-weight: 600; }
+
+    .client-quote {
+      background: var(--amber-bg); border: 1px solid #fde68a;
+      border-left: 3px solid var(--amber); border-radius: 0 8px 8px 0;
+      padding: 12px 16px; margin-top: 10px;
+      font-size: 15px; color: var(--body); line-height: 1.6;
+    }
+    .client-quote strong { color: var(--amber); }
+
+    .decision-quote {
+      background: var(--green-bg); border: 1px solid #86efac;
+      border-left: 3px solid var(--green); border-radius: 0 8px 8px 0;
+      padding: 12px 16px; margin-top: 10px;
+      font-size: 15px; color: var(--body); line-height: 1.6;
+    }
+    .decision-quote strong { color: var(--green); }
+
+    .warning-quote {
+      background: var(--red-bg); border: 1px solid #fca5a5;
+      border-left: 3px solid var(--red); border-radius: 0 8px 8px 0;
+      padding: 12px 16px; margin-top: 10px;
+      font-size: 15px; color: var(--body); line-height: 1.6;
+    }
+    .warning-quote strong { color: var(--red); }
+
+    /* TABLE */
+    .field-table {
+      width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 15px;
+    }
+    .field-table th {
+      background: var(--surface); padding: 8px 14px; text-align: left;
+      font-weight: 600; color: var(--ink); border: 1px solid var(--border); font-size: 14px;
+    }
+    .field-table td { padding: 8px 14px; border: 1px solid var(--border); }
+
+    /* STATUS BADGES */
+    .status-badge {
+      display: inline-block; padding: 3px 12px; border-radius: 20px;
+      font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .status-badge.complete { background: var(--green-bg); color: var(--green); border: 1px solid #86efac; }
+    .status-badge.pending { background: var(--amber-bg); color: var(--amber); border: 1px solid #fde68a; }
+    .status-badge.future { background: var(--purple-bg); color: var(--purple); border: 1px solid #c4b5fd; }
+
+    /* DIVIDER */
+    .big-divider {
+      text-align: center;
+      margin: 48px 0 24px;
+      padding: 16px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border-top: 3px dashed var(--border);
+      border-bottom: 3px dashed var(--border);
+    }
+
+    /* FOOTER */
+    .page-footer {
+      max-width: 1000px; margin: 0 auto; padding: 24px 32px;
+      border-top: 1px solid var(--border); font-size: 15px;
+      color: var(--muted); text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      .header-inner { padding: 24px 16px 20px; }
+      .header-top { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .doc-date { text-align: left; }
+      .header-title { font-size: 24px; }
+      .content { padding: 0 16px 60px; }
+      .nav-bar { padding: 12px 16px; }
+      .req-card { margin-left: 12px; padding: 14px; }
+      .phase-banner { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="page-header">
+    <div class="header-inner">
+      <div class="header-top">
+        <div class="logo-area">
+          <div class="logo-mark">US</div>
+          <div>
+            <div class="logo-text">Unique Sorter</div>
+            <div class="logo-sub">CRM Application</div>
+          </div>
+        </div>
+        <div class="doc-date">
+          <strong>Phase Closure &amp; Roadmap Meeting</strong><br>
+          29 June 2026 &mdash; Raipur
+        </div>
+      </div>
+      <h1 class="header-title">Phase 1 Closure &amp; Phase 2 / Phase 3 Roadmap</h1>
+      <p class="header-desc">Crystal clear separation of what is <strong>completed</strong>, what is <strong>next</strong>, and what comes <strong>later</strong>. No feature will be built without approval. Each phase has its own payment and scope.</p>
+    </div>
+  </header>
+
+  <nav class="nav-bar">
+    <a href="#phase1" class="nav-chip green">Phase 1 &mdash; Complete</a>
+    <a href="#phase2" class="nav-chip amber">Phase 2 &mdash; Inventory + Invoice</a>
+    <a href="#phase3" class="nav-chip purple">Phase 3 &mdash; Mobile App</a>
+    <a href="#payment" class="nav-chip">Payment Structure</a>
+  </nav>
+
+  <div class="content">
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!--                   PHASE 1 — COMPLETE                      -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div id="phase1">
+      <div class="phase-banner p1">
+        <span class="phase-tag">Phase 1 &mdash; Officially Complete</span>
+        <h2>Enquiry &rarr; Quotation &rarr; Send &rarr; Follow-up</h2>
+        <p><strong>Phase 1 is now closed.</strong> Everything discussed in the first meeting has been built and delivered. No new features will be added to Phase 1 without explicit approval. Any changes or additions from this point forward go into Phase 2 or later.</p>
+
+        <div class="phase-summary">
+          <div class="item"><span class="num">&#10003;</span> <strong>Enquiry Generation</strong> &mdash; Customer details, model, size, commodity, mandatory/optional fields</div>
+          <div class="item"><span class="num">&#10003;</span> <strong>Quotation Generation</strong> &mdash; Linked to enquiry, region-wise pricing, PDF output</div>
+          <div class="item"><span class="num">&#10003;</span> <strong>Share via WhatsApp + Email</strong> &mdash; Quotation + catalogue sent together</div>
+          <div class="item"><span class="num">&#10003;</span> <strong>Follow-up Tracking</strong> &mdash; Follow-up date, % chances, pipeline stages</div>
+          <div class="item"><span class="num">&#10003;</span> <strong>Email Notifications</strong> &mdash; Automated emails for key events via Resend</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon green">&#9989;</div>
+          <h3 class="section-title">Phase 1 &mdash; Closure Rules</h3>
+        </div>
+
+        <div class="req-card">
+          <div class="req-title">No New Features Without Approval</div>
+          <div class="req-desc">Phase 1 scope is frozen. <strong>Not a single feature</strong> will be built without explicit client approval going forward. If the client requests changes to existing Phase 1 features, those are treated as change requests and discussed separately.</div>
+          <div class="decision-quote">
+            <strong>Decision:</strong> "Ek bhi feature bina approval ke nahi banaoge. Phase 1 is officially complete."
+          </div>
+        </div>
+
+        <div class="req-card">
+          <div class="req-title">Phase 1 Change Requests</div>
+          <div class="req-desc">If the client wants any modifications to Phase 1 after closure, they should <strong>ask for changes first</strong>. Changes will be evaluated and discussed before implementation.</div>
+          <div class="decision-quote">
+            <strong>Decision:</strong> "Phase 1 khatam ho gaya, jo bhi ismein changes hain woh pooch lo. Phir Phase 1 close."
+          </div>
+        </div>
+      </div>
+
+      <!-- What Phase 1 includes / does NOT include -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon green">&#128203;</div>
+          <h3 class="section-title">Phase 1 &mdash; What Is Included vs Not Included</h3>
+        </div>
+
+        <div class="req-card">
+          <div class="req-title">Included in Phase 1</div>
+          <div class="req-desc">
+            <table class="field-table">
+              <thead>
+                <tr><th>Feature</th><th>Status</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Enquiry generation form (all fields)</td><td><span class="status-badge complete">Done</span></td></tr>
+                <tr><td>Quotation generation from enquiry</td><td><span class="status-badge complete">Done</span></td></tr>
+                <tr><td>Quotation PDF generation</td><td><span class="status-badge complete">Done</span></td></tr>
+                <tr><td>Send quotation via WhatsApp</td><td><span class="status-badge complete">Done</span></td></tr>
+                <tr><td>Send quotation via Email</td><td><span class="status-badge complete">Done</span></td></tr>
+                <tr><td>Auto-attach catalogue/brochure</td><td><span class="status-badge complete">Done</span></td></tr>
+                <tr><td>Follow-up date tracking</td><td><span class="status-badge complete">Done</span></td></tr>
+                <tr><td>% Chances &amp; pipeline stages</td><td><span class="status-badge complete">Done</span></td></tr>
+                <tr><td>Email notifications (3 events)</td><td><span class="status-badge complete">Done</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="req-card">
+          <div class="req-title">NOT Included in Phase 1</div>
+          <div class="req-desc">
+            <table class="field-table">
+              <thead>
+                <tr><th>Feature</th><th>Goes Into</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Sales Invoice generation</td><td><span class="status-badge pending">Phase 2</span></td></tr>
+                <tr><td>Inventory management</td><td><span class="status-badge pending">Phase 2</span></td></tr>
+                <tr><td>Machine booking &amp; delivery tracking</td><td><span class="status-badge pending">Phase 2</span></td></tr>
+                <tr><td>Online enquiry &rarr; CRM auto-integration</td><td><span class="status-badge pending">Phase 2</span></td></tr>
+                <tr><td>Region-based auto-assignment</td><td><span class="status-badge pending">Phase 2</span></td></tr>
+                <tr><td>MIS Reports</td><td><span class="status-badge pending">Phase 2</span></td></tr>
+                <tr><td>Mobile App (Android / iOS)</td><td><span class="status-badge future">Phase 3</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="big-divider">Phase 1 Closed &mdash; Phase 2 Scope Below</div>
+    <!-- ══════════════════════════════════════════════════════════ -->
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!--                   PHASE 2 — INVENTORY                     -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div id="phase2">
+      <div class="phase-banner p2">
+        <span class="phase-tag">Phase 2 &mdash; Next Up</span>
+        <h2>Inventory Management + Sales Invoice + Delivery</h2>
+        <p>Phase 2 extends the existing pipeline. Currently the flow stops at quotation. Phase 2 takes it further: <strong>Enquiry &rarr; Quotation &rarr; Sale &rarr; Invoice &rarr; Machine Booked &rarr; Delivery</strong>. It also adds inventory tracking for machines in the godown (warehouse).</p>
+
+        <div class="phase-summary">
+          <div class="item"><span class="num">1</span> <strong>Sales Invoice</strong> &mdash; Generate sale invoice after quotation converts to sale</div>
+          <div class="item"><span class="num">2</span> <strong>Inventory System</strong> &mdash; Track machines in godown with serial numbers</div>
+          <div class="item"><span class="num">3</span> <strong>Machine Booking</strong> &mdash; When sold, machine gets booked to customer with delivery date</div>
+          <div class="item"><span class="num">4</span> <strong>Multiple User Roles</strong> &mdash; Warehouse manager, owners with different access</div>
+        </div>
+      </div>
+
+      <!-- Sales Invoice -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon amber">&#128176;</div>
+          <h3 class="section-title">Phase 2 &mdash; Part 1: Sales Invoice</h3>
+        </div>
+
+        <div class="req-card">
+          <div class="req-title">Quotation &rarr; Sale &rarr; Invoice</div>
+          <div class="req-desc">Currently the system only generates <strong>quotations</strong>. Phase 2 adds the next step: when a quotation converts to a sale, the system generates a <strong>sales invoice</strong>. This completes the pipeline from enquiry to revenue.</div>
+          <div class="client-quote">
+            <strong>Discussed:</strong> "Abhi tak sirf quotation generate ho raha hai aur quotation apan send kar rahe hain. Basically ab sale ka invoice aur delivery wala jo hai woh Phase 2 hai."
+          </div>
+        </div>
+
+        <div class="req-card">
+          <div class="req-title">Pipeline Extension</div>
+          <div class="req-desc">The full pipeline after Phase 2 will be:<br>
+            <strong>Enquiry</strong> &rarr; <strong>Quotation</strong> &rarr; <strong>Sale</strong> &rarr; <strong>Invoice</strong> &rarr; <strong>Machine Booked</strong> &rarr; <strong>Delivery</strong><br><br>
+            Phase 1 covers Enquiry &rarr; Quotation. Phase 2 covers Sale &rarr; Invoice &rarr; Machine Booked &rarr; Delivery.
+          </div>
+        </div>
+      </div>
+
+      <!-- Inventory -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon amber">&#128230;</div>
+          <h3 class="section-title">Phase 2 &mdash; Part 2: Inventory Management</h3>
+        </div>
+
+        <div class="req-card">
+          <div class="req-title">Machine Tracking in Godown (Warehouse)</div>
+          <div class="req-desc">Machines sitting in the godown need to be tracked. Each machine has a <strong>serial number</strong>, <strong>model name</strong>, and <strong>availability status</strong>. The inventory system shows what's available, what's booked, and what's been delivered.</div>
+          <div class="client-quote">
+            <strong>Discussed:</strong> "Inke jo godown mein machines rakhi hain, unka serial number ho gaya, machine ho gayi &mdash; toh for example 10 machines. Inventory system mein dikhna chahiye."
+          </div>
+        </div>
+
+        <div class="req-card">
+          <div class="req-title">Machine Booking on Sale</div>
+          <div class="req-desc">When an enquiry converts to a quotation and then to a <strong>sale</strong>, a specific machine from inventory gets <strong>booked</strong> to that customer. The system should show:<br>
+            &bull; Which machine is booked to which customer<br>
+            &bull; Whether the machine is <strong>new/available</strong> or <strong>already booked</strong><br>
+            &bull; <strong>Delivery date</strong> for the booked machine</div>
+          <div class="client-quote">
+            <strong>Discussed:</strong> "Woh sale ho gaya, toh woh machine &mdash; book ho gaya. Falana falana insaan ke naam book ho gaya. Toh usko dikhna chahiye inventory system mein ki bhai ye machine naya hai already aur iska delivery date falana falana hai."
+          </div>
+        </div>
+
+        <div class="req-card">
+          <div class="req-title">Linked to Existing Pipeline</div>
+          <div class="req-desc">Inventory is <strong>not a standalone system</strong>. It is directly linked to the CRM pipeline. When a sale happens through the CRM (enquiry &rarr; quotation &rarr; sale), the inventory automatically updates. No separate data entry.</div>
+          <div class="decision-quote">
+            <strong>Key Point:</strong> "Phase 2 hai only inventory &mdash; woh bhi isi se linked inventory, isi ka aage pipeline."
+          </div>
+        </div>
+      </div>
+
+      <!-- Multiple Users -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon amber">&#128101;</div>
+          <h3 class="section-title">Phase 2 &mdash; Part 3: Multiple User Roles</h3>
+        </div>
+
+        <div class="req-card">
+          <div class="req-title">Warehouse Manager &amp; Owner Roles</div>
+          <div class="req-desc">Phase 2 introduces <strong>multiple user types</strong> with different access levels:<br>
+            &bull; <strong>Warehouse Manager</strong> &mdash; manages inventory, updates machine status<br>
+            &bull; <strong>Owners</strong> &mdash; full access, oversight of everything<br><br>
+            Exact role permissions need to be <strong>discussed in a detailed meeting</strong> with the client.</div>
+          <div class="client-quote">
+            <strong>Discussed:</strong> "Ismein bhi multiple users honge &mdash; ek toh wahan pe jo warehouse manager hai woh ho gaya, owners ho gaye. Ye tumko meeting mein jake samajhna padega."
+          </div>
+        </div>
+      </div>
+
+      <!-- What needs to be confirmed -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon red">&#9888;</div>
+          <h3 class="section-title">Phase 2 &mdash; To Be Confirmed in Next Meeting</h3>
+        </div>
+
+        <div class="req-card">
+          <div class="req-title">Detailed Inventory Requirements</div>
+          <div class="req-desc">The broad scope is clear (inventory + invoice + delivery), but the <strong>detailed requirements</strong> need a dedicated meeting with the client. This includes:<br>
+            &bull; Exact fields for inventory entries<br>
+            &bull; Invoice format and content<br>
+            &bull; Delivery tracking details<br>
+            &bull; Role permissions for warehouse manager vs owners<br>
+            &bull; Any additional workflow steps</div>
+          <div class="warning-quote">
+            <strong>Action Required:</strong> Schedule a detailed requirements meeting with the client before starting Phase 2 development. Create a crystal-clear document of what is included and what is not.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="big-divider">Phase 2 Ends Here &mdash; Phase 3 Below</div>
+    <!-- ══════════════════════════════════════════════════════════ -->
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!--                   PHASE 3 — MOBILE APP                    -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div id="phase3">
+      <div class="phase-banner p3">
+        <span class="phase-tag">Phase 3 &mdash; Future</span>
+        <h2>Mobile App (Android + iOS)</h2>
+        <p>Phase 3 adds a <strong>mobile application</strong> that connects to the same Firebase backend. The web CRM continues to work as-is &mdash; the mobile app is an additional frontend. Built with <strong>Flutter</strong> for both Android and iOS.</p>
+
+        <div class="phase-summary">
+          <div class="item"><span class="num">1</span> <strong>Flutter App</strong> &mdash; Single codebase for Android + iOS</div>
+          <div class="item"><span class="num">2</span> <strong>Same Backend</strong> &mdash; Firebase backend shared with web CRM</div>
+          <div class="item"><span class="num">3</span> <strong>UI Only Change</strong> &mdash; Only the frontend/UI changes, backend stays the same</div>
+          <div class="item"><span class="num">4</span> <strong>Store Publishing</strong> &mdash; Separate charges for Google Play / App Store</div>
+        </div>
+      </div>
+
+      <!-- Tech Stack -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon purple">&#128241;</div>
+          <h3 class="section-title">Phase 3 &mdash; Technical Approach</h3>
+        </div>
+
+        <div class="req-card">
+          <div class="req-title">Flutter for Mobile &mdash; React Stays for Web</div>
+          <div class="req-desc">The current web CRM uses <strong>React (Next.js)</strong>. The mobile app will use <strong>Flutter</strong> which builds for both Android and iOS from a single codebase. The web version stays on React &mdash; no migration needed.</div>
+          <div class="decision-quote">
+            <strong>Decided:</strong> "Web mein React rahega aur Android mein Flutter. Flutter mostly. Haan Flutter hi rahega, koi dikkat nahi hai."
+          </div>
+        </div>
+
+        <div class="req-card">
+          <div class="req-title">Same Firebase Backend &mdash; UI Swap Only</div>
+          <div class="req-desc">The Firebase backend serves both web and mobile. <strong>Multiple frontends, one backend.</strong> Web UI, Android app, and iOS app all interact with the same Firebase project. No separate hosting or backend needed for mobile.</div>
+          <div class="decision-quote">
+            <strong>Decided:</strong> "Backend Firebase mein hai. Toh nahi, alag karna padega. Ek rakh liye web UI, ek rakh liye Android, ek rakh liye iOS &mdash; ek hi backend se interact karega."
+          </div>
+        </div>
+
+        <div class="req-card">
+          <div class="req-title">Backend Readiness</div>
+          <div class="req-desc">While working on Phase 1 and 2, the backend should be kept <strong>mobile-ready</strong>. Since the web APIs are already built, the mobile app mostly needs a UI layer on top. No major backend rework expected.</div>
+          <div class="client-quote">
+            <strong>Discussed:</strong> "Agar inke kaam nahi aata toh tumhara mobile app ke liye backend ready rahe. Web API ready hai toh mobile ke liye bahut zyada tension nahi lagega."
+          </div>
+        </div>
+      </div>
+
+      <!-- Publishing -->
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon purple">&#127979;</div>
+          <h3 class="section-title">Phase 3 &mdash; App Distribution &amp; Publishing</h3>
+        </div>
+
+        <div class="req-card">
+          <div class="req-title">APK Install vs Store Publishing</div>
+          <div class="req-desc">Two options for distributing the app:<br><br>
+            <strong>Option A &mdash; APK File (Simple):</strong> We give them the APK file, they install directly on their phones. No store listing, no review process.<br><br>
+            <strong>Option B &mdash; Google Play / App Store (Separate Charges):</strong> Publish to Google Play Store and/or Apple App Store. This involves a review process, 5-10 testers requirement, and <strong>additional charges</strong> beyond the Phase 3 fee.</div>
+          <div class="warning-quote">
+            <strong>Important:</strong> "Hum aapko app de denge, aap install kar lo APK file se. Publish karna hai toh uske phir charges alag rahenge. Publishing aaj kal aasan nahi hai &mdash; 5-10 testers se kuch system rehta hai."
+          </div>
+        </div>
+
+        <div class="req-card">
+          <div class="req-title">Android + iOS Confirmation Needed</div>
+          <div class="req-desc">Need to confirm with the client whether they want:<br>
+            &bull; <strong>Android only</strong><br>
+            &bull; <strong>iOS only</strong><br>
+            &bull; <strong>Both Android + iOS</strong><br><br>
+            Flutter supports both from a single codebase, but store publishing costs and effort differ.</div>
+          <div class="client-quote">
+            <strong>Discussed:</strong> "Unse ye bhi confirm karna padega ki Android ke liye bhi rakhna hai ya sirf iOS ke liye. Dono ke liye rakhna hai?"
+          </div>
+        </div>
+
+        <div class="req-card">
+          <div class="req-title">Phase 3 Pricing Will Be Separate</div>
+          <div class="req-desc">Phase 3 (mobile app) will <strong>not be priced at &#8377;1 lakh</strong> like Phase 2. The pricing will be discussed separately when the time comes. Store publishing charges are on top of the app development cost.</div>
+          <div class="client-quote">
+            <strong>Discussed:</strong> "Phase 3 jab bhi hoga toh lakh mein toh nahi hoga. Publish karna hai toh charges alag."
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div class="big-divider">Payment Structure</div>
+    <!-- ══════════════════════════════════════════════════════════ -->
+
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!--                   PAYMENT STRUCTURE                        -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <div id="payment">
+      <div class="section">
+        <div class="section-header">
+          <div class="section-icon blue">&#128178;</div>
+          <h3 class="section-title">Payment Structure &mdash; Per Phase</h3>
+        </div>
+
+        <div class="req-card">
+          <div class="req-title">Payment Breakdown</div>
+          <div class="req-desc">
+            <table class="field-table">
+              <thead>
+                <tr><th>Phase</th><th>Amount</th><th>Status</th><th>Notes</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Phase 1</strong></td>
+                  <td>&#8377;1,00,000</td>
+                  <td><span class="status-badge complete">Complete</span></td>
+                  <td>&#8377;50,000 paid. Remaining &#8377;50,000 pending.</td>
+                </tr>
+                <tr>
+                  <td><strong>Phase 2</strong></td>
+                  <td>&#8377;1,00,000</td>
+                  <td><span class="status-badge pending">Pending Payment</span></td>
+                  <td>&#8377;50,000 from Phase 1 balance becomes Phase 2 advance. Remaining &#8377;1,00,000 to be paid before Phase 2 starts.</td>
+                </tr>
+                <tr>
+                  <td><strong>Phase 3</strong></td>
+                  <td>TBD</td>
+                  <td><span class="status-badge future">Future</span></td>
+                  <td>Pricing to be decided. Will not be &#8377;1 lakh. Store publishing charges extra.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="req-card">
+          <div class="req-title">Phase 2 Start Condition</div>
+          <div class="req-desc">Phase 2 development begins <strong>only after</strong> the client pays &#8377;1,00,000. The &#8377;50,000 pending from Phase 1 will be treated as advance for Phase 2.</div>
+          <div class="decision-quote">
+            <strong>Decided:</strong> "&#8377;50,000 ke log Phase 1 karenge, &#8377;50,000 advance Phase 2 kar denge. &#8377;1 lakh log denge tab Phase 2 chalu hoga."
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="page-footer">
+    Unique Sorter CRM &mdash; Phase Closure &amp; Roadmap &middot; 29 June 2026 &middot; Phase 1 = Complete &middot; Phase 2 = Inventory + Invoice + Delivery &middot; Phase 3 = Mobile App (Flutter)
+  </footer>
+
+</body>
+</html>
